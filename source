@@ -1,11 +1,13 @@
 ---//vvv SERVICES vvv\\---
 local UserInputService = game:GetService('UserInputService')
-local runService = (game:GetService('RunService'));
-local GuiService = game.Players.LocalPlayer:WaitForChild('PlayerGui')
+local Players = game:GetService('Players')
+local RunService = (game:GetService('RunService'));
+local GuiService = Players.LocalPlayer:WaitForChild('PlayerGui')
 ---//vvv INSTANCES vvv\\---
 local CmdGUI = Instance.new('ScreenGui')
 CmdGUI.Name = 'CmdGUI'
 CmdGUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+CmdGUI.Parent = GuiService
 
 local CmdMain = Instance.new('Frame')
 CmdMain.Name = 'CmdMain'
@@ -13,9 +15,9 @@ CmdMain.Parent = CmdGUI
 CmdMain.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 CmdMain.BorderColor3 = Color3.fromRGB(31, 31, 31)
 CmdMain.BorderSizePixel = 0
-CmdMain.Position = UDim2.new(0.686335385, 0, 0.253968269, 0)
+CmdMain.Position = UDim2.new(0.5, 0, 0.5, 0)
 CmdMain.Size = UDim2.new(0, 200, 0, 269)
-CmdGUI.Parent = GuiService
+CmdMain.AnchorPoint = Vector2.new(0.5, 0.5)
 
 local CmdHandler = Instance.new('ScrollingFrame')
 CmdHandler.Name = 'CmdHandler'
@@ -105,6 +107,7 @@ CmdDesc.TextWrapped = true
 ---//vvv VARIABLES vvv\\---
 local prefix = '.'
 local canvasPos = CmdHandler.CanvasPosition
+local localplr = Players.LocalPlayer
 ---//vvv GUI DRAGGING vvv\\---
 local dragging
 local dragInput
@@ -152,28 +155,119 @@ CmdMain.InputChanged:Connect(function(input)
 		dragInput = input
 	end
 end)
-runService.Heartbeat:Connect(Update)
+RunService.Heartbeat:Connect(Update)
 ---//vvv COMMANDS vvv\\---
 local Cmd = {}
-Cmd[#Cmd + 1] = {Name='tase / taze <plr>',Desc='Tases a player'}
-Cmd[#Cmd + 1] = {Name='kill <plr>',Desc='Kills a player (Will switch to neutral team if player is in your team)'}
+Cmd[#Cmd + 1] = {Name='tase / taze <plr>',Desc='Tases the player'}
+Cmd[#Cmd + 1] = {Name='taseall / tazeall',Desc='Tases all players'}
+Cmd[#Cmd + 1] = {Name='looptase / looptaze <plr>',Desc='Loop tases the player'}
+Cmd[#Cmd + 1] = {Name='unlooptase / unlooptaze <plr>',Desc='Disables loop tasing the player'}
+Cmd[#Cmd + 1] = {Name='looptaseall / looptazeall',Desc='Loop tases all players'}
+Cmd[#Cmd + 1] = {Name='arrest <plr>',Desc='Arrests the player'}
+Cmd[#Cmd + 1] = {Name='arrestall',Desc='Arrests all players if possible'}
+Cmd[#Cmd + 1] = {Name='looparrest / spamarrest <plr>',Desc='Loop arrests the player (Causes lag)'}
+Cmd[#Cmd + 1] = {Name='unlooparrest / unspamarrest <plr>',Desc='Disable loop arresting the player'}
+Cmd[#Cmd + 1] = {Name='kill <plr>',Desc='Kills the player (Will switch to neutral team if player is in your team)'}
 Cmd[#Cmd + 1] = {Name='killall',Desc='Kills all players (Will switch to neutral team)'}
 Cmd[#Cmd + 1] = {Name='killguard / killguards',Desc='Kills all players in the guard team (Will switch to neutral team if you are in guard team)'}
 Cmd[#Cmd + 1] = {Name='killinmate / killinmates',Desc='Kills all players in the inmate team (Will switch to neutral team if you are in inmate team)'}
 Cmd[#Cmd + 1] = {Name='killcriminal / killcriminals',Desc='Kills all players in the criminal team (Will switch to neutral team if you are in criminal team)'}
 Cmd[#Cmd + 1] = {Name='killenemy / killenemies',Desc='Kills all players who are not in your team'}
-Cmd[#Cmd + 1] = {Name='loopkill <plr> / lk <plr>',Desc='Loop kills a player (Will switch to neutral team if player is in your team)'}
+Cmd[#Cmd + 1] = {Name='loopkill <plr> / lk <plr>',Desc='Loop kills the player (Will switch to neutral team if player is in your team)'}
 Cmd[#Cmd + 1] = {Name='loopkillall',Desc='Loop kills all players (Will switch to neutral team)'}
 Cmd[#Cmd + 1] = {Name='loopkillguard / loopkillguards',Desc='Loop kills all players in the guard team (Will switch to neutral team if you are in guard team)'}
 Cmd[#Cmd + 1] = {Name='loopkillinmate / loopkillinmates',Desc='Loop kills all players in the inmate team (Will switch to neutral team if you are in inmate team)'}
 Cmd[#Cmd + 1] = {Name='loopkillcriminal / loopkillcriminals',Desc='Loop kills all players in the criminal team (Will switch to neutral team if you are in criminal team)'}
 Cmd[#Cmd + 1] = {Name='loopkillenemy / loopkillenemies',Desc='Loop kills all players who are not in your team'}
-Cmd[#Cmd + 1] = {Name='unloopkill <plr> / unlk <plr>',Desc='Unloop kills a player (Will switch to neutral team if player is in your team)'}
-Cmd[#Cmd + 1] = {Name='unloopkillall',Desc='Unloop kills all players (Will switch to neutral team)'}
-Cmd[#Cmd + 1] = {Name='unloopkillguard / unloopkillguards',Desc='Unloop kills all players in the guard team (Will switch to neutral team if you are in guard team)'}
-Cmd[#Cmd + 1] = {Name='unloopkillinmate / unloopkillinmates',Desc='Unloop kills all players in the inmate team (Will switch to neutral team if you are in inmate team)'}
-Cmd[#Cmd + 1] = {Name='unloopkillcriminal / unloopkillcriminals',Desc='Unloop kills all players in the criminal team (Will switch to neutral team if you are in criminal team)'}
-Cmd[#Cmd + 1] = {Name='unloopkillenemy / unloopkillenemies',Desc='Unloop kills all players who are not in your team'}
+Cmd[#Cmd + 1] = {Name='unloopkill <plr> / unlk <plr>',Desc='Disables loopkilling the player'}
+Cmd[#Cmd + 1] = {Name='unloopkillall',Desc='Disables loopkilling all players'}
+Cmd[#Cmd + 1] = {Name='unloopkillguard / unloopkillguards',Desc='Disables loopkillng all players in the guard team'}
+Cmd[#Cmd + 1] = {Name='unloopkillinmate / unloopkillinmates',Desc='Disables loopkillng all players in the inmate team'}
+Cmd[#Cmd + 1] = {Name='unloopkillcriminal / unloopkillcriminals',Desc='Disables loopkillng all players in the criminal team'}
+Cmd[#Cmd + 1] = {Name='unloopkillenemy / unloopkillenemies',Desc='Disables loopkillng all players who are not in your team'}
+Cmd[#Cmd + 1] = {Name='clearloopkill / clearloopkills',Desc='Removes all loop kills'}
+Cmd[#Cmd + 1] = {Name='killaura / aura',Desc='Kills everyone who is near you'}
+Cmd[#Cmd + 1] = {Name='unkillaura / unaura',Desc='Disables kill aura'}
+Cmd[#Cmd + 1] = {Name='inmate / inmates',Desc='Join the inmate team'}
+Cmd[#Cmd + 1] = {Name='guard / guards',Desc='Join the guard team'}
+Cmd[#Cmd + 1] = {Name='criminal / criminals',Desc='Join the criminal team (Requires respawn)'}
+Cmd[#Cmd + 1] = {Name='neutral / neutrals',Desc='Join the neutral team'}
+Cmd[#Cmd + 1] = {Name='red',Desc='Join the custom red team'}
+Cmd[#Cmd + 1] = {Name='orange',Desc='Join the custom orange team'}
+Cmd[#Cmd + 1] = {Name='yellow',Desc='Join the custom yellow team'}
+Cmd[#Cmd + 1] = {Name='green',Desc='Join the custom green team'}
+Cmd[#Cmd + 1] = {Name='blue',Desc='Join the custom blue team'}
+Cmd[#Cmd + 1] = {Name='purple',Desc='Join the custom purple team'}
+Cmd[#Cmd + 1] = {Name='pink',Desc='Join the custom pink team'}
+Cmd[#Cmd + 1] = {Name='white',Desc='Join the custom white team'}
+Cmd[#Cmd + 1] = {Name='grey',Desc='Join the custom grey team'}
+Cmd[#Cmd + 1] = {Name='brown',Desc='Join the custom brown team'}
+Cmd[#Cmd + 1] = {Name='black',Desc='Join the custom black team'}
+Cmd[#Cmd + 1] = {Name='makecriminal / makecrim <plr>',Desc='Makes player join the criminal team (Requires respawn)'}
+Cmd[#Cmd + 1] = {Name='makecriminalall / makecrimall <plr>',Desc='Makes all players join the criminal team'}
+Cmd[#Cmd + 1] = {Name='lag <duration>',Desc='Lags for a specific amount'}
+Cmd[#Cmd + 1] = {Name='crash / lagserver',Desc='Lags and disconnects the server'}
+Cmd[#Cmd + 1] = {Name="uncrash / unlagserver',Desc='Stops lagging the server (If it's not too late)"}
+Cmd[#Cmd + 1] = {Name="fpslag / lagspike',Desc='Makes all players' FPS decrease"}
+Cmd[#Cmd + 1] = {Name='unfpslag / unlagspike',Desc='Stops FPS spiking'}
+Cmd[#Cmd + 1] = {Name='respawn / res',Desc='Respawn on a spawn location'}
+Cmd[#Cmd + 1] = {Name='refresh / re',Desc='Respawn on your old location'}
+Cmd[#Cmd + 1] = {Name='reset',Desc='Reset your character'}
+Cmd[#Cmd + 1] = {Name='autorefresh / autore',Desc='Automatically respawn on your old location when you die'}
+Cmd[#Cmd + 1] = {Name='unautorefresh / unautore',Desc='Disables autorefresh'}
+Cmd[#Cmd + 1] = {Name='god / godmode',Desc='Grants immunity (With the cost of your avatar)'}
+Cmd[#Cmd + 1] = {Name='ungod / ungodmode',Desc='Disables god mode'}
+Cmd[#Cmd + 1] = {Name='swatgod',Desc='Grants immunity by spamming swat vest (Guard team only and requires SWAT gamepass)'}
+Cmd[#Cmd + 1] = {Name='unswatgod',Desc='Disables swat god mode'}
+Cmd[#Cmd + 1] = {Name='goto / to <plr>',Desc='Teleports you to the player'}
+Cmd[#Cmd + 1] = {Name='bring',Desc='Teleports the player to you (Requires respawn)'}
+Cmd[#Cmd + 1] = {Name='loopbring <plr>',Desc='Loop teleports the player to your position'}
+Cmd[#Cmd + 1] = {Name='unloopbring <plr>',Desc='Disables loop bringing the player'}
+Cmd[#Cmd + 1] = {Name='view / spectate <plr>',Desc='Spectates the player'}
+Cmd[#Cmd + 1] = {Name='unview / unspectate',Desc='Unspectates the player'}
+Cmd[#Cmd + 1] = {Name='antifling',Desc='Prevents you from being flinged'}
+Cmd[#Cmd + 1] = {Name='unantifling',Desc='Disables antifling'}
+Cmd[#Cmd + 1] = {Name='antitaser / taserbypass',Desc='Prevents you from being tased'}
+Cmd[#Cmd + 1] = {Name='unantitaser / untaserbypass',Desc='Disables taser bypass'}
+Cmd[#Cmd + 1] = {Name='antishield / antishields',Desc='Removes shields from other players'}
+Cmd[#Cmd + 1] = {Name='unantishield / unantishields',Desc='Restores shields from other players'}
+Cmd[#Cmd + 1] = {Name='fastpunch',Desc='Activates fast punching'}
+Cmd[#Cmd + 1] = {Name='nofastpunch / slowpunch',Desc='Disables fast punching'}
+Cmd[#Cmd + 1] = {Name='onepunch / superpunch',Desc='Activates one punching'}
+Cmd[#Cmd + 1] = {Name='noonepunch / nosuperpunch',Desc='Disables one punching'}
+Cmd[#Cmd + 1] = {Name='keycard / key / card',Desc='Loopkills you until you get a card then switches you back to original team'}
+Cmd[#Cmd + 1] = {Name='crudeknife / knife',Desc='Adds crude knife to your backpack'}
+Cmd[#Cmd + 1] = {Name='superknife / oneshotknife',Desc='Adds one shot knife to your backpack'}
+Cmd[#Cmd + 1] = {Name='hammer',Desc='Adds hammer to your backpack'}
+Cmd[#Cmd + 1] = {Name='baseballbat / bat',Desc='Adds one shot bat to your backpack'}
+Cmd[#Cmd + 1] = {Name='m9 / pistol',Desc='Adds M9 to your backpack'}
+Cmd[#Cmd + 1] = {Name='remington / shotgun',Desc='Adds Remington 870 to your backpack'}
+Cmd[#Cmd + 1] = {Name='ak / ak47',Desc='Adds AK-47 to your backpack'}
+Cmd[#Cmd + 1] = {Name='m4 / m4a1',Desc='Adds M4A1 to your backpack (Requires SWAT Gamepass)'}
+Cmd[#Cmd + 1] = {Name='gun / guns',Desc='Adds possibly all guns to your backpack'}
+Cmd[#Cmd + 1] = {Name='autogun / autoguns',Desc='Automatically adds possibly all guns to your backpack'}
+Cmd[#Cmd + 1] = {Name='unautogun / unautoguns',Desc='Disables autoguns'}
+Cmd[#Cmd + 1] = {Name='autofire / rapidfire',Desc='Activates autofire'}
+Cmd[#Cmd + 1] = {Name='superfire / superguns',Desc='Makes your gun super as possible'}
+Cmd[#Cmd + 1] = {Name='autosuperfire / autosuperguns',Desc='Automatically makes your gun super as possible'}
+Cmd[#Cmd + 1] = {Name='unautosuperfire / unautosuperguns',Desc='Disables autosuperfire'}
+Cmd[#Cmd + 1] = {Name='gate',Desc='Teleports you to the gate'}
+Cmd[#Cmd + 1] = {Name='opengate',Desc='Opens the gate'}
+Cmd[#Cmd + 1] = {Name='gateroom',Desc='Teleports you in the gateroom'}
+Cmd[#Cmd + 1] = {Name='gatetower',Desc='Teleports you to the tower beside the gate'}
+Cmd[#Cmd + 1] = {Name='tower',Desc='Teleports you to the tower on yard'}
+Cmd[#Cmd + 1] = {Name='yard',Desc='Teleports you to the yard'}
+Cmd[#Cmd + 1] = {Name='armory / guardroom',Desc='Teleports you to the armory'}
+Cmd[#Cmd + 1] = {Name='nexus / prison',Desc='Teleports you to the nexus'}
+Cmd[#Cmd + 1] = {Name='backnexus',Desc='Teleports you to the back of the nexus'}
+Cmd[#Cmd + 1] = {Name='sewer / sewers',Desc='Teleports you to the sewer'}
+Cmd[#Cmd + 1] = {Name='cafeteria / cafe',Desc='Teleports you to the cafeteria'}
+Cmd[#Cmd + 1] = {Name='roof',Desc='Teleports you to the roof'}
+Cmd[#Cmd + 1] = {Name='criminalbase / crimbase',Desc='Teleports you to the base'}
+Cmd[#Cmd + 1] = {Name='antifall / antivoid',Desc='Teleports you above if you almost fall to the void'}
+Cmd[#Cmd + 1] = {Name='unantifall / unantivoid',Desc='Disables antifall'}
+Cmd[#Cmd + 1] = {Name='prefix / setprefix <text>',Desc='Sets prefix to the text'}
+
 
 for i = 1,#Cmd do
 	local clone = CmdExample:Clone()	
@@ -190,7 +284,7 @@ for i = 1,#Cmd do
 	end)
 end
 
-local Mouse = game.Players.LocalPlayer:GetMouse()
+local Mouse = localplr:GetMouse()
 Mouse.Move:Connect(function()
 	local Guis = GuiService:GetGuiObjectsAtPosition(Mouse.X, Mouse.Y)
 	local Gui
@@ -217,9 +311,247 @@ Mouse.Move:Connect(function()
 	end
 end)
 --//vvv COMMAND FUNCTIONS vvv\\--
+-- variables --
+local PlrsLoopKilled = {}
+local PlrsLoopTased = {}
+local Toggles = {}
+local BoughtGamepass = game:GetService('MarketplaceService'):UserOwnsGamePassAsync(tonumber((game:GetService('Players').LocalPlayer.CharacterAppearance):split('=')[#((game:GetService('Players').LocalPlayer.CharacterAppearance):split('='))]), 96651)
+
+local function getPlr(str)
+	if not str then return end
+	local str = string.lower(str)
+	local plr
+	local finding = true
+	for _, Player in ipairs(Players:GetChildren()) do
+		if finding then
+			if string.lower(Player.Name):match(str) or string.lower(Player.DisplayName):match(str) then
+				plr = Player
+				finding = false
+			end
+		end
+	end
+	if plr then return plr else return nil end
+end
+
+local function plrDetails()
+	return {localplr.Character.HumanoidRootPart.CFrame, workspace.CurrentCamera.CFrame, localplr.TeamColor.Name}
+end
+
+local function goTo(plr, dis)
+	local Distance = dis or CFrame.new(0,0,0)
+	localplr.Character.HumanoidRootPart.CFrame = plr.Character.HumanoidRootPart.CFrame*Distance
+end
+
+local function killPlr(plr)
+	if not plr then return end
+	pcall(function()
+		if plr:FindFirstChild('Character') then
+			local details = plrDetails()
+			local plrCF = details[1]
+			local camCF = details[2]
+			local team = details[3]
+			
+			if team == plr.TeamColor.Name then
+				workspace.Remote.loadchar:InvokeServer(nil, BrickColor.random().Name)
+				localplr.Character.HumanoidRootPart.CFrame = plrCF
+				workspace.CurrentCamera.CFrame = camCF
+			end
+			
+			workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+			local tool = localplr.Character:FindFirstChild('Remington 870') or localplr.Backpack:FindFirstChild('Remington 870')
+			local event = {
+				[1] = {
+					['RayObject'] = Ray.new(Vector3.new(), Vector3.new()), 
+					['Distance'] = 0, 
+					['Cframe'] = CFrame.new(), 
+					['Hit'] = workspace[plr.Name].Head
+				}, [2] = {
+					['RayObject'] = Ray.new(Vector3.new(), Vector3.new()), 
+					['Distance'] = 0, 
+					['Cframe'] = CFrame.new(), 
+					['Hit'] = workspace[plr.Name].Head
+				}, [3] = {
+					['RayObject'] = Ray.new(Vector3.new(), Vector3.new()), 
+					['Distance'] = 0, 
+					['Cframe'] = CFrame.new(), 
+					['Hit'] = workspace[plr.Name].Head
+				}, [4] = {
+					['RayObject'] = Ray.new(Vector3.new(), Vector3.new()), 
+					['Distance'] = 0, 
+					['Cframe'] = CFrame.new(), 
+					['Hit'] = workspace[plr.Name].Head
+				}, [5] = {
+					['RayObject'] = Ray.new(Vector3.new(), Vector3.new()), 
+					['Distance'] = 0, 
+					['Cframe'] = CFrame.new(), 
+					['Hit'] = workspace[plr.Name].Head
+				}, [6] = {
+					['RayObject'] = Ray.new(Vector3.new(), Vector3.new()), 
+					['Distance'] = 0, 
+					['Cframe'] = CFrame.new(), 
+					['Hit'] = workspace[plr.Name].Head
+				}, [7] = {
+					['RayObject'] = Ray.new(Vector3.new(), Vector3.new()), 
+					['Distance'] = 0, 
+					['Cframe'] = CFrame.new(), 
+					['Hit'] = workspace[plr.Name].Head
+				}, [8] = {
+					['RayObject'] = Ray.new(Vector3.new(), Vector3.new()), 
+					['Distance'] = 0, 
+					['Cframe'] = CFrame.new(), 
+					['Hit'] = workspace[plr.Name].Head
+				}
+			}
+			game:GetService('ReplicatedStorage').ShootEvent:FireServer(event, tool)
+		else return end
+	end)
+end
+
+local function tasePlr(plr)
+	if not plr then return end
+	pcall(function()
+		if plr:FindFirstChild('Character') then
+			local details = plrDetails()
+			local plrCF = details[1]
+			local camCF = details[2]
+			local team = details[3]
+			
+			local tool = localplr.Character:FindFirstChild('Taser') or localplr.Backpack:FindFirstChild('Taser')
+			if team ~= 'Bright blue' or not tool then
+				workspace.Remote.loadchar:InvokeServer(nil, BrickColor.new("Bright blue").Name)
+				localplr.Character.HumanoidRootPart.CFrame = plrCF
+				workspace.CurrentCamera.CFrame = camCF
+				tool = localplr.Character:FindFirstChild('Taser') or localplr.Backpack:FindFirstChild('Taser')
+			end
+			
+			local event = {
+				[1] = {
+					['RayObject'] = Ray.new(Vector3.new(), Vector3.new()), 
+					['Distance'] = 0, 
+					['Cframe'] = CFrame.new(), 
+					['Hit'] = workspace[plr.Name].Torso
+			}}
+			game:GetService('ReplicatedStorage').ShootEvent:FireServer(event, tool)
+		else return end
+	end)
+end
+
+local function bringPlr(plr)
+	if not plr then return end
+	pcall(function()
+		if plr:FindFirstChild('Character') then
+			local details = plrDetails()
+			local plrCF = details[1]
+			local char = localplr.Character
+
+			workspace.Remote.loadchar:InvokeServer()
+			localplr.Character.HumanoidRootPart.CFrame = plrCF
+			workspace.Remote.ItemHandler:InvokeServer(workspace.PRISON_ITEMS.single["Hammer"].ITEMPICKUP)
+			char.Humanoid.Name = 'fuck'
+			local c = char.fuck:Clone()
+			c.Name = 'Humanoid'
+			c.Parent = char
+			char.fuck:Destroy()
+			workspace.CurrentCamera.CameraSubject = char
+			char.Animated.Disabled = true
+			wait()
+			char.Animated.Disabled = false
+			char.Humanoid.DisplayDistanceType = 'None'
+			localplr.Backpack:FindFirstChild('Hammer').Parent = char
+			local counter = 0
+			repeat wait(0.1)
+				counter = counter+ 1
+				localplr.Character.HumanoidRootPart.CFrame = plr.Character.HumanoidRootPart.CFrame * CFrame.new(0,0,0.75)
+			until (not localplr.Character:FindFirstChild('Hammer') or not localplr.Character.HumanoidRootPart or not plr.character.HumanoidRootPart or not localplr.Character or not plr.Character or counter > 500) and counter > 3
+			counter = 0
+			repeat wait()
+				counter = counter + 1
+				localplr.Character.HumanoidRootPart.CFrame = plrCF
+			until counter > 10
+			workspace.Remote.loadchar:InvokeServer()
+			localplr.Character.HumanoidRootPart.CFrame = plrCF
+		else return end
+	end)
+end
+
+function arrestPlr(plr)
+	if not plr then return end
+	pcall(function()
+		if plr:FindFirstChild('Character') then
+			local details = plrDetails()
+			local plrCF = details[1]
+			local camCF = details[2]
+			local team = details[3]
+			repeat wait()
+				localplr.Character.HumanoidRootPart.CFrame = plr.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1)
+				coroutine.wrap(function()
+					workspace.Remote.arrest:InvokeServer(plr.Character.Head)
+				end)()
+			until plr.Character:FindFirstChild("Head"):FindFirstChild("handcuffedGui")
+			wait()
+			workspace.Remote.loadchar:InvokeServer(nil, BrickColor.new(team).Name)
+			localplr.Character.Humanoid.Sit = false
+			localplr.Character.HumanoidRootPart.CFrame = plrCF
+			workspace.CurrentCamera.CFrame = camCF
+		end
+	end)
+end
+
+local function godMode()
+	localplr.Character.Humanoid.Name = 1
+	local l = localplr.Character["1"]:Clone()
+	l.Parent = localplr.Character
+	l.Name = "Humanoid"
+	localplr.Character.Animate.Disabled = true
+	wait()
+	localplr.Character.Animate.Disabled = false
+	localplr.Character["1"]:Destroy()
+	game.Workspace.CurrentCamera.CameraSubject = localplr.Character
+end
+
+local function executeCmd(cmd, args)
+	if cmd == 'tase' or cmd == 'taze' then
+		if args[2] then
+			local plr = getPlr(args[2])
+			if plr then
+				tasePlr(plr)
+			end
+		end
+	elseif cmd == 'taseall' or cmd == 'tazeall' then
+		for _, plr in ipairs(Players:GetChildren()) do
+			tasePlr(plr)
+		end
+	elseif cmd == 'looptase' or cmd == 'looptaze' then
+		if args[2] then
+			local plr = getPlr(args[2])
+			if plr then
+				PlrsLoopTased[plr.UserId] = {player = plr}
+			end
+		end
+	elseif cmd == 'unlooptase' or cmd == 'unlooptaze' then
+		if args[2] then
+			local plr = getPlr(args[2])
+			if plr then
+				PlrsLoopTased[plr.UserId] = nil
+			end
+		end
+	elseif cmd == 'looptaseall' or cmd == 'looptazeall' then
+		Toggles.LoopTaseAll = true
+		while wait() do
+			if Toggles.LoopTaseAll then
+				for _, plr in ipairs(Players:GetChildren()) do
+						tasePlr(plr)
+				end
+			else break end
+		end
+	elseif cmd == 'unlooptaseall' or cmd == 'unlooptazeall' then
+		Toggles.LoopTaseAll = false
+	end
+end
+--//vvv GUI FUNCTIONS vvv\\--
 CmdBar.Changed:Connect(function()
 	if CmdBar.Text ~= '' then
-        CmdHandler.CanvasPosition = canvasPos
+		CmdHandler.CanvasPosition = canvasPos
 		for i,v in pairs(CmdHandler:GetChildren()) do
 			if v:IsA('TextButton') then
 				if not string.lower(v.Text):match(string.lower(CmdBar.Text)) then
