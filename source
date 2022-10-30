@@ -1,0 +1,265 @@
+---//vvv SERVICES vvv\\---
+local UserInputService = game:GetService('UserInputService')
+local runService = (game:GetService('RunService'));
+local GuiService = game.Players.LocalPlayer:WaitForChild('PlayerGui')
+---//vvv INSTANCES vvv\\---
+local CmdGUI = Instance.new('ScreenGui')
+CmdGUI.Name = 'CmdGUI'
+CmdGUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+local CmdMain = Instance.new('Frame')
+CmdMain.Name = 'CmdMain'
+CmdMain.Parent = CmdGUI
+CmdMain.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+CmdMain.BorderColor3 = Color3.fromRGB(31, 31, 31)
+CmdMain.BorderSizePixel = 0
+CmdMain.Position = UDim2.new(0.686335385, 0, 0.253968269, 0)
+CmdMain.Size = UDim2.new(0, 200, 0, 269)
+CmdGUI.Parent = GuiService
+
+local CmdHandler = Instance.new('ScrollingFrame')
+CmdHandler.Name = 'CmdHandler'
+CmdHandler.Parent = CmdMain
+CmdHandler.Active = true
+CmdHandler.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+CmdHandler.BorderSizePixel = 0
+CmdHandler.Position = UDim2.new(0.0299999993, 0, 0.207689703, 0)
+CmdHandler.Size = UDim2.new(0, 194, 0, 213)
+CmdHandler.AutomaticCanvasSize = 'Y'
+
+local CmdLayout = Instance.new('UIListLayout')
+CmdLayout.Name = 'CmdLayout'
+CmdLayout.Parent = CmdHandler
+CmdLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+local CmdExample = Instance.new('TextButton')
+CmdExample.Name = 'CmdExample'
+CmdExample.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+CmdExample.BackgroundTransparency = 1.000
+CmdExample.Size = UDim2.new(0, 194, 0, 18)
+CmdExample.ZIndex = 10
+CmdExample.Font = Enum.Font.SourceSans
+CmdExample.Text = 'whaddafuck'
+CmdExample.TextColor3 = Color3.fromRGB(255, 255, 255)
+CmdExample.TextSize = 14.000
+CmdExample.TextXAlignment = Enum.TextXAlignment.Left
+
+local CmdBar = Instance.new('TextBox')
+CmdBar.Name = 'CmdBar'
+CmdBar.Parent = CmdMain
+CmdBar.BackgroundColor3 = Color3.fromRGB(53, 53, 53)
+CmdBar.BorderSizePixel = 0
+CmdBar.Position = UDim2.new(0.0299999993, 0, 0.0876345932, 0)
+CmdBar.Size = UDim2.new(0, 188, 0, 22)
+CmdBar.Font = Enum.Font.SourceSans
+CmdBar.PlaceholderText = 'Command Bar'
+CmdBar.Text = ''
+CmdBar.TextColor3 = Color3.fromRGB(255, 255, 255)
+CmdBar.TextSize = 14.000
+CmdBar.TextXAlignment = Enum.TextXAlignment.Left
+
+local CmdTitle = Instance.new('TextLabel')
+CmdTitle.Name = 'CmdTitle'
+CmdTitle.Parent = CmdMain
+CmdTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+CmdTitle.BackgroundTransparency = 1.000
+CmdTitle.Size = UDim2.new(0, 200, 0, 23)
+CmdTitle.Font = Enum.Font.SourceSansBold
+CmdTitle.Text = "ong's Prison Life Admin"
+CmdTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+CmdTitle.TextSize = 14.000
+
+local CmdDescBox = Instance.new('Frame')
+CmdDescBox.Name = 'CmdDescBox'
+CmdDescBox.Parent = CmdMain
+CmdDescBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+CmdDescBox.BackgroundTransparency = 0.2500
+CmdDescBox.Position = UDim2.new(-0.00237113237, 0, 0.307555377, 0)
+CmdDescBox.Size = UDim2.new(0, 194, 0, 71)
+CmdDescBox.Visible = false
+
+local CmdName = Instance.new('TextLabel')
+CmdName.Name = 'CmdName'
+CmdName.Parent = CmdDescBox
+CmdName.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+CmdName.BackgroundTransparency = 1.000
+CmdName.Size = UDim2.new(0, 191, 0, 23)
+CmdName.Font = Enum.Font.SourceSansBold
+CmdName.Text = 'killall'
+CmdName.TextColor3 = Color3.fromRGB(255, 255, 255)
+CmdName.TextSize = 13.500
+
+local CmdDesc = Instance.new('TextLabel')
+CmdDesc.Name = 'CmdDesc'
+CmdDesc.Parent = CmdDescBox
+CmdDesc.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+CmdDesc.BackgroundTransparency = 1.000
+CmdDesc.Position = UDim2.new(0, 0, 0.324, 0)
+CmdDesc.Size = UDim2.new(0, 191, 0, 48)
+CmdDesc.ZIndex = 10
+CmdDesc.Font = Enum.Font.SourceSans
+CmdDesc.Text = ''
+CmdDesc.TextColor3 = Color3.fromRGB(255, 255, 255)
+CmdDesc.TextSize = 14.000
+CmdDesc.TextWrapped = true
+---//vvv VARIABLES vvv\\---
+local prefix = '.'
+local canvasPos = CmdHandler.CanvasPosition
+---//vvv GUI DRAGGING vvv\\---
+local dragging
+local dragInput
+local dragStart
+local startPos
+
+local function Lerp(a, b, m)
+	return a + (b - a) * m
+end;
+
+local lastMousePos
+local lastGoalPos
+local DRAG_SPEED = (8); -- // The speed of the UI darg.
+local function Update(dt)
+	if not (startPos) then return end;
+	if not (dragging) and (lastGoalPos) then
+		CmdMain.Position = UDim2.new(startPos.X.Scale, Lerp(CmdMain.Position.X.Offset, lastGoalPos.X.Offset, dt * DRAG_SPEED), startPos.Y.Scale, Lerp(CmdMain.Position.Y.Offset, lastGoalPos.Y.Offset, dt * DRAG_SPEED))
+		return 
+	end;
+
+	local delta = (lastMousePos - UserInputService:GetMouseLocation())
+	local xGoal = (startPos.X.Offset - delta.X);
+	local yGoal = (startPos.Y.Offset - delta.Y);
+	lastGoalPos = UDim2.new(startPos.X.Scale, xGoal, startPos.Y.Scale, yGoal)
+	CmdMain.Position = UDim2.new(startPos.X.Scale, Lerp(CmdMain.Position.X.Offset, xGoal, dt * DRAG_SPEED), startPos.Y.Scale, Lerp(CmdMain.Position.Y.Offset, yGoal, dt * DRAG_SPEED))
+end;
+
+CmdMain.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		dragging = true
+		dragStart = input.Position
+		startPos = CmdMain.Position
+		lastMousePos = UserInputService:GetMouseLocation()
+
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+			end
+		end)
+	end
+end)
+
+CmdMain.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+		dragInput = input
+	end
+end)
+runService.Heartbeat:Connect(Update)
+---//vvv COMMANDS vvv\\---
+local Cmd = {}
+Cmd[#Cmd + 1] = {Name='tase / taze <plr>',Desc='Tases a player'}
+Cmd[#Cmd + 1] = {Name='kill <plr>',Desc='Kills a player (Will switch to neutral team if player is in your team)'}
+Cmd[#Cmd + 1] = {Name='killall',Desc='Kills all players (Will switch to neutral team)'}
+Cmd[#Cmd + 1] = {Name='killguard / killguards',Desc='Kills all players in the guard team (Will switch to neutral team if you are in guard team)'}
+Cmd[#Cmd + 1] = {Name='killinmate / killinmates',Desc='Kills all players in the inmate team (Will switch to neutral team if you are in inmate team)'}
+Cmd[#Cmd + 1] = {Name='killcriminal / killcriminals',Desc='Kills all players in the criminal team (Will switch to neutral team if you are in criminal team)'}
+Cmd[#Cmd + 1] = {Name='killenemy / killenemies',Desc='Kills all players who are not in your team'}
+Cmd[#Cmd + 1] = {Name='loopkill <plr> / lk <plr>',Desc='Loop kills a player (Will switch to neutral team if player is in your team)'}
+Cmd[#Cmd + 1] = {Name='loopkillall',Desc='Loop kills all players (Will switch to neutral team)'}
+Cmd[#Cmd + 1] = {Name='loopkillguard / loopkillguards',Desc='Loop kills all players in the guard team (Will switch to neutral team if you are in guard team)'}
+Cmd[#Cmd + 1] = {Name='loopkillinmate / loopkillinmates',Desc='Loop kills all players in the inmate team (Will switch to neutral team if you are in inmate team)'}
+Cmd[#Cmd + 1] = {Name='loopkillcriminal / loopkillcriminals',Desc='Loop kills all players in the criminal team (Will switch to neutral team if you are in criminal team)'}
+Cmd[#Cmd + 1] = {Name='loopkillenemy / loopkillenemies',Desc='Loop kills all players who are not in your team'}
+Cmd[#Cmd + 1] = {Name='unloopkill <plr> / unlk <plr>',Desc='Unloop kills a player (Will switch to neutral team if player is in your team)'}
+Cmd[#Cmd + 1] = {Name='unloopkillall',Desc='Unloop kills all players (Will switch to neutral team)'}
+Cmd[#Cmd + 1] = {Name='unloopkillguard / unloopkillguards',Desc='Unloop kills all players in the guard team (Will switch to neutral team if you are in guard team)'}
+Cmd[#Cmd + 1] = {Name='unloopkillinmate / unloopkillinmates',Desc='Unloop kills all players in the inmate team (Will switch to neutral team if you are in inmate team)'}
+Cmd[#Cmd + 1] = {Name='unloopkillcriminal / unloopkillcriminals',Desc='Unloop kills all players in the criminal team (Will switch to neutral team if you are in criminal team)'}
+Cmd[#Cmd + 1] = {Name='unloopkillenemy / unloopkillenemies',Desc='Unloop kills all players who are not in your team'}
+
+for i = 1,#Cmd do
+	local clone = CmdExample:Clone()	
+	clone.Text = Cmd[i].Name
+	clone.Name = 'Cmd'
+	local Ins = Instance.new('StringValue', clone)
+	Ins.Name = 'Desc'
+	Ins.Value = Cmd[i].Desc
+	clone.Parent = CmdHandler
+	clone.MouseButton1Click:Connect(function()
+		CmdBar:CaptureFocus()
+		CmdBar.Text = clone.Text:split(' ')[1]
+		CmdBar.CursorPosition = #CmdBar.Text + 1
+	end)
+end
+
+local Mouse = game.Players.LocalPlayer:GetMouse()
+Mouse.Move:Connect(function()
+	local Guis = GuiService:GetGuiObjectsAtPosition(Mouse.X, Mouse.Y)
+	local Gui
+	for i,v in pairs(Guis) do
+		if v.Parent == CmdHandler then
+			Gui = v
+		end
+	end
+	if Gui ~= nil then
+		local X = Mouse.X - CmdMain.AbsolutePosition.X
+		local Y = Mouse.Y - CmdMain.AbsolutePosition.Y
+		if Mouse.X > 200 then
+			X = X - 191
+		end
+		if Mouse.Y > (Mouse.ViewSizeY-96) then
+			Y = Y - 57
+		end
+		CmdDescBox.Visible = true
+		CmdDescBox.Position = UDim2.new(0, X, 0, Y)
+		CmdName.Text = Gui.Text
+		CmdDesc.Text = Gui.Desc.Value
+	else
+		CmdDescBox.Visible = false
+	end
+end)
+--//vvv COMMAND FUNCTIONS vvv\\--
+CmdBar.Changed:Connect(function()
+	if CmdBar.Text ~= '' then
+        CmdHandler.CanvasPosition = canvasPos
+		for i,v in pairs(CmdHandler:GetChildren()) do
+			if v:IsA('TextButton') then
+				if not string.lower(v.Text):match(string.lower(CmdBar.Text)) then
+					v.Parent = CmdMain
+					v.Visible = false
+				end
+			end
+		end
+		for i,v in pairs(CmdMain:GetChildren()) do
+			if v.Name == 'Cmd' then
+				if string.lower(v.Text):match(string.lower(CmdBar.Text)) then
+					v.Parent = CmdHandler
+					v.Visible = true
+				end
+			end
+		end
+	elseif CmdBar.Text == '' and (#CmdHandler:GetChildren()-1) ~= #Cmd  then
+		for i,v in pairs(CmdHandler:GetChildren()) do
+			if v:IsA('TextButton') then
+				v:Destroy()
+			end
+		end
+		for i,v in pairs(CmdMain:GetChildren()) do
+			if v.Name == 'Cmd' then
+				v:Destroy()
+			end
+		end
+		for i = 1,#Cmd do
+			local clone = CmdExample:Clone()	
+			clone.Text = Cmd[i].Name
+			clone.Name = 'Cmd'
+			local Ins = Instance.new('StringValue', clone)
+			Ins.Name = 'Desc'
+			Ins.Value = Cmd[i].Desc
+			clone.Parent = CmdHandler
+			clone.MouseButton1Click:Connect(function()
+				CmdBar:CaptureFocus()
+				CmdBar.Text = clone.Text:split(' ')[1]
+				CmdBar.CursorPosition = #CmdBar.Text + 1
+			end)
+		end
+	end
+end)
