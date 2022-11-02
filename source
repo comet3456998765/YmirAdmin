@@ -21,8 +21,8 @@ CmdMain.Position = UDim2.new(0.5, 0, 0.5, 0)
 CmdMain.Size = UDim2.new(0, 200, 0, 269)
 CmdMain.AnchorPoint = Vector2.new(0.5, 0.5)
 
-local CmdNotifBox = Instance.new("Frame")
-CmdNotifBox.Name = "CmdNotifBox"
+local CmdNotifBox = Instance.new('Frame')
+CmdNotifBox.Name = 'CmdNotifBox'
 CmdNotifBox.Parent = CmdMain
 CmdNotifBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 CmdNotifBox.BorderColor3 = Color3.fromRGB(140, 140, 140)
@@ -30,8 +30,8 @@ CmdNotifBox.BorderSizePixel = 0
 CmdNotifBox.Position = UDim2.new(0, 0, 0.632000029, 0)
 CmdNotifBox.Size = UDim2.new(0.996109784, 0, 0.36981371, 0)
 
-local CmdNotif = Instance.new("TextLabel")
-CmdNotif.Name = "CmdNotif"
+local CmdNotif = Instance.new('TextLabel')
+CmdNotif.Name = 'CmdNotif'
 CmdNotif.Parent = CmdNotifBox
 CmdNotif.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 CmdNotif.BackgroundTransparency = 1.000
@@ -40,13 +40,13 @@ CmdNotif.Size = UDim2.new(0.986970961, 0, 0.820274472, 0)
 CmdNotif.Visible = false
 CmdNotif.ZIndex = 10
 CmdNotif.Font = Enum.Font.SourceSans
-CmdNotif.Text = "whaddafuck done"
+CmdNotif.Text = 'whaddafuck done'
 CmdNotif.TextColor3 = Color3.fromRGB(255, 255, 255)
 CmdNotif.TextSize = 14.000
 CmdNotif.TextWrapped = true
 
-local CmdNotifHandler = Instance.new("ScrollingFrame")
-CmdNotifHandler.Name = "CmdNotifHandler"
+local CmdNotifHandler = Instance.new('ScrollingFrame')
+CmdNotifHandler.Name = 'CmdNotifHandler'
 CmdNotifHandler.Parent = CmdNotifBox
 CmdNotifHandler.Active = true
 CmdNotifHandler.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
@@ -55,12 +55,12 @@ CmdNotifHandler.Position = UDim2.new(0.0331288725, 0, 0.207801834, 0)
 CmdNotifHandler.Size = UDim2.new(0.966870666, 0, 0.785972178, 0)
 CmdNotifHandler.AutomaticCanvasSize = 'Y'
 
-local CmdNotifLayout = Instance.new("UIListLayout")
+local CmdNotifLayout = Instance.new('UIListLayout')
 CmdNotifLayout.Parent = CmdNotifHandler
 CmdNotifLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
-local CmdNotifExample = Instance.new("TextLabel")
-CmdNotifExample.Name = "CmdNotifExample"
+local CmdNotifExample = Instance.new('TextLabel')
+CmdNotifExample.Name = 'CmdNotifExample'
 CmdNotifExample.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 CmdNotifExample.BackgroundTransparency = 1.000
 CmdNotifExample.Size = UDim2.new(0.928425848, 0, 0.14037393, 0)
@@ -71,15 +71,15 @@ CmdNotifExample.TextWrapped = true
 CmdNotifExample.TextXAlignment = Enum.TextXAlignment.Left
 CmdNotifExample.AutomaticSize = 'Y'
 
-local CmdNotifTitle = Instance.new("TextLabel")
-CmdNotifTitle.Name = "CmdNotifTitle"
+local CmdNotifTitle = Instance.new('TextLabel')
+CmdNotifTitle.Name = 'CmdNotifTitle'
 CmdNotifTitle.Parent = CmdNotifBox
 CmdNotifTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 CmdNotifTitle.BackgroundTransparency = 1.000
 CmdNotifTitle.Position = UDim2.new(0.0128824329, 0, 0, 0)
 CmdNotifTitle.Size = UDim2.new(0.987117469, 0, 0.207801759, 0)
 CmdNotifTitle.Font = Enum.Font.SourceSansBold
-CmdNotifTitle.Text = "Logs"
+CmdNotifTitle.Text = 'Logs'
 CmdNotifTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
 CmdNotifTitle.TextSize = 14.000
 
@@ -276,6 +276,8 @@ Cmd[#Cmd + 1] = {Name='arrest <plr>',Desc='Arrests the player'}
 Cmd[#Cmd + 1] = {Name='arrestall',Desc='Arrests all players if possible'}
 Cmd[#Cmd + 1] = {Name='looparrest / spamarrest <plr>',Desc='Loop arrests the player (Causes lag)'}
 Cmd[#Cmd + 1] = {Name='unlooparrest / unspamarrest <plr>',Desc='Disable loop arresting the player'}
+Cmd[#Cmd + 1] = {Name='arrestaura',Desc='Arrests everyone who is near you'}
+Cmd[#Cmd + 1] = {Name='noarrestaura / unarrestaura',Desc='Disables arrest aura'}
 Cmd[#Cmd + 1] = {Name='kill <plr>',Desc='Kills the player (Will switch to neutral team if player is in your team)'}
 Cmd[#Cmd + 1] = {Name='killall',Desc='Kills all players (Will switch to neutral team)'}
 Cmd[#Cmd + 1] = {Name='killguard / killguards',Desc='Kills all players in the guard team (Will switch to neutral team if you are in guard team)'}
@@ -296,7 +298,7 @@ Cmd[#Cmd + 1] = {Name='unloopkillcriminal / unloopkillcriminals',Desc='Disables 
 Cmd[#Cmd + 1] = {Name='unloopkillenemy / unloopkillenemies',Desc='Disables loopkillng all players who are not in your team'}
 Cmd[#Cmd + 1] = {Name='clearloopkill / clearloopkills',Desc='Removes all loop kills'}
 Cmd[#Cmd + 1] = {Name='killaura / aura',Desc='Kills everyone who is near you'}
-Cmd[#Cmd + 1] = {Name='unkillaura / unaura',Desc='Disables kill aura'}
+Cmd[#Cmd + 1] = {Name='nokillaura / noaura',Desc='Disables kill aura'}
 Cmd[#Cmd + 1] = {Name='inmate / inmates',Desc='Join the inmate team'}
 Cmd[#Cmd + 1] = {Name='guard / guards',Desc='Join the guard team'}
 Cmd[#Cmd + 1] = {Name='criminal / criminals',Desc='Join the criminal team (Requires respawn)'}
@@ -313,7 +315,7 @@ Cmd[#Cmd + 1] = {Name='grey',Desc='Join the custom grey team'}
 Cmd[#Cmd + 1] = {Name='brown',Desc='Join the custom brown team'}
 Cmd[#Cmd + 1] = {Name='black',Desc='Join the custom black team'}
 Cmd[#Cmd + 1] = {Name='makecriminal / makecrim <plr>',Desc='Makes player join the criminal team (Requires respawn)'}
-Cmd[#Cmd + 1] = {Name='makecriminalall / makecrimall <plr>',Desc='Makes all players join the criminal team'}
+Cmd[#Cmd + 1] = {Name='makecriminalall / makecrimall',Desc='Makes all players join the criminal team'}
 Cmd[#Cmd + 1] = {Name='lag <duration>',Desc='Lags for a specific amount'}
 Cmd[#Cmd + 1] = {Name='crash / lagserver',Desc='Lags and disconnects the server'}
 Cmd[#Cmd + 1] = {Name='uncrash / unlagserver',Desc="Stops lagging the server (If it's not too late)"}
@@ -535,7 +537,7 @@ local function tasePlr(plr)
 
 			local tool = game.Players.LocalPlayer.Character:FindFirstChild('Taser') or game.Players.LocalPlayer.Backpack:FindFirstChild('Taser')
 			if team ~= 'Bright blue' or not tool then
-				workspace.Remote.loadchar:InvokeServer(nil, BrickColor.new("Bright blue").Name)
+				workspace.Remote.loadchar:InvokeServer(nil, 'Bright blue')
 				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
 				workspace.CurrentCamera.CFrame = camCF
 				tool = game.Players.LocalPlayer.Character:FindFirstChild('Taser') or game.Players.LocalPlayer.Backpack:FindFirstChild('Taser')
@@ -549,6 +551,10 @@ local function tasePlr(plr)
 					['Hit'] = workspace[plr.Name].Torso
 				}}
 			game:GetService('ReplicatedStorage').ShootEvent:FireServer(event, tool)
+			game.Players.LocalPlayer.Character.Animate.Disabled = true
+			tool.Parent = game.Players.LocalPlayer.Character
+			tool:Destroy()
+			game.Players.LocalPlayer.Character.Animate.Disabled = false
 		else return end
 	end)
 end
@@ -600,7 +606,7 @@ local function arrestPlr(plr)
 				coroutine.wrap(function()
 					workspace.Remote.arrest:InvokeServer(workspace[plr.Name].Head)
 				end)()
-			until plr.Character:FindFirstChild("Head"):FindFirstChild("handcuffedGui")
+			until plr.Character:FindFirstChild('Head'):FindFirstChild('handcuffedGui')
 			wait()
 			workspace.Remote.loadchar:InvokeServer(nil, team)
 			game.Players.LocalPlayer.Character.Humanoid.Sit = false
@@ -618,13 +624,13 @@ end
 
 local function godMode()
 	game.Players.LocalPlayer.Character.Humanoid.Name = 1
-	local l = game.Players.LocalPlayer.Character["1"]:Clone()
+	local l = game.Players.LocalPlayer.Character['1']:Clone()
 	l.Parent = game.Players.LocalPlayer.Character
-	l.Name = "Humanoid"
+	l.Name = 'Humanoid'
 	game.Players.LocalPlayer.Character.Animate.Disabled = true
 	wait()
 	game.Players.LocalPlayer.Character.Animate.Disabled = false
-	game.Players.LocalPlayer.Character["1"]:Destroy()
+	game.Players.LocalPlayer.Character['1']:Destroy()
 	game.Workspace.CurrentCamera.CameraSubject = game.Players.LocalPlayer.Character
 end
 
@@ -649,7 +655,6 @@ local function executeCmd(cmd, args)
 		for _, plr in ipairs(game.Players:GetChildren()) do
 			if plr.TeamColor.Name ~= 'Bright blue' then
 				tasePlr(plr)
-				workspace.Remote.loadchar:InvokeServer()
 			end
 		end
 		log('[Logs]: Tased all players')
@@ -684,7 +689,6 @@ local function executeCmd(cmd, args)
 				for _, plr in ipairs(game.Players:GetChildren()) do
 					if plr.TeamColor.Name ~= 'Bright blue' then
 						tasePlr(plr)
-						workspace.Remote.loadchar:InvokeServer()
 					end
 				end
 			else break end
@@ -754,6 +758,26 @@ local function executeCmd(cmd, args)
 			workspace.Remote.loadchar:InvokeServer()
 			log('[Logs]: Disabled spam arrest')
 		else log('[Logs]: Already disabled spam arrest') end
+	elseif cmd == 'arrestaura' then
+		log('[Logs]: Enabled arrest aura')
+		Toggles.ArrestAura = true
+		while wait() do
+			if Toggles.ArrestAura then
+				for i,v in pairs(game.Players:GetPlayers()) do
+					pcall(function()
+						if v ~= game.Players.LocalPlayer then
+							local Distance = (v.Character:FindFirstChildOfClass('Part').Position - game.Players.LocalPlayer.Character:FindFirstChildOfClass('Part').Position).magnitude
+							if (not v.Character:FindFirstChild('handcuffedGui')) and Distance <= 10 and Toggles.ArrestAura then
+								workspace.Remote.arrest:InvokeServer(workspace[v.Name].Head)
+							end
+						end
+					end)
+				end
+			else break end
+		end
+	elseif cmd == 'unarrestaura' or cmd == 'noarrestaura' then
+		log('[Logs]: Disabled arrest aura')
+		Toggles.ArrestAura = false
 	elseif cmd == 'kill' then
 		local details = plrDetails()
 		local team = details[3]
@@ -763,7 +787,7 @@ local function executeCmd(cmd, args)
 				local team = details[3]
 
 				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
-				workspace.Remote.TeamEvent:FireServer("Medium stone grey")
+				workspace.Remote.TeamEvent:FireServer('Medium stone grey')
 				local db = false
 				spawn(function()
 					db = true
@@ -777,14 +801,96 @@ local function executeCmd(cmd, args)
 				repeat wait() until db == false
 				log('[Logs]: Killed all players')
 				workspace.Remote.TeamEvent:FireServer(team)
+			elseif args[1] == 'guards' or args[1] == 'guard' then
+				local details = plrDetails()
+				local team = details[3]
+
+				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+				if team == 'Bright blue' then
+					workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+				end
+				local db = false
+				spawn(function()
+					db = true
+					for _, plr in ipairs(game.Players:GetChildren()) do
+						if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == 'Bright blue' then
+							killPlr(plr)
+						end
+					end
+					db = false
+				end)
+				repeat wait() until db == false
+				log('[Logs]: Killed all guards')
+				workspace.Remote.TeamEvent:FireServer(team)
+			elseif args[1] == 'inmates' or args[1] == 'inmate' or args[1] == 'prisoners' or args[1] == 'prisoner' then
+				local details = plrDetails()
+				local team = details[3]
+
+				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+				if team == 'Bright orange' then
+					workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+				end
+				local db = false
+				spawn(function()
+					db = true
+					for _, plr in ipairs(game.Players:GetChildren()) do
+						if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == 'Bright orange' then
+							killPlr(plr)
+						end
+					end
+					db = false
+				end)
+				repeat wait() until db == false
+				log('[Logs]: Killed all inmates')
+				workspace.Remote.TeamEvent:FireServer(team)
+			elseif args[1] == 'criminals' or args[1] == 'criminal' or args[1] == 'crims' or args[1] == 'crim' then
+				local details = plrDetails()
+				local team = details[3]
+
+				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+				if team == 'Really red' then
+					workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+				end
+				local db = false
+				spawn(function()
+					db = true
+					for _, plr in ipairs(game.Players:GetChildren()) do
+						if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == 'Really red' then
+							killPlr(plr)
+						end
+					end
+					db = false
+				end)
+				repeat wait() until db == false
+				log('[Logs]: Killed all criminals')
+				if team == 'Really red' then
+					workspace.Remote.loadchar:InvokeServer(nil, team)
+				end
+			elseif args[1] == 'enemies' or args[1] == 'enemy' then
+				local details = plrDetails()
+				local team = details[3]
+
+				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+				local db = false
+				spawn(function()
+					db = true
+					for _, plr in ipairs(game.Players:GetChildren()) do
+						if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name ~= team then
+							killPlr(plr)
+						end
+					end
+					db = false
+				end)
+				repeat wait() until db == false
+				log('[Logs]: Killed all enemies')
 			else
 				local plr = getPlr(args[1])
-				
+
 				if plr then
 					log('[Logs]: Killed '..plrName(plr))
 					notif('Killed '..plrName(plr))
 					if team == plr.TeamColor.Name then
-						workspace.Remote.TeamEvent:FireServer("Medium stone grey")
+						workspace.Remote.TeamEvent:FireServer('Medium stone grey')
 					end
 					killPlr(plr)
 					workspace.Remote.TeamEvent:FireServer(team)
@@ -796,7 +902,7 @@ local function executeCmd(cmd, args)
 		local team = details[3]
 
 		workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
-		workspace.Remote.TeamEvent:FireServer("Medium stone grey")
+		workspace.Remote.TeamEvent:FireServer('Medium stone grey')
 		local db = false
 		spawn(function()
 			db = true
@@ -816,7 +922,7 @@ local function executeCmd(cmd, args)
 
 		workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
 		if team == 'Bright blue' then
-			workspace.Remote.TeamEvent:FireServer("Medium stone grey")
+			workspace.Remote.TeamEvent:FireServer('Medium stone grey')
 		end
 		local db = false
 		spawn(function()
@@ -837,7 +943,7 @@ local function executeCmd(cmd, args)
 
 		workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
 		if team == 'Bright orange' then
-			workspace.Remote.TeamEvent:FireServer("Medium stone grey")
+			workspace.Remote.TeamEvent:FireServer('Medium stone grey')
 		end
 		local db = false
 		spawn(function()
@@ -858,7 +964,7 @@ local function executeCmd(cmd, args)
 
 		workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
 		if team == 'Really red' then
-			workspace.Remote.TeamEvent:FireServer("Medium stone grey")
+			workspace.Remote.TeamEvent:FireServer('Medium stone grey')
 		end
 		local db = false
 		spawn(function()
@@ -871,10 +977,527 @@ local function executeCmd(cmd, args)
 			db = false
 		end)
 		repeat wait() until db == false
-		log('[Logs]: Killed all inmates')
+		log('[Logs]: Killed all criminals')
 		if team == 'Really red' then
-			workspace.Remote.loadchar:FireServer(nil, team)
+			workspace.Remote.loadchar:InvokeServer(nil, team)
 		end
+	elseif cmd == 'killenemy' or cmd == 'killenemies' then
+		local details = plrDetails()
+		local team = details[3]
+
+		workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+		local db = false
+		spawn(function()
+			db = true
+			for _, plr in ipairs(game.Players:GetChildren()) do
+				if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name ~= team then
+					killPlr(plr)
+				end
+			end
+			db = false
+		end)
+		repeat wait() until db == false
+		log('[Logs]: Killed all enemies')
+	elseif cmd == 'loopkill' or cmd == 'lkill' or cmd == 'lk' then
+		if args[1] == 'all' or args[1] == 'others'  then
+			if not Toggles.LoopKillAll then
+				Toggles.LoopKillAll = true
+				log('[Logs]: Loop killing all players')
+				while wait() do
+					if Toggles.LoopKillAll then
+						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+						workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+						for _, plr in ipairs(game.Players:GetChildren()) do
+							if plr.Name ~= game.Players.LocalPlayer.Name and Toggles.LoopKillAll then
+								killPlr(plr)
+							end
+						end
+					else break end
+				end
+			else 
+				notif('Already loop killing all players') 
+				log('[Logs]: Already loop killing all players') 
+			end
+		elseif args[1] == 'guards' or args[1] == 'guard' then
+			if not Toggles.LoopKillGuards then
+				Toggles.LoopKillGuards = true
+				log('[Logs]: Loop killing guards')
+				while wait() do
+					if Toggles.LoopKillGuards then
+						local details = plrDetails()
+						local team = details[3]
+
+						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+						if team == 'Bright blue' then
+							workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+						end
+						for _, plr in ipairs(game.Players:GetChildren()) do
+							if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == 'Bright blue' and Toggles.LoopKillGuards then
+								killPlr(plr)
+							end
+						end
+					else break end
+				end
+			else 
+				notif('Already loop killing guards') 
+				log('[Logs]: Already loop killing guards') 
+			end
+		elseif args[1] == 'inmates' or args[1] == 'inmate' or args[1] == 'prisoners' or args[1] == 'prisoner' then
+			if not Toggles.LoopKillInmates then
+				Toggles.LoopKillInmates = true
+				log('[Logs]: Loop killing inmates')
+				while wait() do
+					if Toggles.LoopKillInmates then
+						local details = plrDetails()
+						local team = details[3]
+
+						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+						if team == 'Bright orange' then
+							workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+						end
+						for _, plr in ipairs(game.Players:GetChildren()) do
+							if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == 'Bright orange' and Toggles.LoopKillInmates then
+								killPlr(plr)
+							end
+						end
+					else break end
+				end
+			else 
+				notif('Already loop killing inmates') 
+				log('[Logs]: Already loop killing inmates') 
+			end
+		elseif args[1] == 'criminals' or args[1] == 'criminal' or args[1] == 'crims' or args[1] == 'crim' then
+			if not Toggles.LoopKillCrims then
+				Toggles.LoopKillCrims = true
+				log('[Logs]: Loop killing criminals')
+				while wait() do
+					if Toggles.LoopKillCrims then
+						local details = plrDetails()
+						local team = details[3]
+
+						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+						if team == 'Really red' then
+							workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+						end
+						for _, plr in ipairs(game.Players:GetChildren()) do
+							if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == 'Really red' and Toggles.LoopKillCrims then
+								killPlr(plr)
+							end
+						end
+					else break end
+				end
+			else 
+				notif('Already loop killing criminals') 
+				log('[Logs]: Already loop killing criminals') 
+			end
+		elseif args[1] == 'enemies' or args[1] == 'enemy' then
+			if not Toggles.LoopKillEnemies then
+				Toggles.LoopKillEnemies = true
+				log('[Logs]: Loop killing enemies')
+				while wait() do
+					if Toggles.LoopKillEnemies then
+						local details = plrDetails()
+						local team = details[3]
+
+						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+						for _, plr in ipairs(game.Players:GetChildren()) do
+							if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name ~= team and Toggles.LoopKillEnemies then
+								killPlr(plr)
+							end
+						end
+					else break end
+				end
+			else 
+				notif('Already loop killing enemies') 
+				log('[Logs]: Already loop killing enemies') 
+			end
+		else
+			local plr = getPlr(args[1])
+			if plr then
+				if not PlrsLoopKilled[plr.UserId] then
+					log('[Logs]: Loop killing '..plrName(plr))
+					PlrsLoopKilled[plr.UserId] = {player = plr}
+				else log('[Logs]: Already loop killing '..plrName(plr)) end
+			else log('[Logs]: No player found') end
+		end
+	elseif cmd == 'loopkillall' or cmd == 'lkillall' or cmd == 'lkall' then
+		if not Toggles.LoopKillAll then
+			Toggles.LoopKillAll = true
+			log('[Logs]: Loop killing all players')
+			while wait() do
+				if Toggles.LoopKillAll then
+					workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+					workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+					for _, plr in ipairs(game.Players:GetChildren()) do
+						if plr.Name ~= game.Players.LocalPlayer.Name and Toggles.LoopKillAll then
+							killPlr(plr)
+						end
+					end
+				else break end
+				end
+		else 
+			notif('Already loop killing all players') 
+			log('[Logs]: Already loop killing all players') 
+		end
+	elseif cmd == 'loopkillguards' or cmd == 'loopkillguard' or cmd == 'lkillguards' or cmd == 'lkillguard' or cmd == 'lkguards'  or cmd == 'lkguard' then
+		if not Toggles.LoopKillGuards then
+			Toggles.LoopKillGuards = true
+			log('[Logs]: Loop killing guards')
+			while wait() do
+				if Toggles.LoopKillGuards then
+					local details = plrDetails()
+					local team = details[3]
+
+					workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+					if team == 'Bright blue' then
+						workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+					end
+					for _, plr in ipairs(game.Players:GetChildren()) do
+						if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == 'Bright blue' and Toggles.LoopKillGuards then
+							killPlr(plr)
+						end
+					end
+				else break end
+			end
+		else 
+			notif('Already loop killing guards') 
+			log('[Logs]: Already loop killing guards') 
+		end
+	elseif cmd == 'loopkillinmates' or cmd == 'loopkillinmate' or cmd == 'lkillinmates' or cmd == 'lkillinmate' or cmd == 'lkinmates' or cmd == 'lkinmate' or cmd == 'loopkillprisoners' or cmd == 'loopkillprisoner' or cmd == 'lkillprisoners' or cmd == 'lkillprisoner' or cmd == 'lkprisoners' or cmd == 'lkprisoner' then
+		if not Toggles.LoopKillInmates then
+			Toggles.LoopKillInmates = true
+			log('[Logs]: Loop killing inmates')
+			while wait() do
+				if Toggles.LoopKillInmates then
+					local details = plrDetails()
+					local team = details[3]
+
+					workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+					if team == 'Bright orange' then
+						workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+					end
+					for _, plr in ipairs(game.Players:GetChildren()) do
+						if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == 'Bright orange' and Toggles.LoopKillInmates then
+							killPlr(plr)
+						end
+					end
+				else break end
+			end
+		else 
+			notif('Already loop killing inmates') 
+			log('[Logs]: Already loop killing inmates') 
+		end
+	elseif cmd == 'loopkillcriminals' or cmd == 'loopkillcriminal' or cmd == 'lkillcriminals' or cmd == 'lkillcriminal' or cmd == 'lkcriminals' or cmd == 'lkcriminal' or cmd == 'loopkillcrims' or cmd == 'loopkillcrim' or cmd == 'lkillcrims' or cmd == 'lkillcrim' or cmd == 'lkcrims' or cmd == 'lkcrim' then
+		if not Toggles.LoopKillCrims then
+			Toggles.LoopKillCrims = true
+			log('[Logs]: Loop killing criminals')
+			while wait() do
+				if Toggles.LoopKillCrims then
+					local details = plrDetails()
+					local team = details[3]
+
+					workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+					if team == 'Really red' then
+						workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+					end
+					for _, plr in ipairs(game.Players:GetChildren()) do
+						if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == 'Really red' and Toggles.LoopKillCrims then
+							killPlr(plr)
+						end
+					end
+				else break end
+			end
+		else 
+			notif('Already loop killing criminals') 
+			log('[Logs]: Already loop killing criminals') 
+		end
+	elseif cmd == 'loopkillenemies' or cmd == 'loopkillenemy' or cmd == 'lkillenemies' or cmd == 'lkillenemy' or cmd == 'lkenemies' or cmd == 'lkenemy' then
+		if not Toggles.LoopKillEnemies then
+			Toggles.LoopKillEnemies = true
+			log('[Logs]: Loop killing enemies')
+			while wait() do
+				if Toggles.LoopKillEnemies then
+					local details = plrDetails()
+					local team = details[3]
+
+					workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+					for _, plr in ipairs(game.Players:GetChildren()) do
+						if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name ~= team and Toggles.LoopKillEnemies then
+							killPlr(plr)
+						end
+					end
+				else break end
+			end
+		else 
+			notif('Already loop killing enemies') 
+			log('[Logs]: Already loop killing enemies') 
+		end
+	elseif cmd == 'unloopkill' or cmd == 'unlkill' or cmd == 'unlk' then
+		if args[1] == 'all' or args[1] == 'others'  then
+			if Toggles.LoopKillAll then
+				log('[Logs]: Disabled loop killing all players')
+				Toggles.LoopKillAll = false
+			else 
+				notif('Already disabled loop killing all players') 
+				log('[Logs]: Already disabled loop killing all players') 
+			end
+		elseif args[1] == 'guards' or args[1] == 'guard' then
+			if Toggles.LoopKillGuards then
+				log('[Logs]: Disabled loop killing guards')
+				Toggles.LoopKillGuards = false
+			else 
+				notif('Already disabled loop killing guards') 
+				log('[Logs]: Already disabled loop killing guards') 
+			end
+		elseif args[1] == 'inmates' or args[1] == 'inmate' or args[1] == 'prisoners' or args[1] == 'prisoner' then
+			if Toggles.LoopKillInmates then
+				log('[Logs]: Disabled loop killing inmates')
+				Toggles.LoopKillInmates = false
+			else 
+				notif('Already disabled loop killing inmates') 
+				log('[Logs]: Already disabled loop killing inmates') 
+			end
+		elseif args[1] == 'criminals' or args[1] == 'criminal' or args[1] == 'crims' or args[1] == 'crim' then
+			if Toggles.LoopKillCrims then
+				log('[Logs]: Disabled loop killing criminals')
+				Toggles.LoopKillCrims = false
+			else 
+				notif('Already disabled loop killing criminals') 
+				log('[Logs]: Already disabled loop killing criminals') 
+			end
+		elseif args[1] == 'enemies' or args[1] == 'enemy' then
+			if Toggles.LoopKillEnemies then
+				log('[Logs]: Disabled loop killing enemies')
+				Toggles.LoopKillEnemies = false
+			else
+				notif('Already disabled loop killing enemies') 
+				log('[Logs]: Already disabled loop killing enemies') 
+			end
+		else
+			local plr = getPlr(args[1])
+			if plr then
+				if PlrsLoopKilled[plr.UserId] then
+					table.remove(PlrsLoopKilled, PlrsLoopKilled[plr.UserId])
+					log('[Logs]: Disabled loop killing '..plrName(plr))
+				else log('[Logs]: Already disabled loop killing '..plrName(plr)) end
+			else log('[Logs]: No player found') end
+		end
+	elseif cmd == 'unloopkillall' or cmd == 'unlkillall' or cmd == 'unlkall' then
+		if Toggles.LoopKillAll then
+			log('[Logs]: Disabled loop killing all players')
+			Toggles.LoopKillAll = false
+		else 
+			notif('Already disabled loop killing all players') 
+			log('[Logs]: Already disabled loop killing all players') 
+		end
+	elseif cmd == 'unloopkillguards' or cmd == 'unloopkillguard' or cmd == 'unlkillguards' or cmd == 'unlkillguard' or cmd == 'unlkguards'  or cmd == 'unlkguard' then
+		if Toggles.LoopKillGuards then
+			log('[Logs]: Disabled loop killing guards')
+			Toggles.LoopKillGuards = false
+		else 
+			notif('Already disabled loop killing guards') 
+			log('[Logs]: Already disabled loop killing guards') 
+		end
+	elseif cmd == 'unloopkillinmates' or cmd == 'unloopkillinmate' or cmd == 'unlkillinmates' or cmd == 'unlkillinmate' or cmd == 'unlkinmates' or cmd == 'unlkinmate' or cmd == 'unloopkillprisoners' or cmd == 'unloopkillprisoner' or cmd == 'unlkillprisoners' or cmd == 'unlkillprisoner' or cmd == 'unlkprisoners' or cmd == 'unlkprisoner' then
+		if Toggles.LoopKillInmates then
+			log('[Logs]: Disabled loop killing inmates')
+			Toggles.LoopKillInmates = false
+		else 
+			notif('Already disabled loop killing inmates') 
+			log('[Logs]: Already disabled loop killing inmates') 
+		end
+	elseif cmd == 'unloopkillcriminals' or cmd == 'unloopkillcriminal' or cmd == 'unlkillcriminals' or cmd == 'unlkillcriminal' or cmd == 'unlkcriminals' or cmd == 'unlkcriminal' or cmd == 'unloopkillcrims' or cmd == 'unloopkillcrim' or cmd == 'unlkillcrims' or cmd == 'unlkillcrim' or cmd == 'unlkcrims' or cmd == 'unlkcrim' then
+		if Toggles.LoopKillCrims then
+			log('[Logs]: Disabled loop killing criminals')
+			Toggles.LoopKillCrims = false
+		else 
+			notif('Already disabled loop killing criminals') 
+			log('[Logs]: Already disabled loop killing criminals') 
+		end
+	elseif cmd == 'unloopkillenemies' or cmd == 'unloopkillenemy' or cmd == 'unlkillenemies' or cmd == 'unlkillenemy' or cmd == 'unlkenemies' or cmd == 'unlkenemy' then
+		if Toggles.LoopKillEnemies then
+			log('[Logs]: Disabled loop killing enemies')
+			Toggles.LoopKillEnemies = false
+		else
+			notif('Already disabled loop killing enemies') 
+			log('[Logs]: Already disabled loop killing enemies') 
+		end
+	elseif cmd == 'clearloopkills' or cmd == 'clearloopkill' or cmd == 'clearlks' or cmd == 'clearlk' then
+		log('[Logs]: Cleared loop killing all players')
+		notif('Cleared loop killing all players') 
+		Toggles.LoopKillAll = false
+		Toggles.LoopKillGuards = false
+		Toggles.LoopKillInmates = false
+		Toggles.LoopKillCrims = false
+		Toggles.LoopKillEnemies = false
+		PlrsLoopKilled = {}
+	elseif cmd == 'killaura' or cmd == 'aura' then
+		if not Toggles.KillAura then
+			log('[Logs]: Enabled kill aura')
+			Toggles.KillAura = true
+			while wait() do
+				if Toggles.KillAura then
+					for i,v in pairs(game.Players:GetPlayers()) do
+						pcall(function()
+							if v ~= game.Players.LocalPlayer then
+								local Distance = (v.Character:FindFirstChildOfClass('Part').Position - game.Players.LocalPlayer.Character:FindFirstChildOfClass('Part').Position).magnitude
+								if Distance <= 10 and Toggles.KillAura then
+									for i = 1,25 do
+										game.ReplicatedStorage.meleeEvent:FireServer(v)
+									end
+								end
+							end
+						end)
+					end
+				else break end
+			end
+		else log('[Logs]: Already enabled kill aura') end
+	elseif cmd == 'unkillaura' or cmd == 'unaura' or cmd == 'nokillaura' or cmd == 'noaura' then
+		if Toggles.KillAura then
+			log('[Logs]: Disabled kill aura')
+			Toggles.KillAura = false
+		else log('[Logs]: Already disabled kill aura') end
+	elseif cmd == 'inmate' or cmd == 'inmates' or cmd == 'prisoner' or cmd == 'prisoners' then
+		if game.Players.LocalPlayer.TeamColor.Name  ~= 'Bright orange' then
+			workspace.Remote.TeamEvent:FireServer('Bright orange')
+			log('[Logs]: Joined inmates team')
+		else log('[Logs]: Already joined inmates team') end
+	elseif cmd == 'guard' or cmd == 'guards' or cmd == 'police' or cmd == 'cop' or cmd == 'cops' then
+		if game.Players.LocalPlayer.TeamColor.Name  ~= 'Bright blue' then
+			workspace.Remote.TeamEvent:FireServer('Bright blue')
+			if game.Players.LocalPlayer.TeamColor.Name  ~= 'Bright blue' then
+				log('[Logs]: Cannot join guards team')
+			else log('[Logs]: Joined guards team') end
+		else log('[Logs]: Already joined guards team') end
+	elseif cmd == 'criminal' or cmd == 'crim' then
+		if args[1] and args[1] ~= '' and args[1] ~= ' ' then
+			
+		else
+			if game.Players.LocalPlayer.TeamColor.Name  ~= 'Really red' then
+				local details = plrDetails()
+				local plrCF = details[1]
+				local camCF = details[2]
+				workspace.Remote.loadchar:InvokeServer(nil, 'Really red')
+				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
+				workspace.CurrentCamera.CFrame = camCF
+				log('[Logs]: Joined criminals team')
+			else log('[Logs]: Already joined criminals team') end
+		end
+	elseif cmd == 'neutral' or cmd == 'neutrals' then
+		if game.Players.LocalPlayer.TeamColor.Name  ~= 'Medium stone grey' then
+			workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+			log('[Logs]: Joined neutral team')
+		else log('[Logs]: Already joined neutral team') end
+	elseif cmd == 'red' then
+		if game.Players.LocalPlayer.TeamColor.Name  ~= 'Bright red' then
+			local details = plrDetails()
+			local plrCF = details[1]
+			local camCF = details[2]
+			workspace.Remote.loadchar:InvokeServer(nil, 'Bright red')
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
+			workspace.CurrentCamera.CFrame = camCF
+			log('[Logs]: Joined custom red team')
+		else log('[Logs]: Already joined custom red team') end
+	elseif cmd == 'orange' then
+		if game.Players.LocalPlayer.TeamColor.Name  ~= 'Neon orange' then
+			local details = plrDetails()
+			local plrCF = details[1]
+			local camCF = details[2]
+			workspace.Remote.loadchar:InvokeServer(nil, 'Neon orange')
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
+			workspace.CurrentCamera.CFrame = camCF
+			log('[Logs]: Joined custom orange team')
+		else log('[Logs]: Already joined custom orange team') end
+	elseif cmd == 'yellow' then
+		if game.Players.LocalPlayer.TeamColor.Name  ~= 'Bright yellow' then
+			local details = plrDetails()
+			local plrCF = details[1]
+			local camCF = details[2]
+			workspace.Remote.loadchar:InvokeServer(nil, 'Bright yellow')
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
+			workspace.CurrentCamera.CFrame = camCF
+			log('[Logs]: Joined custom yellow team')
+		else log('[Logs]: Already joined custom yellow team') end
+	elseif cmd == 'green' then
+		if game.Players.LocalPlayer.TeamColor.Name  ~= 'Bright green' then
+			local details = plrDetails()
+			local plrCF = details[1]
+			local camCF = details[2]
+			workspace.Remote.loadchar:InvokeServer(nil, 'Bright green')
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
+			workspace.CurrentCamera.CFrame = camCF
+			log('[Logs]: Joined custom green team')
+		else log('[Logs]: Already joined custom green team') end
+	elseif cmd == 'blue' then
+		if game.Players.LocalPlayer.TeamColor.Name  ~= 'Deep blue' then
+			local details = plrDetails()
+			local plrCF = details[1]
+			local camCF = details[2]
+			workspace.Remote.loadchar:InvokeServer(nil, 'Deep blue')
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
+			workspace.CurrentCamera.CFrame = camCF
+			log('[Logs]: Joined custom blue team')
+		else log('[Logs]: Already joined custom blue team') end
+	elseif cmd == 'purple' then
+		if game.Players.LocalPlayer.TeamColor.Name  ~= 'Royal purple' then
+			local details = plrDetails()
+			local plrCF = details[1]
+			local camCF = details[2]
+			workspace.Remote.loadchar:InvokeServer(nil, 'Royal purple')
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
+			workspace.CurrentCamera.CFrame = camCF
+			log('[Logs]: Joined custom purple team')
+		else log('[Logs]: Already joined custom purple team') end
+	elseif cmd == 'pink' then
+		if game.Players.LocalPlayer.TeamColor.Name  ~= 'Hot pink' then
+			local details = plrDetails()
+			local plrCF = details[1]
+			local camCF = details[2]
+			workspace.Remote.loadchar:InvokeServer(nil, 'Hot pink')
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
+			workspace.CurrentCamera.CFrame = camCF
+			log('[Logs]: Joined custom pink team')
+		else log('[Logs]: Already joined custom pink team') end
+	elseif cmd == 'white' then
+		if game.Players.LocalPlayer.TeamColor.Name  ~= 'White' then
+			local details = plrDetails()
+			local plrCF = details[1]
+			local camCF = details[2]
+			workspace.Remote.loadchar:InvokeServer(nil, 'White')
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
+			workspace.CurrentCamera.CFrame = camCF
+			log('[Logs]: Joined custom white team')
+		else log('[Logs]: Already joined custom white team') end
+	elseif cmd == 'grey' or cmd == 'gray' then
+		if game.Players.LocalPlayer.TeamColor.Name  ~= 'Ghost grey' then
+			local details = plrDetails()
+			local plrCF = details[1]
+			local camCF = details[2]
+			workspace.Remote.loadchar:InvokeServer(nil, 'Ghost grey')
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
+			workspace.CurrentCamera.CFrame = camCF
+			log('[Logs]: Joined custom grey team')
+		else log('[Logs]: Already joined custom grey team') end
+	elseif cmd == 'brown' then
+		if game.Players.LocalPlayer.TeamColor.Name  ~= 'Brown' then
+			local details = plrDetails()
+			local plrCF = details[1]
+			local camCF = details[2]
+			workspace.Remote.loadchar:InvokeServer(nil, 'Brown')
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
+			workspace.CurrentCamera.CFrame = camCF
+			log('[Logs]: Joined custom brown team')
+		else log('[Logs]: Already joined custom brown team') end
+	elseif cmd == 'black' then
+		if game.Players.LocalPlayer.TeamColor.Name  ~= 'Brown' then
+			local details = plrDetails()
+			local plrCF = details[1]
+			local camCF = details[2]
+			workspace.Remote.loadchar:InvokeServer(nil, 'Really black')
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
+			workspace.CurrentCamera.CFrame = camCF
+			log('[Logs]: Joined custom black team')
+		else log('[Logs]: Already joined custom black team') end
 	elseif cmd == 'notify' or cmd == 'notif' then
 		log('[Logs]: Enabled notifications')
 		notifs = true
@@ -959,12 +1582,28 @@ end)
 
 spawn(function()
 	while wait() do
+		for i,v in pairs(PlrsLoopKilled) do
+			pcall(function()
+				local plr = getPlr(v.player.Name)
+				if plr then
+					local details = plrDetails()
+					local team = details[3]
+					if team == plr.TeamColor.Name then
+						workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+					end
+					killPlr(plr)
+				end
+			end)
+		end
+	end
+end)
+
+spawn(function()
+	while wait() do
 		for i,v in pairs(PlrsLoopTased) do
 			pcall(function()
 				if v and v.player and v.player.Character and v.player.Character.Torso and v.player.Character.HumanoidRootPart then
 					tasePlr(v.player)
-					wait()
-					workspace.Remote.loadchar:InvokeServer()
 				end
 			end)
 		end
