@@ -470,17 +470,6 @@ local function killPlr(plr)
 	if not plr then return end
 	pcall(function()
 		if workspace[plr.Name] then
-			local details = plrDetails()
-			local plrCF = details[1]
-			local camCF = details[2]
-			local team = details[3]
-
-			if team == plr.TeamColor.Name then
-				workspace.Remote.loadchar:InvokeServer(nil, BrickColor.random().Name)
-				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
-				workspace.CurrentCamera.CFrame = camCF
-			end
-
 			workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
 			local tool = game.Players.LocalPlayer.Character:FindFirstChild('Remington 870') or game.Players.LocalPlayer.Backpack:FindFirstChild('Remington 870')
 			local event = {
@@ -527,6 +516,10 @@ local function killPlr(plr)
 				}
 			}
 			game:GetService('ReplicatedStorage').ShootEvent:FireServer(event, tool)
+			game.Players.LocalPlayer.Character.Animate.Disabled = true
+			tool.Parent = game.Players.LocalPlayer.Character
+			tool:Destroy()
+			game.Players.LocalPlayer.Character.Animate.Disabled = false
 		else return end
 	end)
 end
@@ -605,7 +598,7 @@ local function arrestPlr(plr)
 			repeat wait()
 				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plr.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1)
 				coroutine.wrap(function()
-					workspace.Remote.arrest:InvokeServer(plr.Character.Head)
+					workspace.Remote.arrest:InvokeServer(workspace[plr.Name].Head)
 				end)()
 			until plr.Character:FindFirstChild("Head"):FindFirstChild("handcuffedGui")
 			wait()
@@ -619,7 +612,7 @@ end
 
 function spamArrest(plr, t)
 	for i = 1,t do
-		workspace.Remote.arrest:InvokeServer(plr.Character.Head)
+		workspace.Remote.arrest:InvokeServer(workspace[plr.Name].Head)
 	end
 end
 
@@ -705,6 +698,9 @@ local function executeCmd(cmd, args)
 			local plr = getPlr(args[1])
 			if plr then
 				log('[Logs]: Attempting to arrest '..plrName(plr))
+				if plr.TeamColor.Name ~= 'Really red' then
+					repeat bringPlr(plr, CFrame.new(-919, 96, 2138)) until (not game.Players:FindFirstChild(plr.Name)) or plr.TeamColor.Name == 'Really red'
+				end
 				arrestPlr(plr)
 			else log('[Logs]: No player found') end
 		end
@@ -758,6 +754,127 @@ local function executeCmd(cmd, args)
 			workspace.Remote.loadchar:InvokeServer()
 			log('[Logs]: Disabled spam arrest')
 		else log('[Logs]: Already disabled spam arrest') end
+	elseif cmd == 'kill' then
+		local details = plrDetails()
+		local team = details[3]
+		if args[1] then
+			if args[1] == 'all' or args[1] == 'others' then
+				local details = plrDetails()
+				local team = details[3]
+
+				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+				workspace.Remote.TeamEvent:FireServer("Medium stone grey")
+				local db = false
+				spawn(function()
+					db = true
+					for _, plr in ipairs(game.Players:GetChildren()) do
+						if plr.Name ~= game.Players.LocalPlayer.Name then
+							killPlr(plr)
+						end
+					end
+					db = false
+				end)
+				repeat wait() until db == false
+				log('[Logs]: Killed all players')
+				workspace.Remote.TeamEvent:FireServer(team)
+			else
+				local plr = getPlr(args[1])
+				
+				if plr then
+					log('[Logs]: Killed '..plrName(plr))
+					notif('Killed '..plrName(plr))
+					if team == plr.TeamColor.Name then
+						workspace.Remote.TeamEvent:FireServer("Medium stone grey")
+					end
+					killPlr(plr)
+					workspace.Remote.TeamEvent:FireServer(team)
+				else log('[Logs]: No player found') end
+			end
+		end
+	elseif cmd == 'killall' then
+		local details = plrDetails()
+		local team = details[3]
+
+		workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+		workspace.Remote.TeamEvent:FireServer("Medium stone grey")
+		local db = false
+		spawn(function()
+			db = true
+			for _, plr in ipairs(game.Players:GetChildren()) do
+				if plr.Name ~= game.Players.LocalPlayer.Name then
+					killPlr(plr)
+				end
+			end
+			db = false
+		end)
+		repeat wait() until db == false
+		log('[Logs]: Killed all players')
+		workspace.Remote.TeamEvent:FireServer(team)
+	elseif cmd == 'killguard' or cmd == 'killguards' then
+		local details = plrDetails()
+		local team = details[3]
+
+		workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+		if team == 'Bright blue' then
+			workspace.Remote.TeamEvent:FireServer("Medium stone grey")
+		end
+		local db = false
+		spawn(function()
+			db = true
+			for _, plr in ipairs(game.Players:GetChildren()) do
+				if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == 'Bright blue' then
+					killPlr(plr)
+				end
+			end
+			db = false
+		end)
+		repeat wait() until db == false
+		log('[Logs]: Killed all guards')
+		workspace.Remote.TeamEvent:FireServer(team)
+	elseif cmd == 'killinmate' or cmd == 'killinmates' or cmd == 'killprisoner' or cmd == 'killprisoners' then
+		local details = plrDetails()
+		local team = details[3]
+
+		workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+		if team == 'Bright orange' then
+			workspace.Remote.TeamEvent:FireServer("Medium stone grey")
+		end
+		local db = false
+		spawn(function()
+			db = true
+			for _, plr in ipairs(game.Players:GetChildren()) do
+				if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == 'Bright orange' then
+					killPlr(plr)
+				end
+			end
+			db = false
+		end)
+		repeat wait() until db == false
+		log('[Logs]: Killed all inmates')
+		workspace.Remote.TeamEvent:FireServer(team)
+	elseif cmd == 'killcriminal' or cmd == 'killcriminals' or cmd == 'killcrim' or cmd == 'killcrims' then
+		local details = plrDetails()
+		local team = details[3]
+
+		workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+		if team == 'Really red' then
+			workspace.Remote.TeamEvent:FireServer("Medium stone grey")
+		end
+		local db = false
+		spawn(function()
+			db = true
+			for _, plr in ipairs(game.Players:GetChildren()) do
+				if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == 'Really red' then
+					killPlr(plr)
+				end
+			end
+			db = false
+		end)
+		repeat wait() until db == false
+		log('[Logs]: Killed all inmates')
+		if team == 'Really red' then
+			workspace.Remote.loadchar:FireServer(nil, team)
+		end
 	elseif cmd == 'notify' or cmd == 'notif' then
 		log('[Logs]: Enabled notifications')
 		notifs = true
