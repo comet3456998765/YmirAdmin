@@ -383,6 +383,7 @@ Cmd[#Cmd + 1] = {Name='prefix / setprefix <text>',Desc='Sets prefix to the text'
 Cmd[#Cmd + 1] = {Name='notif / notify',Desc='Notifies you when you use a command'}
 Cmd[#Cmd + 1] = {Name='unnotif / unnotify',Desc='Disable notifying you whenever you use a command'}
 Cmd[#Cmd + 1] = {Name='logs / notifications',Desc='Check command logs'}
+Cmd[#Cmd + 1] = {Name='nologs / nonotifications',Desc='Minimize command logs'}
 Cmd[#Cmd + 1] = {Name='destroygui / destroyscript',Desc='Destroy script'}
 
 
@@ -1371,7 +1372,16 @@ local function executeCmd(cmd, args)
 		else log('[Logs]: Already joined guards team') end
 	elseif cmd == 'criminal' or cmd == 'crim' then
 		if args[1] and args[1] ~= '' and args[1] ~= ' ' then
-			
+			local plr = getPlr(args[1])
+			if plr then
+				if plr.TeamColor.Name ~= 'Really red' then
+					log('[Logs]: Made '..plrName(plr)..' a criminal')
+					repeat bringPlr(plr, CFrame.new(-919, 96, 2138)) until (not Toggles.SpamArrest or not game.Players:FindFirstChild(plr.Name)) or plr.TeamColor.Name == 'Really red'
+				else 
+					notif(plrName(plr)..' is already a criminal') 
+					log('[Logs]: '..plrName(plr)..' is already a criminal') 
+				end
+			else log('[Logs]: No player found') end
 		else
 			if game.Players.LocalPlayer.TeamColor.Name  ~= 'Really red' then
 				local details = plrDetails()
@@ -1383,6 +1393,16 @@ local function executeCmd(cmd, args)
 				log('[Logs]: Joined criminals team')
 			else log('[Logs]: Already joined criminals team') end
 		end
+	elseif cmd == 'criminals' or cmd == 'crims' then
+		if game.Players.LocalPlayer.TeamColor.Name  ~= 'Really red' then
+			local details = plrDetails()
+			local plrCF = details[1]
+			local camCF = details[2]
+			workspace.Remote.loadchar:InvokeServer(nil, 'Really red')
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
+			workspace.CurrentCamera.CFrame = camCF
+			log('[Logs]: Joined criminals team')
+		else log('[Logs]: Already joined criminals team') end
 	elseif cmd == 'neutral' or cmd == 'neutrals' then
 		if game.Players.LocalPlayer.TeamColor.Name  ~= 'Medium stone grey' then
 			workspace.Remote.TeamEvent:FireServer('Medium stone grey')
@@ -1498,6 +1518,45 @@ local function executeCmd(cmd, args)
 			workspace.CurrentCamera.CFrame = camCF
 			log('[Logs]: Joined custom black team')
 		else log('[Logs]: Already joined custom black team') end
+	elseif cmd == 'makecriminal' or cmd == 'makecrim' then
+		if args[1] then
+			local plr = getPlr(args[1])
+			if plr then
+				if plr.TeamColor.Name ~= 'Really red' then
+					log('[Logs]: Made '..plrName(plr)..' a criminal')
+					repeat bringPlr(plr, CFrame.new(-919, 96, 2138)) until (not Toggles.SpamArrest or not game.Players:FindFirstChild(plr.Name)) or plr.TeamColor.Name == 'Really red'
+				else 
+					notif(plrName(plr)..' is already a criminal') 
+					log('[Logs]: '..plrName(plr)..' is already a criminal') 
+				end
+			else log('[Logs]: No player found') end
+		end
+	elseif cmd == 'makecriminalall' or cmd == 'makecrimall' then
+		log('[Logs]: Making all players criminals...')
+		for _, plr in ipairs(game.Players:GetChildren()) do
+			if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name ~= 'Really red' then
+				repeat bringPlr(plr, CFrame.new(-919, 96, 2138)) until (not Toggles.SpamArrest or not game.Players:FindFirstChild(plr.Name)) or plr.TeamColor.Name == 'Really red'
+			end
+		end
+	elseif cmd == 'lag' then
+		if args[1] then
+			if typeof(tonumber(args[1])) == 'number' then
+				log('Lagging server for '..args[1]..' seconds')
+				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+				local tool = game.Players.LocalPlayer.Character:FindFirstChild('Remington 870') or game.Players.LocalPlayer.Backpack:FindFirstChild('Remington 870')
+				for i = 1, (tonumber(args[1])*3) do
+					local event = {
+						[1] = {
+							['RayObject'] = Ray.new(Vector3.new(), Vector3.new()), 
+							['Distance'] = 0, 
+							['Cframe'] = CFrame.new(), 
+							['Hit'] = workspace[game.Players.LocalPlayer.Name].Head
+						}
+					}
+					game:GetService('ReplicatedStorage').ShootEvent:FireServer(event, tool)
+				end
+			else log('[Logs]: Input a valid duration') end
+		end
 	elseif cmd == 'notify' or cmd == 'notif' then
 		log('[Logs]: Enabled notifications')
 		notifs = true
