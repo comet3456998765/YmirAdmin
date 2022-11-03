@@ -2,14 +2,11 @@
 local UserInputService = game:GetService('UserInputService')
 local RunService = (game:GetService('RunService'));
 local GuiService = game.Players.LocalPlayer:WaitForChild('PlayerGui')
-
----//vvv DESTROY CLONES vvv\\---
-if GuiService:FindFirstChild('CmdGUI') then GuiService.CmdGUI:Destroy() end
 ---//vvv INSTANCES vvv\\---
 local CmdGUI = Instance.new('ScreenGui')
-CmdGUI.Name = 'CmdGUI'
 CmdGUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 CmdGUI.Parent = GuiService
+CmdGUI.Enabled = false
 
 local CmdMain = Instance.new('Frame')
 CmdMain.Name = 'CmdMain'
@@ -53,7 +50,9 @@ CmdNotifHandler.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 CmdNotifHandler.BorderSizePixel = 0
 CmdNotifHandler.Position = UDim2.new(0.0331288725, 0, 0.207801834, 0)
 CmdNotifHandler.Size = UDim2.new(0.966870666, 0, 0.785972178, 0)
+CmdNotifHandler.CanvasSize = UDim2.new(0, 0, 0, 0)
 CmdNotifHandler.AutomaticCanvasSize = 'Y'
+CmdNotifHandler.ScrollingDirection = 'Y'
 
 local CmdNotifLayout = Instance.new('UIListLayout')
 CmdNotifLayout.Parent = CmdNotifHandler
@@ -91,10 +90,11 @@ CmdHandler.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 CmdHandler.BorderSizePixel = 0
 CmdHandler.Position = UDim2.new(0.0299999993, 0, 0.207689703, 0)
 CmdHandler.Size = UDim2.new(0, 194, 0, 213)
+CmdHandler.CanvasSize = UDim2.new(0, 0, 0, 0)
 CmdHandler.AutomaticCanvasSize = 'Y'
+CmdHandler.ScrollingDirection = 'Y'
 
 local CmdLayout = Instance.new('UIListLayout')
-CmdLayout.Name = 'CmdLayout'
 CmdLayout.Parent = CmdHandler
 CmdLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
@@ -105,7 +105,6 @@ CmdExample.BackgroundTransparency = 1.000
 CmdExample.Size = UDim2.new(0, 194, 0, 18)
 CmdExample.ZIndex = 10
 CmdExample.Font = Enum.Font.SourceSans
-CmdExample.Text = 'whaddafuck'
 CmdExample.TextColor3 = Color3.fromRGB(255, 255, 255)
 CmdExample.TextSize = 14.000
 CmdExample.TextXAlignment = Enum.TextXAlignment.Left
@@ -123,6 +122,7 @@ CmdBar.Text = ''
 CmdBar.TextColor3 = Color3.fromRGB(255, 255, 255)
 CmdBar.TextSize = 14.000
 CmdBar.TextXAlignment = Enum.TextXAlignment.Left
+CmdBar.ClearTextOnFocus = false
 
 local CmdTitle = Instance.new('TextLabel')
 CmdTitle.Name = 'CmdTitle'
@@ -168,6 +168,50 @@ CmdDesc.Text = ''
 CmdDesc.TextColor3 = Color3.fromRGB(255, 255, 255)
 CmdDesc.TextSize = 14.000
 CmdDesc.TextWrapped = true
+---//vvv DESTROY CLONES vvv\\---
+local introSpeed = 0.2
+local reload = false
+if GuiService:FindFirstChild('CmdGUI') then
+	reload = true 
+	local oldMain = GuiService.CmdGUI.CmdMain
+	CmdMain.Position = oldMain.Position
+	local oldHandler = oldMain.CmdHandler
+	CmdHandler.CanvasPosition = oldHandler.CanvasPosition
+	local oldBar = CmdMain.CmdBar
+	CmdBar.Text = oldBar.Text
+	local oldNotifBox = oldMain.CmdNotifBox
+	CmdNotifBox.Position = oldNotifBox.Position
+	local oldNotif = oldNotifBox.CmdNotif
+	CmdNotif.Visible = oldNotif.Visible
+	local oldNotifHandler = oldNotifBox.CmdNotifHandler:Clone()
+	CmdNotifHandler:Destroy()
+	oldNotifHandler.Parent = CmdNotifBox
+	CmdNotifHandler = oldNotifHandler
+	GuiService.CmdGUI:Destroy()
+	CmdGUI.Enabled = true
+else --//vvv INTRO vvv\\---
+	CmdGUI.Enabled = true
+	CmdNotifBox.Visible = false
+	CmdHandler.Visible = false
+	CmdTitle.TextTransparency = 1
+	CmdBar.BackgroundTransparency = 1
+	CmdBar.TextTransparency = 1
+	CmdMain.Size = UDim2.new(0,0,0,0)
+	CmdMain:TweenSize(UDim2.new(0, 200, 0, 269))
+	repeat wait() until CmdMain.Size == UDim2.new(0, 200, 0, 269)
+	wait(.1)
+	repeat wait()
+		CmdTitle.TextTransparency = CmdTitle.TextTransparency - introSpeed
+	until CmdTitle.TextTransparency <= 0
+	wait(.1)
+	repeat wait()
+		CmdBar.BackgroundTransparency = CmdBar.BackgroundTransparency - introSpeed
+		CmdBar.TextTransparency = CmdBar.TextTransparency - introSpeed
+	until CmdBar.BackgroundTransparency <= 0 and CmdBar.TextTransparency <= 0 
+	CmdHandler.Visible = true
+	CmdNotifBox.Visible = true
+end
+CmdGUI.Name = 'CmdGUI'
 ---//vvv VARIABLES vvv\\---
 local prefix = '.'
 local canvasPos = CmdHandler.CanvasPosition
@@ -207,7 +251,6 @@ local function log(txt)
 end
 
 local function toggleLogs(tog)
-	CmdNotif.Visible = false
 	CmdNotifHandler.Visible = false
 	if tog then
 		CmdNotifHandler.Visible = true
@@ -215,24 +258,24 @@ local function toggleLogs(tog)
 	else
 		CmdNotifBox:TweenPosition(UDim2.new(0, 0, 0.632000029, 0))
 	end
+	CmdNotif.Visible = false
 end
 ---//vvv GUI DRAGGING vvv\\---
 local dragging
 local dragInput
 local dragStart
 local startPos
+local lastMousePos
+local lastGoalPos
 
 local function Lerp(a, b, m)
 	return a + (b - a) * m
 end;
 
-local lastMousePos
-local lastGoalPos
-local DRAG_SPEED = (8); -- // The speed of the UI darg.
 local function Update(dt)
 	if not (startPos) then return end;
 	if not (dragging) and (lastGoalPos) then
-		CmdMain.Position = UDim2.new(startPos.X.Scale, Lerp(CmdMain.Position.X.Offset, lastGoalPos.X.Offset, dt * DRAG_SPEED), startPos.Y.Scale, Lerp(CmdMain.Position.Y.Offset, lastGoalPos.Y.Offset, dt * DRAG_SPEED))
+		CmdMain.Position = UDim2.new(startPos.X.Scale, Lerp(CmdMain.Position.X.Offset, lastGoalPos.X.Offset, dt * 8), startPos.Y.Scale, Lerp(CmdMain.Position.Y.Offset, lastGoalPos.Y.Offset, dt * 8))
 		return 
 	end;
 
@@ -240,7 +283,7 @@ local function Update(dt)
 	local xGoal = (startPos.X.Offset - delta.X);
 	local yGoal = (startPos.Y.Offset - delta.Y);
 	lastGoalPos = UDim2.new(startPos.X.Scale, xGoal, startPos.Y.Scale, yGoal)
-	CmdMain.Position = UDim2.new(startPos.X.Scale, Lerp(CmdMain.Position.X.Offset, xGoal, dt * DRAG_SPEED), startPos.Y.Scale, Lerp(CmdMain.Position.Y.Offset, yGoal, dt * DRAG_SPEED))
+	CmdMain.Position = UDim2.new(startPos.X.Scale, Lerp(CmdMain.Position.X.Offset, xGoal, dt * 8), startPos.Y.Scale, Lerp(CmdMain.Position.Y.Offset, yGoal, dt * 8))
 end;
 
 CmdMain.InputBegan:Connect(function(input)
@@ -316,14 +359,14 @@ Cmd[#Cmd + 1] = {Name='brown',Desc='Join the custom brown team'}
 Cmd[#Cmd + 1] = {Name='black',Desc='Join the custom black team'}
 Cmd[#Cmd + 1] = {Name='makecriminal / makecrim <plr>',Desc='Makes player join the criminal team (Requires respawn)'}
 Cmd[#Cmd + 1] = {Name='makecriminalall / makecrimall',Desc='Makes all players join the criminal team'}
-Cmd[#Cmd + 1] = {Name='lag <duration>',Desc='Lags for a specific amount'}
+Cmd[#Cmd + 1] = {Name='lag <duration>',Desc='Lags for an amount of time'}
 Cmd[#Cmd + 1] = {Name='crash / lagserver',Desc='Lags and disconnects the server'}
 Cmd[#Cmd + 1] = {Name='uncrash / unlagserver',Desc="Stops lagging the server (If it's not too late)"}
-Cmd[#Cmd + 1] = {Name='fpslag / lagspike',Desc="Makes all players' FPS decrease"}
+Cmd[#Cmd + 1] = {Name='fpslag / lagspike',Desc="Makes all players' FPS decrease (Requires SWAT gamepass)"}
 Cmd[#Cmd + 1] = {Name='unfpslag / unlagspike',Desc='Stops FPS spiking'}
-Cmd[#Cmd + 1] = {Name='respawn / res',Desc='Respawn on a spawn location'}
-Cmd[#Cmd + 1] = {Name='refresh / re',Desc='Respawn on your old location'}
-Cmd[#Cmd + 1] = {Name='reset',Desc='Reset your character'}
+Cmd[#Cmd + 1] = {Name='reset / oof',Desc='Reset your character'}
+Cmd[#Cmd + 1] = {Name='respawn / res',Desc='Respawns you on a spawn location'}
+Cmd[#Cmd + 1] = {Name='refresh / re',Desc='Respawns you on your old location'}
 Cmd[#Cmd + 1] = {Name='autorefresh / autore',Desc='Automatically respawn on your old location when you die'}
 Cmd[#Cmd + 1] = {Name='unautorefresh / unautore',Desc='Disables autorefresh'}
 Cmd[#Cmd + 1] = {Name='god / godmode',Desc='Grants immunity (With the cost of your avatar)'}
@@ -331,7 +374,7 @@ Cmd[#Cmd + 1] = {Name='ungod / ungodmode',Desc='Disables god mode'}
 Cmd[#Cmd + 1] = {Name='swatgod',Desc='Grants immunity by spamming swat vest (Guard team only and requires SWAT gamepass)'}
 Cmd[#Cmd + 1] = {Name='unswatgod',Desc='Disables swat god mode'}
 Cmd[#Cmd + 1] = {Name='goto / to <plr>',Desc='Teleports you to the player'}
-Cmd[#Cmd + 1] = {Name='bring',Desc='Teleports the player to you (Requires respawn)'}
+Cmd[#Cmd + 1] = {Name='bring <plr>',Desc='Teleports the player to you (Requires respawn)'}
 Cmd[#Cmd + 1] = {Name='loopbring <plr>',Desc='Loop teleports the player to your position'}
 Cmd[#Cmd + 1] = {Name='unloopbring <plr>',Desc='Disables loop bringing the player'}
 Cmd[#Cmd + 1] = {Name='view / spectate <plr>',Desc='Spectates the player'}
@@ -358,6 +401,7 @@ Cmd[#Cmd + 1] = {Name='m4 / m4a1',Desc='Adds M4A1 to your backpack (Requires SWA
 Cmd[#Cmd + 1] = {Name='gun / guns',Desc='Adds possibly all guns to your backpack'}
 Cmd[#Cmd + 1] = {Name='autogun / autoguns',Desc='Automatically adds possibly all guns to your backpack'}
 Cmd[#Cmd + 1] = {Name='unautogun / unautoguns',Desc='Disables autoguns'}
+Cmd[#Cmd + 1] = {Name='oneshotgun',Desc='Makes your gun one shot'}
 Cmd[#Cmd + 1] = {Name='autofire / rapidfire',Desc='Activates autofire'}
 Cmd[#Cmd + 1] = {Name='superfire / superguns',Desc='Makes your gun super as possible'}
 Cmd[#Cmd + 1] = {Name='autosuperfire / autosuperguns',Desc='Automatically makes your gun super as possible'}
@@ -386,7 +430,6 @@ Cmd[#Cmd + 1] = {Name='logs / notifications',Desc='Check command logs'}
 Cmd[#Cmd + 1] = {Name='nologs / nonotifications',Desc='Minimize command logs'}
 Cmd[#Cmd + 1] = {Name='destroygui / destroyscript',Desc='Destroy script'}
 
-
 for i = 1,#Cmd do
 	local clone = CmdExample:Clone()	
 	clone.Text = Cmd[i].Name
@@ -395,13 +438,18 @@ for i = 1,#Cmd do
 	Ins.Name = 'Desc'
 	Ins.Value = Cmd[i].Desc
 	clone.Parent = CmdHandler
+	if reload == false and i <= 11 then
+		clone.TextTransparency = 1
+		repeat wait()
+			clone.TextTransparency = clone.TextTransparency - (introSpeed*2)
+		until clone.TextTransparency <= 0
+	end
 	clone.MouseButton1Click:Connect(function()
 		CmdBar:CaptureFocus()
 		CmdBar.Text = clone.Text:split(' ')[1]
 		CmdBar.CursorPosition = #CmdBar.Text + 1
 	end)
 end
-
 local Mouse = game.Players.LocalPlayer:GetMouse()
 Mouse.Move:Connect(function()
 	local Guis = GuiService:GetGuiObjectsAtPosition(Mouse.X, Mouse.Y)
@@ -434,7 +482,7 @@ local PlrsLoopKilled = {}
 local PlrsLoopTased = {}
 local Toggles = {}
 local ChatCmd = true
-local BoughtGamepass = game:GetService('MarketplaceService'):UserOwnsGamePassAsync(tonumber((game:GetService('Players').LocalPlayer.CharacterAppearance):split('=')[#((game:GetService('Players').LocalPlayer.CharacterAppearance):split('='))]), 96651)
+local SWAT = game:GetService('MarketplaceService'):UserOwnsGamePassAsync(tonumber((game:GetService('Players').LocalPlayer.CharacterAppearance):split('=')[#((game:GetService('Players').LocalPlayer.CharacterAppearance):split('='))]), 96651)
 
 local function plrName(plr)
 	local name = plr.Name
@@ -566,7 +614,7 @@ local function bringPlr(plr, cf)
 	local plrCF = details[1]
 	workspace.Remote.loadchar:InvokeServer()
 	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
-	workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Hammer'].ITEMPICKUP)
+	workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['M9'].ITEMPICKUP)
 	local char = game.Players.LocalPlayer.Character
 	char.Humanoid.Name = 'fuck'
 	local c = char.fuck:Clone()
@@ -578,13 +626,13 @@ local function bringPlr(plr, cf)
 	wait()
 	char.Animate.Disabled = false
 	char.Humanoid.DisplayDistanceType = 'None'
-	local tool = game.Players.LocalPlayer.Backpack:FindFirstChild('Hammer') or game.Players.LocalPlayer.Character:FindFirstChild('Hammer')
+	local tool = game.Players.LocalPlayer.Backpack:FindFirstChild('M9') or game.Players.LocalPlayer.Character:FindFirstChild('M9')
 	tool.Parent = char
 	local counter1 = 0
 	repeat wait(0.1)
 		counter1 = counter1 + 1
 		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plr.Character.HumanoidRootPart.CFrame * CFrame.new(0,0,0.75)
-	until (not game.Players.LocalPlayer.Character:FindFirstChild('Hammer') or not game.Players.LocalPlayer.Character.HumanoidRootPart or not plr.character.HumanoidRootPart or not game.Players.LocalPlayer.Character or not plr.Character or counter1 > 500) and counter1 > 3
+	until (not game.Players.LocalPlayer.Character:FindFirstChild('M9') or not game.Players.LocalPlayer.Character.HumanoidRootPart or not plr.character.HumanoidRootPart or not game.Players.LocalPlayer.Character or not plr.Character or counter1 > 500) and counter1 > 3
 	local counter2 = 0
 	repeat wait()
 		counter2 = counter2 + 1
@@ -886,14 +934,13 @@ local function executeCmd(cmd, args)
 				log('[Logs]: Killed all enemies')
 			else
 				local plr = getPlr(args[1])
-
 				if plr then
-					log('[Logs]: Killed '..plrName(plr))
-					notif('Killed '..plrName(plr))
 					if team == plr.TeamColor.Name then
 						workspace.Remote.TeamEvent:FireServer('Medium stone grey')
 					end
 					killPlr(plr)
+					log('[Logs]: Killed '..plrName(plr))
+					notif('Killed '..plrName(plr))
 					workspace.Remote.TeamEvent:FireServer(team)
 				else log('[Logs]: No player found') end
 			end
@@ -1135,7 +1182,7 @@ local function executeCmd(cmd, args)
 						end
 					end
 				else break end
-				end
+			end
 		else 
 			notif('Already loop killing all players') 
 			log('[Logs]: Already loop killing all players') 
@@ -1556,6 +1603,175 @@ local function executeCmd(cmd, args)
 					game:GetService('ReplicatedStorage').ShootEvent:FireServer(event, tool)
 				end
 			else log('[Logs]: Input a valid duration') end
+		else log('[Logs]: Input a valid duration') end
+	elseif cmd == 'crash' or cmd == 'lagserver' then
+		if not Toggles.CrashServer then
+			log('[Logs]: Crashing server')
+			Toggles.CrashServer = true
+			workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+			local tool = game.Players.LocalPlayer.Character:FindFirstChild('Remington 870') or game.Players.LocalPlayer.Backpack:FindFirstChild('Remington 870')
+			while wait() do
+				if Toggles.CrashServer then
+					local event = {
+						[1] = {
+							['RayObject'] = Ray.new(Vector3.new(), Vector3.new()), 
+							['Distance'] = 0, 
+							['Cframe'] = CFrame.new(), 
+							['Hit'] = workspace[game.Players.LocalPlayer.Name].Head
+						}
+					}
+					game:GetService('ReplicatedStorage').ShootEvent:FireServer(event, tool)
+				end
+			end
+		else log('[Logs]: Already crashing server') end
+	elseif cmd == 'uncrash' or cmd == 'unlagserver' then
+		if Toggles.CrashServer then
+			log('[Logs]: Uncrashing server')
+			Toggles.CrashServer = false
+			local tool = game.Players.LocalPlayer.Character:FindFirstChild('Remington 870') or game.Players.LocalPlayer.Backpack:FindFirstChild('Remington 870')
+			game.Players.LocalPlayer.Character.Animate.Disabled = true
+			tool.Parent = game.Players.LocalPlayer.Character
+			tool:Destroy()
+			game.Players.LocalPlayer.Character.Animate.Disabled = false
+		else log('[Logs]: Already uncrashing server') end
+	elseif cmd == 'fpslag' or cmd == 'lagspike' then
+		if not Toggles.FPSLag then
+			if SWAT then
+				log('[Logs]: FPS spiking all players')
+				Toggles.FPSLag = true
+				while wait() do
+					if Toggles.FPSLag then
+						if game.Players.LocalPlayer.TeamColor.Name  ~= 'Bright blue' then
+							repeat wait() workspace.Remote.TeamEvent:FireServer('Bright blue') until game.Players.LocalPlayer.TeamColor.Name  == 'Bright blue'
+						end
+						spawn(function()
+							workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.clothes['Riot Police'].ITEMPICKUP)
+						end)
+					end
+				end
+			else log('[Logs]: You need the SWAT gamepass to use this command') end
+		else log('[Logs]: Already FPS spiking all players') end
+	elseif cmd == 'unfpslag' or cmd == 'unlagspike ' then
+		if Toggles.FPSLag then
+			local details = plrDetails()
+			local plrCF = details[1]
+			local camCF = details[2]
+			log('[Logs]: Disabled FPS spiking all players')
+			Toggles.FPSLag = false
+			repeat wait() workspace.Remote.loadchar:InvokeServer() until not workspace[game.Players.LocalPlayer.Name]:FindFirstChild('vest') 
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
+			workspace.CurrentCamera.CFrame = camCF
+		else log('[Logs]: Already disabled FPS spiking all players') end
+	elseif cmd == 'reset' or cmd == 'oof ' then
+		game.Players.LocalPlayer.Character:BreakJoints()
+		log('[Logs]: Successfully reset')
+	elseif cmd == 'respawn' or cmd == 'res ' then
+		workspace.Remote.loadchar:InvokeServer()
+		log('[Logs]: Successfully respawned')
+	elseif cmd == 'refresh' or cmd == 're' then
+		local details = plrDetails()
+		local plrCF = details[1]
+		local camCF = details[2]
+		workspace.Remote.loadchar:InvokeServer()
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
+		workspace.CurrentCamera.CFrame = camCF
+		log('[Logs]: Successfully refreshed')
+	elseif cmd == 'autorefresh' or cmd == 'autore' then
+		if not Toggles.AutoRefresh then
+			log('[Logs]: Enabled auto refresh')
+			Toggles.AutoRefresh = true
+			while wait() do
+				if Toggles.AutoRefresh then
+					pcall(function()
+						if game.Players.LocalPlayer.Character.Humanoid.Health < 1 then
+							local details = plrDetails()
+							local plrCF = details[1]
+							local camCF = details[2]
+							workspace.Remote.loadchar:InvokeServer()
+							game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
+							workspace.CurrentCamera.CFrame = camCF
+						end
+					end)
+				end
+			end
+		else log('[Logs]: Already enabled auto refresh') end
+	elseif cmd == 'unautorefresh' or cmd == 'unautore' then
+		if Toggles.AutoRefresh then
+			log('[Logs]: Disabled auto refresh')
+			Toggles.AutoRefresh = false
+		else log('[Logs]: Already disabled auto refresh') end
+	elseif cmd == 'god' or cmd == 'godmode' then
+		if not Toggles.GodMode then
+			log('[Logs]: Enabled god mode')
+			Toggles.GodMode = true
+			while wait() do
+				if Toggles.GodMode then
+					repeat wait() until not game.Players.LocalPlayer.Character:FindFirstChild('ForceField')
+					godMode()
+					wait(5)
+					local details = plrDetails()
+					local plrCF = details[1]
+					local camCF = details[2]
+					workspace.Remote.loadchar:InvokeServer()
+					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
+					workspace.CurrentCamera.CFrame = camCF
+				end
+			end
+		else log('[Logs]: Already enabled god mode') end
+	elseif cmd == 'ungod' or cmd == 'ungodmode' then
+		if Toggles.GodMode then
+			log('[Logs]: Disabled god mode')
+			Toggles.GodMode = false
+			if not game.Players.LocalPlayer.Character:FindFirstChild('ForceField') then
+				local details = plrDetails()
+				local plrCF = details[1]
+				local camCF = details[2]
+				workspace.Remote.loadchar:InvokeServer()
+				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
+				workspace.CurrentCamera.CFrame = camCF
+			end
+		else log('[Logs]: Already disabled god mode') end
+	elseif cmd == 'swatgod' or cmd == 'swatgodmode' then
+		if not Toggles.SwatGodMode then
+			if SWAT then
+				log('[Logs]: Enabled swat god mode')
+				Toggles.SwatGodMode = true
+				while wait() do
+					if Toggles.SwatGodMode then
+						if game.Players.LocalPlayer.TeamColor.Name ~= 'Bright blue' then
+							workspace.Remote.TeamEvent:FireServer('Bright blue')
+						end
+						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.clothes['Riot Police'].ITEMPICKUP)
+						if workspace[game.Players.LocalPlayer.Name]:FindFirstChild('vest') then workspace[game.Players.LocalPlayer.Name].vest:Destroy() end
+					end
+				end
+			else log('[Logs]: You need the SWAT gamepass to use this command') end
+		else log('[Logs]: Already enabled swat god mode') end
+	elseif cmd == 'unswatgod' or cmd == 'unswatgodmode' then
+		if Toggles.SwatGodMode then
+			Toggles.SwatGodMode = false
+			log('[Logs]: Disabled swat god mode')
+		else log('[Logs]: Already disabled swat god mode') end
+	elseif cmd == 'bring'then
+		if args[1] then
+			local plr = getPlr(args[1])
+			if plr then
+				if plr.Name ~= game.Players.LocalPlayer.Name then
+					local details = plrDetails()
+					local plrCF = details[1]
+					bringPlr(plr, plrCF)
+					log('[Logs]: Brought '..plrName(plr))
+				else log("[Logs]: Can't bring yourself") end
+			else log('[Logs]: No player found') end
+		end
+		if args[1] then
+			local plr = getPlr(args[1])
+			if plr then
+				if plr.Name ~= game.Players.LocalPlayer.Name then
+					goTo(plr)
+					log('[Logs]: Teleported to '..plrName(plr))
+				else log("[Logs]: Can't teleport to yourself") end
+			else log('[Logs]: No player found') end
 		end
 	elseif cmd == 'notify' or cmd == 'notif' then
 		log('[Logs]: Enabled notifications')
@@ -1581,6 +1797,10 @@ local function executeCmd(cmd, args)
 	end
 end
 --//vvv GUI FUNCTIONS vvv\\--
+CmdNotifHandler.ChildAdded:Connect(function(i)
+	CmdNotifHandler.CanvasPosition = Vector2.new(0, 99999)
+end)
+ 
 CmdBar.Changed:Connect(function()
 	if CmdBar.Text ~= '' then
 		local args = string.split(CmdBar.Text, ' ')
@@ -1631,12 +1851,13 @@ CmdBar.Changed:Connect(function()
 end)
 
 CmdBar.FocusLost:Connect(function(_, __)
-	if not _ then return end
-	local args = string.split(CmdBar.Text, ' ')
-	CmdBar.Text = ''
-	local cmd = args[1]
-	table.remove(args, 1)
-	executeCmd(cmd, args)
+	if _ then 
+		local args = string.split(CmdBar.Text, ' ')
+		CmdBar.Text = ''
+		local cmd = args[1]
+		table.remove(args, 1)
+		executeCmd(cmd, args)
+	end
 end)
 
 spawn(function()
@@ -1669,4 +1890,9 @@ spawn(function()
 	end
 end)
 
-log('[Logs]: Loaded admin commands')
+if reload == false then 
+	log('[Logs]: Loaded admin commands')
+else 
+	notif('Reloaded admin commands')
+	log('[Logs]: Reloaded admin commands')
+end
