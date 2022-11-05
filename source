@@ -96,10 +96,6 @@ CmdHandler.CanvasSize = UDim2.new(0, 0, 0, 0)
 CmdHandler.AutomaticCanvasSize = 'Y'
 CmdHandler.ScrollingDirection = 'Y'
 
-local CmdLayout = Instance.new('UIListLayout')
-CmdLayout.Parent = CmdHandler
-CmdLayout.SortOrder = Enum.SortOrder.LayoutOrder
-
 local CmdExample = Instance.new('TextButton')
 CmdExample.Name = 'CmdExample'
 CmdExample.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -169,6 +165,10 @@ CmdDesc.Text = ''
 CmdDesc.TextColor3 = Color3.fromRGB(255, 255, 255)
 CmdDesc.TextSize = 14.000
 CmdDesc.TextWrapped = true
+
+Instance.new('UIListLayout', CmdNotifHandler).SortOrder = Enum.SortOrder.LayoutOrder
+Instance.new('UIListLayout', CmdHandler).SortOrder = Enum.SortOrder.LayoutOrder
+Instance.new('UIAspectRatioConstraint', CmdNotifHandler).AspectRatio = 3
 --//vvv SAVE AND LOAD vvv\\--
 _G.settings = {
 	prefix = '.',
@@ -224,6 +224,7 @@ if GuiService:FindFirstChild('CmdGUI') then
 	CmdNotifHandler:Destroy()
 	oldNotifHandler.Parent = CmdNotifBox
 	CmdNotifHandler = oldNotifHandler
+	CmdNotifHandler.Position = UDim2.new(0.0331288725, 0, 0.207801834, 0)
 	GuiService.CmdGUI.Parent = nil
 	CmdGUI.Enabled = true
 else --//vvv INTRO vvv\\---
