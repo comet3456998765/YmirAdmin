@@ -2776,7 +2776,7 @@ local function executeCmd(cmd, args)
 				prefix = args[1]
 				_G.settings.prefix = args[1]
 				save()
-				if ChatCmd then CmdBar.PlaceHolderText = 'Command Bar ('..args[1]..')' end
+				if ChatCmd then CmdBar.PlaceholderText = 'Command Bar ('..args[1]..')' end
 				log('[Logs]: Set prefix to '..args[1])
 			else log('[Logs]: Already set prefix to '..args[1]) end
 		else 
