@@ -176,7 +176,7 @@ _G.settings = {
 	ChatCmd = true,
 	notifs = true,
 	logsOpen = false,
-	mainPos = CmdMain.Position,
+	mainPos = {x1 = CmdMain.Position.X.Scale, x2 = CmdMain.Position.X.Offset, x3 = CmdMain.Position.Y.Scale, x4 = CmdMain.Position.Y.Offset},
 }
 local file = 'PrisonLifeSettings.ong'
 local function load()
@@ -201,7 +201,8 @@ local prefix = _G.settings.prefix
 local ChatCmd = _G.settings.ChatCmd
 local notifs = _G.settings.notifs
 local logsOpen = _G.settings.logsOpen
-CmdMain.Position =  _G.settings.mainPos
+local mainPos =  _G.settings.mainPos
+CmdMain.Position =  UDim2.new(mainPos.x1, mainPos.x2, mainPos.x3, mainPos.x4)
 ---//vvv DESTROY CLONES vvv\\---
 local introSpeed = 0.2
 local reload = false
@@ -325,7 +326,7 @@ local function Update(dt)
 	if not (startPos) then return end;
 	if not (dragging) and (lastGoalPos) then
 		CmdMain.Position = UDim2.new(startPos.X.Scale, Lerp(CmdMain.Position.X.Offset, lastGoalPos.X.Offset, dt * 8), startPos.Y.Scale, Lerp(CmdMain.Position.Y.Offset, lastGoalPos.Y.Offset, dt * 8))
-		_G.settings.mainPos = CmdMain.Position
+		_G.settings.mainPos = {x1 = CmdMain.Position.X.Scale, x2 = CmdMain.Position.X.Offset, x3 = CmdMain.Position.Y.Scale, x4 = CmdMain.Position.Y.Offset}
 		save()
 		return 
 	end;
