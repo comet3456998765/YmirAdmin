@@ -1,5 +1,5 @@
 # ong's Prison Life Admin
-The best admin commands script with over 100 commands.
+The best admin commands script for Prison Life with over 100 commands.
 
 #### Loadstring: 
 ```lua 
