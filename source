@@ -1748,23 +1748,23 @@ local function executeCmd(cmd, args)
 					local tool = plr.Character:FindFirstChild('Remington 870') or plr.Backpack:FindFirstChild('Remington 870')
 					tool.Parent = plr.Character
 					for _, v in pairs(workspace:GetDescendants()) do
-						spawn(function()
-							for i = 1, 15 do
-								if Toggles.Earrape then
-									if v:IsA('Sound') and v.Parent then
+						if v:IsA('Sound') and v.Parent then
+							spawn(function()
+								for i = 1, 15 do
+									if Toggles.Earrape then
 										local clone = v:Clone()
 										clone.Parent = v.Parent
 										clone:Play()
 										local event = game.ReplicatedStorage.SoundEvent
 										pcall(function()
-											event:FireServer(v, v.Character.Head)
+											event:FireServer(v, plr.Character.Head)
 										end)
 										repeat wait() until not clone.IsPlaying
 										clone:Destroy() 
 									end
 								end
-							end
-						end)
+							end)
+						end
 					end
 				else break end
 			end
