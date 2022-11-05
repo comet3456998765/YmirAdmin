@@ -493,7 +493,6 @@ Cmd[#Cmd + 1] = {Name='logs / notifications',Desc='Check command logs'}
 Cmd[#Cmd + 1] = {Name='nologs / nonotifications',Desc='Minimize command logs'}
 Cmd[#Cmd + 1] = {Name='reloadgui / reloadscript',Desc='Reloads GUI and script if there is a new version'}
 Cmd[#Cmd + 1] = {Name='destroygui / destroyscript',Desc='Destroys GUI and script'}
-print(#Cmd)
 
 for i = 1,#Cmd do
 	local clone = CmdExample:Clone()	
@@ -1741,17 +1740,19 @@ local function executeCmd(cmd, args)
 			log('[Logs]: Enabled earraping server')
 			while wait() do
 				if Toggles.Earrape then
-					for _ ,v in pairs(game.Players:GetChildren()) do
-						local s = game:GetService("Workspace")["Prison_guardspawn"].spawn.Sound
-						pcall(function()
-							local h = v.Character.Head
-							for i = 1, 5 do
-								spawn(function()
-									game:GetService("ReplicatedStorage").SoundEvent:FireServer(s, h)
-								end)
-							end
-						end)
-					end
+					pcall(function()
+						for _ ,v in pairs(game.Players:GetChildren()) do
+							local s = game:GetService("Workspace")["Prison_guardspawn"].spawn.Sound
+							pcall(function()
+								local h = v.Character.Head
+								for i = 1, 15 do
+									spawn(function()
+										game:GetService("ReplicatedStorage").SoundEvent:FireServer(s, h)
+									end)
+								end
+							end)
+						end
+					end)
 				else break end
 			end
 		else log('[Logs]: Already enabled earraping server') end
