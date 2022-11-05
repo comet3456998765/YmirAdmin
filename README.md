@@ -1,6 +1,21 @@
 # ong's Prison Life Admin
-A ROBLOX admin script for Prison Life. Septex Admin is good but has shitty UI so I pretty much imported those commands and put them here, with better UI but that would be based on your opinion.
+The best admin commands script with over 100 commands.
 
-The script is incomplete, this README will be updated when it is completed.
+#### Loadstring: 
+```lua 
+loadstring(game:HttpGet(('https://raw.githubusercontent.com/senorkal/ongsPrisonLifeAdmin/main/source'),true))() 
+```
+
+## Update Log
+### Version 1.0 (Current)
+> 133 commands
+
+> First public release so it may be buggy
+
+> Unobfuscated
+
+> A week of development
 
 
+## Credits
+> [@senorkal](https://github.com/senorkal) - Primary developer, scripter and GUI designer
