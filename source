@@ -231,6 +231,9 @@ else --//vvv INTRO vvv\\---
 	CmdTitle.TextTransparency = 1
 	CmdBar.BackgroundTransparency = 1
 	CmdBar.TextTransparency = 1
+	if ChatCmd then
+		CmdBar.PlaceHolderText = 'Command Bar ('..prefix..')'
+	end
 	CmdMain.Size = UDim2.new(0,0,0,0)
 	CmdMain:TweenSize(UDim2.new(0, 200, 0, 269))
 	repeat wait() until CmdMain.Size == UDim2.new(0, 200, 0, 269)
@@ -552,17 +555,6 @@ local punchCooldown
 local knifeCooldown
 local batCooldown
 local SWAT = game:GetService('MarketplaceService'):UserOwnsGamePassAsync(game.Players.LocalPlayer.UserId, 96651)
-
-spawn(function()
-	while wait() do
-		if CmdGUI.Parent == nil then return end
-		if CmdBar.PlaceholderText ~= 'Command Bar ('..prefix..')' and ChatCmd then
-			CmdBar.PlaceholderText = 'Command Bar ('..prefix..')'
-		elseif CmdBar.PlaceholderText == 'Command Bar ('..prefix..')' and not ChatCmd then
-			CmdBar.PlaceholderText = 'Command Bar'
-		end
-	end
-end)
 
 local function plrName(plr)
 	local name = plr.Name
@@ -2811,6 +2803,7 @@ local function executeCmd(cmd, args)
 			ChatCmd = true
 			_G.settings.ChatCmd = true
 			save()
+			CmdBar.PlaceHolderText = 'Command Bar ('..prefix..')'
 			log('[Logs]: Enabled chat commands')
 			notif('Enabled chat commands')
 		else log('[Logs]: Already enabled chat commands') end
@@ -2820,6 +2813,7 @@ local function executeCmd(cmd, args)
 			ChatCmd = false
 			_G.settings.ChatCmd = false
 			save()
+			CmdBar.PlaceHolderText = 'Command Bar'
 			log('[Logs]: Disabled chat commands')
 			notif('Disabled chat commands')
 		else log('[Logs]: Already disabled chat commands') end
