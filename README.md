@@ -10,7 +10,9 @@ loadstring(game:HttpGet(('https://raw.githubusercontent.com/senorkal/ongsPrisonL
 ```
 
 ## Update Log
-### Version 1.0 (Current)
+### Current information
+> Version 1.0 (5 November 2022)
+
 > 133 commands
 
 > First public release so it may be buggy
