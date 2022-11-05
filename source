@@ -1837,7 +1837,7 @@ local function executeCmd(cmd, args)
 			Toggles.Earrape = true
 			log('[Logs]: Enabled earraping server')
 			local function playSound(tool)
-				for i = 1, 2 do
+				for i = 1, 200 do
 					if Toggles.Earrape then
 						local sound = tool.Handle.FireSound
 						local clone = sound:Clone()
