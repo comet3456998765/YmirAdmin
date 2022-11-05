@@ -168,7 +168,6 @@ CmdDesc.TextWrapped = true
 
 Instance.new('UIListLayout', CmdNotifHandler).SortOrder = Enum.SortOrder.LayoutOrder
 Instance.new('UIListLayout', CmdHandler).SortOrder = Enum.SortOrder.LayoutOrder
-Instance.new('UIAspectRatioConstraint', CmdNotifHandler).AspectRatio = 3
 --//vvv SAVE AND LOAD vvv\\--
 _G.settings = {
 	prefix = '.',
