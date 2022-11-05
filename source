@@ -203,6 +203,9 @@ local notifs = _G.settings.notifs
 local logsOpen = _G.settings.logsOpen
 local mainPos =  _G.settings.mainPos
 CmdMain.Position =  UDim2.new(mainPos.x1, mainPos.x2, mainPos.x3, mainPos.x4)
+if ChatCmd then
+	CmdBar.PlaceholderText = 'Command Bar ('..prefix..')'
+end
 ---//vvv DESTROY CLONES vvv\\---
 local introSpeed = 0.2
 local reload = false
@@ -231,9 +234,6 @@ else --//vvv INTRO vvv\\---
 	CmdTitle.TextTransparency = 1
 	CmdBar.BackgroundTransparency = 1
 	CmdBar.TextTransparency = 1
-	if ChatCmd then
-		CmdBar.PlaceholderText = 'Command Bar ('..prefix..')'
-	end
 	CmdMain.Size = UDim2.new(0,0,0,0)
 	CmdMain:TweenSize(UDim2.new(0, 200, 0, 269))
 	repeat wait() until CmdMain.Size == UDim2.new(0, 200, 0, 269)
@@ -466,6 +466,7 @@ Cmd[#Cmd + 1] = {Name='gun / guns',Desc='Adds possibly all guns to your backpack
 Cmd[#Cmd + 1] = {Name='autogun / autoguns',Desc='Automatically adds possibly all guns to your backpack'}
 Cmd[#Cmd + 1] = {Name='unautogun / unautoguns',Desc='Disables autoguns'}
 Cmd[#Cmd + 1] = {Name='oneshotgun',Desc='Makes your gun one shot'}
+Cmd[#Cmd + 1] = {Name='firerate <num>',Desc="Changes the firerate of the gun you're holding"}
 Cmd[#Cmd + 1] = {Name='autofire / rapidfire',Desc='Makes your gun shoot really fast'}
 Cmd[#Cmd + 1] = {Name='superfire / supergun',Desc='Makes your gun super as possible'}
 Cmd[#Cmd + 1] = {Name='unsuperfire / normalfire',Desc='Disables superfire'}
@@ -2453,6 +2454,18 @@ local function executeCmd(cmd, args)
 				req.Bullets = 25
 				req.Damage = math.huge
 				log('[Logs]: Made '..tool.Name..' one shot')
+			else log('[Logs]: Equip a gun before using this command') end
+		else log('[Logs]: Equip a gun before using this command') end
+	elseif cmd == 'firerate' then
+		local plr = game.Players.LocalPlayer
+		if plr.Character:FindFirstChildOfClass('Tool') then
+			local tool = plr.Character:FindFirstChildOfClass('Tool')
+			if tool:FindFirstChild('GunStates') then
+				if args[1] and tonumber(args[1]) then
+					local req = require(tool.GunStates)
+					req.FireRate = tonumber(args[1])
+					log('[Logs]: Set fire rate for '..tool.Name..' to '..args[1])
+				else log('[Logs]: Input a valid number') end
 			else log('[Logs]: Equip a gun before using this command') end
 		else log('[Logs]: Equip a gun before using this command') end
 	elseif cmd == 'autofire' or cmd == 'rapidfire' then
