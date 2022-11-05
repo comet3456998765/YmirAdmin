@@ -2040,12 +2040,14 @@ local function executeCmd(cmd, args)
 			while wait() do
 				if Toggles.AntiShield then
 					for _, plr in pairs(game.Players:GetChildren()) do
-						if plr.Character and plr.Character.Torso:FindFirstChild('ShieldFolder') then
-							plr.Character.Torso.ShieldFolder.shield.Transparency = 1
-							plr.Character.Torso.ShieldFolder.shield.Mesh.MeshId = ''
-							plr.Character.Torso.ShieldFolder.shield.CanCollide = false
-							plr.Character.Torso.ShieldFolder.shield.Size = Vector3.new(0,0,0)
-						end
+						pcall(function()
+							if plr.Character.Torso:FindFirstChild('ShieldFolder') then
+								plr.Character.Torso.ShieldFolder.shield.Transparency = 1
+								plr.Character.Torso.ShieldFolder.shield.Mesh.MeshId = ''
+								plr.Character.Torso.ShieldFolder.shield.CanCollide = false
+								plr.Character.Torso.ShieldFolder.shield.Size = Vector3.new(0,0,0)
+							end
+						end)
 					end
 				end
 			end
