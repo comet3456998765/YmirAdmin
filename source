@@ -294,7 +294,13 @@ local function log(txt)
 	local clone = CmdNotifExample:Clone()
 	clone.Text = txt
 	clone.Name = 'CmdNotification'
+	clone.TextTransparency = 1
 	clone.Parent = CmdNotifHandler
+	spawn(function()
+		repeat wait()
+			clone.TextTransparency = clone.TextTransparency - introSpeed
+		until clone.TextTransparency <= 0
+	end)
 end
 
 local function toggleLogs(tog)
@@ -540,6 +546,13 @@ Mouse.Move:Connect(function()
 		CmdDescBox.Visible = false
 	end
 end)
+
+if reload then
+	notif('Reloaded admin commands', true)
+	log('[Logs]: Reloaded admin commands')
+else 
+	log('[Logs]: Loaded admin commands')
+end
 --//vvv COMMAND FUNCTIONS vvv\\--
 -- variables --
 local PlrsLoopKilled = {}
@@ -2941,10 +2954,3 @@ spawn(function()
 		end
 	end
 end)
-
-if reload == false then 
-	log('[Logs]: Loaded admin commands')
-else 
-	notif('Reloaded admin commands', true)
-	log('[Logs]: Reloaded admin commands')
-end
