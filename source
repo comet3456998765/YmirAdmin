@@ -374,13 +374,13 @@ Cmd[#Cmd + 1] = {Name='arrestall',Desc='Arrests all players if possible'}
 Cmd[#Cmd + 1] = {Name='looparrest / spamarrest <plr>',Desc='Loop arrests the player (Causes lag)'}
 Cmd[#Cmd + 1] = {Name='arrestaura',Desc='Arrests everyone who is near you'}
 Cmd[#Cmd + 1] = {Name='noarrestaura / unarrestaura',Desc='Disables arrest aura'}
-Cmd[#Cmd + 1] = {Name='kill <plr / team / all>',Desc='Kills the player (Will switch to neutral team if player is in your team)'}
+Cmd[#Cmd + 1] = {Name='kill <plr / team / all>',Desc='Kills the player/team or all players if you choose all'}
 Cmd[#Cmd + 1] = {Name='killenemy / killenemies',Desc='Kills all players who are not in your team'}
-Cmd[#Cmd + 1] = {Name='loopkill / lk <plr / team / all>',Desc='Loop kills the player (Will switch to neutral team if player is in your team)'}
-Cmd[#Cmd + 1] = {Name='loopkillall',Desc='Loop kills all players (Will switch to neutral team)'}
-Cmd[#Cmd + 1] = {Name='loopkillguard / loopkillguards',Desc='Loop kills all players in the guard team (Will switch to neutral team if you are in guard team)'}
-Cmd[#Cmd + 1] = {Name='loopkillinmate / loopkillinmates',Desc='Loop kills all players in the inmate team (Will switch to neutral team if you are in inmate team)'}
-Cmd[#Cmd + 1] = {Name='loopkillcriminal / loopkillcriminals',Desc='Loop kills all players in the criminal team (Will switch to neutral team if you are in criminal team)'}
+Cmd[#Cmd + 1] = {Name='loopkill / lk <plr / team / all>',Desc='Loop kills the player / team or all players if you choose all'}
+Cmd[#Cmd + 1] = {Name='loopkillall',Desc='Loop kills all players'}
+Cmd[#Cmd + 1] = {Name='loopkillguard / loopkillguards',Desc='Loop kills all players in the guard team'}
+Cmd[#Cmd + 1] = {Name='loopkillinmate / loopkillinmates',Desc='Loop kills all players in the inmate team'}
+Cmd[#Cmd + 1] = {Name='loopkillcriminal / loopkillcriminals',Desc='Loop kills all players in the criminal team'}
 Cmd[#Cmd + 1] = {Name='loopkillenemy / loopkillenemies',Desc='Loop kills all players who are not in your team'}
 Cmd[#Cmd + 1] = {Name='unloopkill / unlk <plr / team / all>',Desc='Disables loopkilling the player'}
 Cmd[#Cmd + 1] = {Name='unloopkillall',Desc='Disables loopkilling all players'}
@@ -406,7 +406,7 @@ Cmd[#Cmd + 1] = {Name='white',Desc='Join the custom white team'}
 Cmd[#Cmd + 1] = {Name='grey',Desc='Join the custom grey team'}
 Cmd[#Cmd + 1] = {Name='brown',Desc='Join the custom brown team'}
 Cmd[#Cmd + 1] = {Name='black',Desc='Join the custom black team'}
-Cmd[#Cmd + 1] = {Name='makecriminal / makecrim <plr>',Desc='Makes player join the criminal team (Requires respawn)'}
+Cmd[#Cmd + 1] = {Name='makecriminal / makecrim <plr>',Desc='Makes player join the criminal team'}
 Cmd[#Cmd + 1] = {Name='makecriminalall / makecrimall',Desc='Makes all players join the criminal team'}
 Cmd[#Cmd + 1] = {Name='lag <duration>',Desc='Lags for an amount of time'}
 Cmd[#Cmd + 1] = {Name='crash / lagserver',Desc='Lags and disconnects the server'}
@@ -415,7 +415,7 @@ Cmd[#Cmd + 1] = {Name='fpslag / lagspike',Desc="Makes all players' FPS decrease 
 Cmd[#Cmd + 1] = {Name='unfpslag / unlagspike',Desc='Stops FPS spiking'}
 Cmd[#Cmd + 1] = {Name='infstamina',Desc="Enables infinite stamina"}
 Cmd[#Cmd + 1] = {Name='uninfstamina / noinfstamina',Desc='Disables infinite stamina'}
-Cmd[#Cmd + 1] = {Name='earrape',Desc="Annoy the shit out of players (Causes lag)"}
+Cmd[#Cmd + 1] = {Name='earrape',Desc="Annoy the shit out of players (You won't be able to hear the sounds)"}
 Cmd[#Cmd + 1] = {Name='unearrape / noearrape',Desc='Disables earrape'}
 Cmd[#Cmd + 1] = {Name='reset / oof',Desc='Reset your character'}
 Cmd[#Cmd + 1] = {Name='respawn / res',Desc='Respawns you on a spawn location'}
@@ -427,7 +427,7 @@ Cmd[#Cmd + 1] = {Name='ungod / ungodmode',Desc='Disables god mode'}
 Cmd[#Cmd + 1] = {Name='swatgod',Desc='Grants immunity by spamming swat vest (Guard team only and requires SWAT gamepass)'}
 Cmd[#Cmd + 1] = {Name='unswatgod',Desc='Disables swat god mode'}
 Cmd[#Cmd + 1] = {Name='goto / to <plr>',Desc='Teleports you to the player'}
-Cmd[#Cmd + 1] = {Name='bring <plr / team / all>',Desc='Teleports the player to you (Requires respawn)'}
+Cmd[#Cmd + 1] = {Name='bring <plr / team / all>',Desc='Teleports the player/team to you or all players if you choose all'}
 Cmd[#Cmd + 1] = {Name='loopbring <plr>',Desc='Loop teleports the player to your position'}
 Cmd[#Cmd + 1] = {Name='unloopbring <plr>',Desc='Disables loop bringing the player'}
 Cmd[#Cmd + 1] = {Name='view / spectate <plr>',Desc='Spectates the player'}
@@ -446,7 +446,7 @@ Cmd[#Cmd + 1] = {Name='freepunch',Desc='Running or crawling will not affect punc
 Cmd[#Cmd + 1] = {Name='unfreepunch / nofreepunch',Desc='Disables free punching'}
 Cmd[#Cmd + 1] = {Name='superpunch / allpunch',Desc='Enables fast, free, and one punching'}
 Cmd[#Cmd + 1] = {Name='nosuperpunch / noallpunch',Desc='Disables super punching'}
-Cmd[#Cmd + 1] = {Name='keycard / key / card',Desc='Finds for key card or you get killed until you spawn a keycard'}
+Cmd[#Cmd + 1] = {Name='keycard / key / card',Desc='Finds for key card or you spawn a key card and auto pick it up'}
 Cmd[#Cmd + 1] = {Name='findkeycard / findkey ',Desc='Finds for a key card'}
 Cmd[#Cmd + 1] = {Name='crudeknife / knife',Desc='Adds crude knife to your backpack'}
 Cmd[#Cmd + 1] = {Name='superknife / oneshotknife',Desc='Adds one shot knife to your backpack'}
@@ -463,9 +463,9 @@ Cmd[#Cmd + 1] = {Name='unautogun / unautoguns',Desc='Disables autoguns'}
 Cmd[#Cmd + 1] = {Name='oneshotgun',Desc='Makes your gun one shot'}
 Cmd[#Cmd + 1] = {Name='firerate <num>',Desc="Changes the firerate of the gun you're holding"}
 Cmd[#Cmd + 1] = {Name='autofire / rapidfire',Desc='Makes your gun shoot really fast'}
-Cmd[#Cmd + 1] = {Name='superfire / supergun',Desc='Makes your gun super as possible'}
+Cmd[#Cmd + 1] = {Name='superfire / supergun',Desc="Enables all gun mods for the gun you're holding"}
 Cmd[#Cmd + 1] = {Name='unsuperfire / normalfire',Desc='Disables superfire'}
-Cmd[#Cmd + 1] = {Name='autosuperfire / autosuperguns',Desc='Automatically makes all your guns super as possible'}
+Cmd[#Cmd + 1] = {Name='autosuperfire / autosuperguns',Desc='Auto enables all gun mods for all your guns'}
 Cmd[#Cmd + 1] = {Name='unautosuperfire / unautosuperguns',Desc='Disables autosuperfire'}
 Cmd[#Cmd + 1] = {Name='gate / frontgate',Desc='Teleports you to the gate'}
 Cmd[#Cmd + 1] = {Name='opengate / openfrontgate',Desc='Opens the gate'}
@@ -474,12 +474,12 @@ Cmd[#Cmd + 1] = {Name='gatetower',Desc='Teleports you to the tower beside the ga
 Cmd[#Cmd + 1] = {Name='tower',Desc='Teleports you to the tower on yard'}
 Cmd[#Cmd + 1] = {Name='yard',Desc='Teleports you to the yard'}
 Cmd[#Cmd + 1] = {Name='armory / guardroom',Desc='Teleports you to the armory'}
-Cmd[#Cmd + 1] = {Name='nexus / prison',Desc='Teleports you to the nexus'}
-Cmd[#Cmd + 1] = {Name='backnexus',Desc='Teleports you to the back of the nexus'}
-Cmd[#Cmd + 1] = {Name='sewer / sewers',Desc='Teleports you to the sewer'}
-Cmd[#Cmd + 1] = {Name='cafeteria / cafe',Desc='Teleports you to the cafeteria'}
+Cmd[#Cmd + 1] = {Name='nexus / prison',Desc='Teleports you in the nexus'}
+Cmd[#Cmd + 1] = {Name='backnexus',Desc='Teleports you in the back of the nexus'}
+Cmd[#Cmd + 1] = {Name='sewer / sewers',Desc='Teleports you in the sewer'}
+Cmd[#Cmd + 1] = {Name='cafeteria / cafe',Desc='Teleports you in the cafeteria'}
 Cmd[#Cmd + 1] = {Name='roof',Desc='Teleports you to the roof'}
-Cmd[#Cmd + 1] = {Name='criminalbase / crimbase',Desc='Teleports you to the base'}
+Cmd[#Cmd + 1] = {Name='criminalbase / crimbase',Desc='Teleports you in the criminal base'}
 Cmd[#Cmd + 1] = {Name='antifall / antivoid',Desc='Teleports you above if you almost fall to the void'}
 Cmd[#Cmd + 1] = {Name='unantifall / unantivoid',Desc='Disables antifall'}
 Cmd[#Cmd + 1] = {Name='rejoin / rj',Desc='Rejoin the server'}
