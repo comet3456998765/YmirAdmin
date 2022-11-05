@@ -417,7 +417,7 @@ Cmd[#Cmd + 1] = {Name='fpslag / lagspike',Desc="Makes all players' FPS decrease 
 Cmd[#Cmd + 1] = {Name='unfpslag / unlagspike',Desc='Stops FPS spiking'}
 Cmd[#Cmd + 1] = {Name='infstamina',Desc="Enables infinite stamina"}
 Cmd[#Cmd + 1] = {Name='uninfstamina / noinfstamina',Desc='Disables infinite stamina'}
-Cmd[#Cmd + 1] = {Name='earrape',Desc="Annoy the shit out of players"}
+Cmd[#Cmd + 1] = {Name='earrape',Desc="Annoy the shit out of players (Causes lag)"}
 Cmd[#Cmd + 1] = {Name='unearrape / noearrape',Desc='Disables earrape'}
 Cmd[#Cmd + 1] = {Name='reset / oof',Desc='Reset your character'}
 Cmd[#Cmd + 1] = {Name='respawn / res',Desc='Respawns you on a spawn location'}
@@ -1837,15 +1837,17 @@ local function executeCmd(cmd, args)
 			Toggles.Earrape = true
 			log('[Logs]: Enabled earraping server')
 			local function playSound(tool)
-				if Toggles.Earrape then
-					local sound = tool.Handle.FireSound
-					local clone = sound:Clone()
-					clone.Parent = sound.Parent
-					clone:Play()
-					local event = game.ReplicatedStorage.SoundEvent
-					event:FireServer(sound, tool)
-					repeat wait() until not clone.IsPlaying
-					clone:Destroy()
+				for i = 1, 500 do
+					if Toggles.Earrape then
+						local sound = tool.Handle.FireSound
+						local clone = sound:Clone()
+						clone.Parent = sound.Parent
+						clone:Play()
+						local event = game.ReplicatedStorage.SoundEvent
+						event:FireServer(sound, tool)
+						repeat wait() until not clone.IsPlaying
+						clone:Destroy()
+					end
 				end
 			end
 			while wait() do
@@ -1869,7 +1871,7 @@ local function executeCmd(cmd, args)
 						for _, tool in game.Players.LocalPlayer.Character:GetChildren() do
 							if Toggles.Earrape then
 								if tool:FindFirstChild('GunStates') then
-									for i = 1, 200 do
+									for i = 1, 500 do
 										spawn(function()
 											if Toggles.Earrape then
 												playSound(tool)
