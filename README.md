@@ -14,7 +14,7 @@ loadstring(game:HttpGet(('https://raw.githubusercontent.com/senorkal/ongsPrisonL
 
 > 130 commands
 
-> First public release so it may be buggy
+> First public release so it may be buggy, on the way to tweak and fix buggy commands
 
 > Unobfuscated
 
