@@ -9,8 +9,7 @@ The best admin commands script for Prison Life with over 100 commands.
 loadstring(game:HttpGet(('https://raw.githubusercontent.com/senorkal/ongsPrisonLifeAdmin/main/source'),true))() 
 ```
 
-## Update Log
-### Current information
+## Current information
 > Version 1.0 (5 November 2022)
 
 > 133 commands
