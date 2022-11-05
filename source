@@ -7,7 +7,7 @@ local HttpService = game:GetService('HttpService')
 local CmdGUI = Instance.new('ScreenGui')
 CmdGUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 CmdGUI.Parent = GuiService
-CmdGUI.Enabled = false
+CmdGUI.Enabled = false\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 local CmdMain = Instance.new('Frame')
 CmdMain.Name = 'CmdMain'
@@ -232,7 +232,7 @@ else --//vvv INTRO vvv\\---
 	CmdBar.BackgroundTransparency = 1
 	CmdBar.TextTransparency = 1
 	if ChatCmd then
-		CmdBar.PlaceHolderText = 'Command Bar ('..prefix..')'
+		CmdBar.PlaceholderText = 'Command Bar ('..prefix..')'
 	end
 	CmdMain.Size = UDim2.new(0,0,0,0)
 	CmdMain:TweenSize(UDim2.new(0, 200, 0, 269))
@@ -2776,6 +2776,7 @@ local function executeCmd(cmd, args)
 				prefix = args[1]
 				_G.settings.prefix = args[1]
 				save()
+				if ChatCmd then CmdBar.PlaceHolderText = 'Command Bar ('..args[1]..')' end
 				log('[Logs]: Set prefix to '..args[1])
 			else log('[Logs]: Already set prefix to '..args[1]) end
 		else 
@@ -2803,7 +2804,7 @@ local function executeCmd(cmd, args)
 			ChatCmd = true
 			_G.settings.ChatCmd = true
 			save()
-			CmdBar.PlaceHolderText = 'Command Bar ('..prefix..')'
+			CmdBar.PlaceholderText = 'Command Bar ('..prefix..')'
 			log('[Logs]: Enabled chat commands')
 			notif('Enabled chat commands')
 		else log('[Logs]: Already enabled chat commands') end
@@ -2813,7 +2814,7 @@ local function executeCmd(cmd, args)
 			ChatCmd = false
 			_G.settings.ChatCmd = false
 			save()
-			CmdBar.PlaceHolderText = 'Command Bar'
+			CmdBar.PlaceholderText = 'Command Bar'
 			log('[Logs]: Disabled chat commands')
 			notif('Disabled chat commands')
 		else log('[Logs]: Already disabled chat commands') end
