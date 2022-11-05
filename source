@@ -417,6 +417,8 @@ Cmd[#Cmd + 1] = {Name='fpslag / lagspike',Desc="Makes all players' FPS decrease 
 Cmd[#Cmd + 1] = {Name='unfpslag / unlagspike',Desc='Stops FPS spiking'}
 Cmd[#Cmd + 1] = {Name='infstamina',Desc="Enables infinite stamina"}
 Cmd[#Cmd + 1] = {Name='uninfstamina / noinfstamina',Desc='Disables infinite stamina'}
+Cmd[#Cmd + 1] = {Name='earrape',Desc="Annoy the shit out of players"}
+Cmd[#Cmd + 1] = {Name='unearrape / noearrape',Desc='Disables earrape'}
 Cmd[#Cmd + 1] = {Name='reset / oof',Desc='Reset your character'}
 Cmd[#Cmd + 1] = {Name='respawn / res',Desc='Respawns you on a spawn location'}
 Cmd[#Cmd + 1] = {Name='refresh / re',Desc='Respawns you on your old location'}
@@ -1830,6 +1832,51 @@ local function executeCmd(cmd, args)
 			workspace.CurrentCamera.CFrame = camCF
 			log('[Logs]: Disabled infinite stamina')
 		else log('[Logs]: Already disabled infinite stamina') end
+	elseif cmd == 'earrape' then
+		if not Toggles.Earrape then
+			Toggles.Earrape = true
+			log('[Logs]: Enabled earraping server')
+			local function playSound(tool)
+				local sound = tool.Handle.FireSound
+				local clone = sound:Clone()
+				local deb = game:GetService('Debris')
+				clone.Parent = sound.Parent
+				clone:Play()
+				local event = game.ReplicatedStorage.SoundEvent
+				event:FireServer(sound, tool)
+			end
+			while wait() do
+				if Toggles.Earrape then
+					if #game.Players.LocalPlayer.Backpack:GetChildren() < 3 then
+						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['M9'].ITEMPICKUP)
+						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['AK-47'].ITEMPICKUP)
+						if SWAT then
+							workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['M4A1'].ITEMPICKUP)
+						end
+					end
+					for _, tool in game.Players.LocalPlayer.Backpack:GetChildren() do
+						if Toggles.Earrape then
+							if tool:FindFirstChild('GunStates') then
+								tool.Parent = game.Players.LocalPlayer.Character
+							end
+						end
+					end
+					for _, tool in game.Players.LocalPlayer.Character:GetChildren() do
+						if Toggles.Earrape then
+							if tool:FindFirstChild('GunStates') then
+								playSound(tool)
+							end
+						end
+					end
+				end
+			end
+		else log('[Logs]: Already enabled earraping server') end
+	elseif cmd == 'unearrape' or cmd == 'noearrape' then
+		if Toggles.Earrape then
+			Toggles.Earrape = false
+			log('[Logs]: Disabled earraping server')
+		else log('[Logs]: Already disabled earraping server') end
 	elseif cmd == 'reset' or cmd == 'oof ' then
 		game.Players.LocalPlayer.Character:BreakJoints()
 		log('[Logs]: Successfully reset')
@@ -1948,8 +1995,8 @@ local function executeCmd(cmd, args)
 			if plr then
 				if plr.Name ~= game.Players.LocalPlayer.Name then
 					if not Toggles.LoopBring then
-					log('[Logs]: Loop bringing '..plrName(plr))
-					Toggles.LoopBring = {true, plr}
+						log('[Logs]: Loop bringing '..plrName(plr))
+						Toggles.LoopBring = {true, plr}
 						while wait() do
 							if workspace[plr.Name] and Toggles.LoopBring then
 								local details = plrDetails()
@@ -2765,7 +2812,7 @@ end
 CmdNotifHandler.ChildAdded:Connect(function(i)
 	CmdNotifHandler.CanvasPosition = Vector2.new(0, 99999)
 end)
- 
+
 CmdBar.Changed:Connect(function()
 	if CmdGUI.Parent ~= nil then
 		if CmdBar.Text ~= '' then
