@@ -1747,7 +1747,9 @@ local function executeCmd(cmd, args)
 								local h = v.Character.Head
 								for i = 1, 15 do
 									spawn(function()
-										game:GetService("ReplicatedStorage").SoundEvent:FireServer(s, h)
+										if Toggles.Earrape then
+											game:GetService("ReplicatedStorage").SoundEvent:FireServer(s, h)
+										end
 									end)
 								end
 							end)
