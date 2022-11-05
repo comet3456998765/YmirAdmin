@@ -52,7 +52,7 @@ CmdNotifHandler.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 CmdNotifHandler.BorderSizePixel = 0
 CmdNotifHandler.Position = UDim2.new(0.0331288725, 0, 0.207801834, 0)
 CmdNotifHandler.Size = UDim2.new(0.966870666, 0, 0.785972178, 0)
-CmdNotifHandler.CanvasSize = UDim2.new(1, 0, 0, 0)
+CmdNotifHandler.CanvasSize = UDim2.new(0.1, 0, 0.1, 0)
 CmdNotifHandler.AutomaticCanvasSize = 'Y'
 CmdNotifHandler.ScrollingDirection = 'Y'
 CmdNotifHandler.ScrollBarThickness = 6
@@ -292,12 +292,13 @@ end
 
 
 local function log(txt)
-	local clone = CmdNotifExample:Clone()
-	clone.Text = txt
-	clone.Name = 'CmdNotification'
-	clone.TextTransparency = 1
-	clone.Parent = CmdNotifHandler
 	spawn(function()
+		local clone = CmdNotifExample:Clone()
+		clone.Text = txt
+		clone.Name = 'CmdNotification'
+		clone.TextTransparency = 1
+		clone.Parent = CmdNotifHandler
+		CmdNotifHandler.CanvasPosition = Vector2.new(0, 99999)
 		repeat wait()
 			clone.TextTransparency = clone.TextTransparency - introSpeed
 		until clone.TextTransparency <= 0
@@ -2760,10 +2761,6 @@ local function executeCmd(cmd, args)
 	end
 end
 --//vvv GUI FUNCTIONS vvv\\--
-CmdNotifHandler.ChildAdded:Connect(function()
-	CmdNotifHandler.CanvasPosition = Vector2.new(0, 9999)
-end)
-
 CmdBar.Changed:Connect(function()
 	if CmdGUI.Parent ~= nil then
 		if CmdBar.Text ~= '' then
