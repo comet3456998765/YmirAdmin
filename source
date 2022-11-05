@@ -2040,14 +2040,12 @@ local function executeCmd(cmd, args)
 			while wait() do
 				if Toggles.AntiShield then
 					for _, plr in pairs(game.Players:GetChildren()) do
-						pcall(function()
-							if plr.Character.Torso:FindFirstChild('ShieldFolder') and plr.Character.Torso.ShieldFolder:FindFirstChild('shield') then
-								plr.Character.Torso.ShieldFolder.shield.Transparency = 1
-								plr.Character.Torso.ShieldFolder.shield.Mesh.MeshId = ''
-								plr.Character.Torso.ShieldFolder.shield.CanCollide = false
-								plr.Character.Torso.ShieldFolder.shield.Size = Vector3.new(0,0,0)
-							end
-						end)
+						if workspace:FindFirstChild(plr.Name) and workspace[plr.Name].Torso:FindFirstChild('ShieldFolder') and workspace[plr.Name].Torso.ShieldFolder:FindFirstChild('shield') then
+							plr.Character.Torso.ShieldFolder.shield.Transparency = 1
+							plr.Character.Torso.ShieldFolder.shield.Mesh.MeshId = ''
+							plr.Character.Torso.ShieldFolder.shield.CanCollide = false
+							plr.Character.Torso.ShieldFolder.shield.Size = Vector3.new(0,0,0)
+						end
 					end
 				end
 			end
@@ -2057,7 +2055,7 @@ local function executeCmd(cmd, args)
 			log('[Logs]: Disabled anti sheilds')
 			Toggles.AntiShield = false
 			for _, plr in pairs(game.Players:GetChildren()) do
-				if workspace:FindFirstChild(plr.Name) and workspace[plr.Name].Torso:FindFirstChild('ShieldFolder') then
+				if workspace:FindFirstChild(plr.Name) and workspace[plr.Name].Torso:FindFirstChild('ShieldFolder') and workspace[plr.Name].Torso.ShieldFolder:FindFirstChild('shield') then
 					workspace[plr.Name].Torso.ShieldFolder.shield.Transparency = 0
 					workspace[plr.Name].Torso.ShieldFolder.shield.Mesh.MeshId = 'rbxassetid://82265009'
 					workspace[plr.Name].Torso.ShieldFolder.shield.CanCollide = true
