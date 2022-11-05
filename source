@@ -52,9 +52,10 @@ CmdNotifHandler.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 CmdNotifHandler.BorderSizePixel = 0
 CmdNotifHandler.Position = UDim2.new(0.0331288725, 0, 0.207801834, 0)
 CmdNotifHandler.Size = UDim2.new(0.966870666, 0, 0.785972178, 0)
-CmdNotifHandler.CanvasSize = UDim2.new(0, 0, 0, 0)
+CmdNotifHandler.CanvasSize = UDim2.new(1, 0, 1, 0)
 CmdNotifHandler.AutomaticCanvasSize = 'Y'
 CmdNotifHandler.ScrollingDirection = 'Y'
+CmdNotifHandler.ScrollBarThickness = 6
 
 local CmdNotifLayout = Instance.new('UIListLayout')
 CmdNotifLayout.Parent = CmdNotifHandler
@@ -2760,7 +2761,10 @@ local function executeCmd(cmd, args)
 end
 --//vvv GUI FUNCTIONS vvv\\--
 CmdNotifHandler.ChildAdded:Connect(function(i)
-	CmdNotifHandler.CanvasPosition = Vector2.new(0, 99999)
+	for i = 1, 9999 do
+		CmdNotifHandler.CanvasPosition = Vector2.new(0,i)
+		wait()
+	end
 end)
 
 CmdBar.Changed:Connect(function()
