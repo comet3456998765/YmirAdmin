@@ -463,10 +463,10 @@ Cmd[#Cmd + 1] = {Name='unautogun / unautoguns',Desc='Disables autoguns'}
 Cmd[#Cmd + 1] = {Name='oneshotgun',Desc='Makes your gun one shot'}
 Cmd[#Cmd + 1] = {Name='firerate <num>',Desc="Changes the firerate of the gun you're holding"}
 Cmd[#Cmd + 1] = {Name='autofire / rapidfire',Desc='Makes your gun shoot really fast'}
-Cmd[#Cmd + 1] = {Name='superfire / supergun',Desc="Enables all gun mods for the gun you're holding"}
-Cmd[#Cmd + 1] = {Name='unsuperfire / normalfire',Desc='Disables superfire'}
-Cmd[#Cmd + 1] = {Name='autosuperfire / autosuperguns',Desc='Auto enables all gun mods for all your guns'}
-Cmd[#Cmd + 1] = {Name='unautosuperfire / unautosuperguns',Desc='Disables autosuperfire'}
+Cmd[#Cmd + 1] = {Name='modgun / supergun',Desc="Enables all gun mods for the gun you're holding"}
+Cmd[#Cmd + 1] = {Name='unmodgun / unsupergun',Desc="Disables gun mods for the gun you're holding"}
+Cmd[#Cmd + 1] = {Name='automodguns / autosuperguns',Desc='Auto enables all gun mods for all your guns'}
+Cmd[#Cmd + 1] = {Name='unautomodguns / unautosuperguns',Desc='Disables auto gun mods'}
 Cmd[#Cmd + 1] = {Name='gate / frontgate',Desc='Teleports you to the gate'}
 Cmd[#Cmd + 1] = {Name='opengate / openfrontgate',Desc='Opens the gate'}
 Cmd[#Cmd + 1] = {Name='gateroom',Desc='Teleports you in the gateroom'}
@@ -544,7 +544,7 @@ end)
 -- variables --
 local PlrsLoopKilled = {}
 local PlrsLoopTased = {}
-local GunsSuperFire = {}
+local GunsAutoModded = {}
 local Toggles = {}
 local PlrSpectated = nil
 local punchCooldown
@@ -2380,12 +2380,12 @@ local function executeCmd(cmd, args)
 				log('[Logs]: Made '..tool.Name..' rapid fire')
 			else log('[Logs]: Equip a gun before using this command') end
 		else log('[Logs]: Equip a gun before using this command') end
-	elseif cmd == 'superfire' or cmd == 'supergun' then
+	elseif cmd == 'modgun' or cmd == 'supergun' then
 		local plr = game.Players.LocalPlayer
 		if plr.Character:FindFirstChildOfClass('Tool') then
 			local tool = plr.Character:FindFirstChildOfClass('Tool')
 			if tool:FindFirstChild('GunStates') then
-				if not GunsSuperFire[tool.Name] then
+				if not GunsAutoModded[tool.Name] then
 					local req = require(tool.GunStates)
 					req.MaxAmmo = req.MaxAmmo
 					req.StoredAmmo = req.StoredAmmo
@@ -2397,18 +2397,18 @@ local function executeCmd(cmd, args)
 					req.Bullets = 1
 					req.Spread = 0
 					req.AutoFire = true
-					GunsSuperFire[tool.Name] = true
-					log('[Logs]: Enabled superfire for '..tool.Name)
-				else log('[Logs]: Already enabled superfire for '..tool.Name) end
+					GunsAutoModded[tool.Name] = true
+					log('[Logs]: Enabled gun mods for '..tool.Name)
+				else log('[Logs]: Already enabled gun mods for '..tool.Name) end
 			else log('[Logs]: Equip a gun before using this command') end
 		else log('[Logs]: Equip a gun before using this command') end
-	elseif cmd == 'normalfire' or cmd == 'normalgun' or cmd == 'unsuperfire' or cmd == 'unsupergun'  or cmd == 'nosuperfire' or cmd == 'nosupergun' then
+	elseif cmd == 'unmodgun' or cmd == 'unsupergun'  then
 		local plr = game.Players.LocalPlayer
 		if plr.Character:FindFirstChildOfClass('Tool') then
 			local tool = plr.Character:FindFirstChildOfClass('Tool')
 			if tool:FindFirstChild('GunStates') then
-				if GunsSuperFire[tool.Name] then
-					GunsSuperFire[tool.Name] = nil
+				if GunsAutoModded[tool.Name] then
+					GunsAutoModded[tool.Name] = nil
 					tool.Handle:Destroy()
 					local par = tool.Parent
 					repeat wait() until not tool:FindFirstChild('Handle')
@@ -2416,17 +2416,17 @@ local function executeCmd(cmd, args)
 					tool:Destroy()				
 					workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[tool.Name].ITEMPICKUP)
 					plr.Backpack[tool.Name].Parent = par
-					log('[Logs]: Disabled superfire for '..tool.Name)
-				else log('[Logs]: Already disabled superfire for '..tool.Name) end
+					log('[Logs]: Disabled gun mods for '..tool.Name)
+				else log('[Logs]: Already disabled gun mods for '..tool.Name) end
 			else log('[Logs]: Equip a gun before using this command') end
 		else log('[Logs]: Equip a gun before using this command') end
-	elseif cmd == 'autosuperfire' or cmd == 'autosuperguns' then
-		if not Toggles.AutoSuperfire then
+	elseif cmd == 'automodguns' or cmd == 'autosuperguns' then
+		if not Toggles.AutoModGuns then
 			local plr = game.Players.LocalPlayer
-			Toggles.AutoSuperfire = true
-			log('[Logs]: Enabled auto superfire')
+			Toggles.AutoModGuns = true
+			log('[Logs]: Enabled auto mod guns')
 			plr.Backpack.ChildAdded:Connect(function(tool)
-				if Toggles.AutoSuperfire then
+				if Toggles.AutoModGuns then
 					if tool:FindFirstChild('GunStates') then
 						local req = require(tool.GunStates)
 						req.MaxAmmo = req.MaxAmmo
@@ -2439,7 +2439,7 @@ local function executeCmd(cmd, args)
 						req.Bullets = 1
 						req.Spread = 0
 						req.AutoFire = true
-						GunsSuperFire[tool.Name] = true
+						GunsAutoModded[tool.Name] = true
 						tool.Parent = plr.Character
 						plr.Character[tool.Name] = plr.Backpack
 					end
@@ -2447,7 +2447,7 @@ local function executeCmd(cmd, args)
 			end)
 			if plr.Character:FindFirstChildOfClass('Tool') and plr.Character:FindFirstChildOfClass('Tool'):FindFirstChild('GunStates') then
 				local tool = plr.Character:FindFirstChildOfClass('Tool')
-				if not GunsSuperFire[tool.Name] then
+				if not GunsAutoModded[tool.Name] then
 					local req = require(tool.GunStates)
 					req.MaxAmmo = req.MaxAmmo
 					req.StoredAmmo = req.StoredAmmo
@@ -2459,7 +2459,7 @@ local function executeCmd(cmd, args)
 					req.Bullets = 1
 					req.Spread = 0
 					req.AutoFire = true
-					GunsSuperFire[tool.Name] = true
+					GunsAutoModded[tool.Name] = true
 				end
 			end
 			for _, tool in pairs(plr.Backpack:GetChildren()) do
@@ -2475,14 +2475,14 @@ local function executeCmd(cmd, args)
 					req.Bullets = 1
 					req.Spread = 0
 					req.AutoFire = true
-					GunsSuperFire[tool.Name] = true
+					GunsAutoModded[tool.Name] = true
 				end
 			end
-		else log('[Logs]: Already enabled auto superfire') end
-	elseif cmd == 'unautosuperfire' or cmd == 'unautosuperguns' then
-		if Toggles.AutoSuperfire then
-			Toggles.AutoSuperfire = false
-			GunsSuperFire = {}
+		else log('[Logs]: Already enabled auto mod guns') end
+	elseif cmd == 'unautomodguns' or cmd == 'unautosuperguns' then
+		if Toggles.AutoModGuns then
+			Toggles.AutoModGuns = false
+			GunsAutoModded = {}
 			local plr = game.Players.LocalPlayer
 			if plr.Character:FindFirstChildOfClass('Tool') and plr.Character:FindFirstChildOfClass('Tool'):FindFirstChild('GunStates') then
 				local tool = plr.Character:FindFirstChildOfClass('Tool')
@@ -2505,8 +2505,8 @@ local function executeCmd(cmd, args)
 					plr.Backpack[tool.Name].Parent = par
 				end
 			end
-			log('[Logs]: Disabled auto superfire')
-		else log('[Logs]: Already disabled auto superfire') end
+			log('[Logs]: Disabled auto mod guns')
+		else log('[Logs]: Already disabled auto mod guns') end
 	elseif cmd == 'gate' or cmd == 'frontgate' then
 		local dest = CFrame.new(492.763, 98.039917, 2216.74878)
 		if game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Position ~= dest.Position then
@@ -2737,7 +2737,7 @@ local function executeCmd(cmd, args)
 	elseif cmd == 'reloadgui' or cmd == 'reloadscript' then
 		loadstring(game:HttpGet(('https://raw.githubusercontent.com/senorkal/ongsPrisonLifeAdmin/main/source'),true))() 
 	elseif cmd == 'destroygui' or cmd == 'destroyscript' then
-		GunsSuperFire = {}
+		GunsAutoModded = {}
 		PlrsLoopKilled = {}
 		PlrsLoopTased = {}
 		Toggles = {}
@@ -2833,7 +2833,7 @@ end)
 spawn(function()
 	while wait() do
 		if CmdGUI.Parent ~= GuiService then
-			GunsSuperFire = {}
+			GunsAutoModded = {}
 			PlrsLoopKilled = {}
 			PlrsLoopTased = {}
 			Toggles = {}
@@ -2846,7 +2846,7 @@ end)
 
 spawn(function()
 	while wait() do
-		for i, _ in pairs(GunsSuperFire) do
+		for i, _ in pairs(GunsAutoModded) do
 			pcall(function()
 				if i then
 					if game.Players.LocalPlayer.Character:FindFirstChild(i) or game.Players.LocalPlayer.Backpack:FindFirstChild(i) then
@@ -2865,9 +2865,9 @@ spawn(function()
 							req.Spread = 0
 							req.AutoFire = true
 						end
-						if not Toggles.AutoSuperfire and req.Damage ~= math.huge then
-							GunsSuperFire[i] = nil
-						elseif Toggles.AutoSuperfire and req.Damage ~= math.huge then 
+						if not Toggles.AutoModGuns and req.Damage ~= math.huge then
+							GunsAutoModded[i] = nil
+						elseif Toggles.AutoModGuns and req.Damage ~= math.huge then 
 							req = require(tool.GunStates)
 							req.MaxAmmo = req.MaxAmmo
 							req.StoredAmmo = req.StoredAmmo
