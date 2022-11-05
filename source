@@ -7,7 +7,7 @@ local HttpService = game:GetService('HttpService')
 local CmdGUI = Instance.new('ScreenGui')
 CmdGUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 CmdGUI.Parent = GuiService
-CmdGUI.Enabled = false\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+CmdGUI.Enabled = false
 
 local CmdMain = Instance.new('Frame')
 CmdMain.Name = 'CmdMain'
