@@ -489,7 +489,8 @@ Cmd[#Cmd + 1] = {Name='notif / notify',Desc='Notifies you when you use a command
 Cmd[#Cmd + 1] = {Name='unnotif / unnotify',Desc='Disable notifying you whenever you use a command'}
 Cmd[#Cmd + 1] = {Name='logs / notifications',Desc='Check command logs'}
 Cmd[#Cmd + 1] = {Name='nologs / nonotifications',Desc='Minimize command logs'}
-Cmd[#Cmd + 1] = {Name='destroygui / destroyscript',Desc='Destroy script'}
+Cmd[#Cmd + 1] = {Name='reloadgui / reloadscript',Desc='Reloads GUI and script if there is a new version'}
+Cmd[#Cmd + 1] = {Name='destroygui / destroyscript',Desc='Destroys GUI and script'}
 
 for i = 1,#Cmd do
 	local clone = CmdExample:Clone()	
@@ -2748,6 +2749,8 @@ local function executeCmd(cmd, args)
 		toggleLogs(true)
 	elseif cmd == 'nologs' or cmd == 'nonotifications' or cmd == 'nonotifs' then
 		toggleLogs(false)
+	elseif cmd == 'reloadgui' or cmd == 'reloadscript' then
+		loadstring(game:HttpGet(('https://raw.githubusercontent.com/senorkal/ongsPrisonLifeAdmin/main/source'),true))() 
 	elseif cmd == 'destroygui' or cmd == 'destroyscript' then
 		GunsSuperFire = {}
 		PlrsLoopKilled = {}
