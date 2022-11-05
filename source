@@ -1837,17 +1837,15 @@ local function executeCmd(cmd, args)
 			Toggles.Earrape = true
 			log('[Logs]: Enabled earraping server')
 			local function playSound(tool)
-				for i = 1, 2 do
-					if Toggles.Earrape then
-						local sound = tool.Handle.FireSound
-						local clone = sound:Clone()
-						clone.Parent = sound.Parent
-						clone:Play()
-						local event = game.ReplicatedStorage.SoundEvent
-						event:FireServer(sound, tool)
-						repeat wait() until not clone.IsPlaying
-						clone:Destroy()
-					end
+				if Toggles.Earrape then
+					local sound = tool.Handle.FireSound
+					local clone = sound:Clone()
+					clone.Parent = sound.Parent
+					clone:Play()
+					local event = game.ReplicatedStorage.SoundEvent
+					event:FireServer(sound, tool)
+					repeat wait() until not clone.IsPlaying
+					clone:Destroy()
 				end
 			end
 			while wait() do
