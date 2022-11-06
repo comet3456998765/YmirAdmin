@@ -372,7 +372,8 @@ CmdMain.InputChanged:Connect(function(input)
 		dragInput = input
 	end
 end)
-RunService.Heartbeat:Connect(Update)
+
+dragging = RunService.Heartbeat:Connect(Update)
 ---//vvv COMMANDS vvv\\---
 local Cmd = {}
 Cmd[#Cmd + 1] = {Name='tase / taze <plr>',Desc='Tases the player'}
@@ -2678,6 +2679,7 @@ spawn(function()
 			PlrsLoopTased = {}
 			Toggles = {}
 			ChatCmd = false
+			dragging:Disconnect()
 			print('Reloaded admin commands')
 		break end
 	end
