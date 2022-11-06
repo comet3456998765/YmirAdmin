@@ -1404,7 +1404,7 @@ local function executeCmd(cmd, args)
 						}
 					}
 					game:GetService('ReplicatedStorage').ShootEvent:FireServer(event, tool)
-				end
+				else break end
 			end
 		else log('[Logs]: Already crashing server') end
 	elseif cmd == 'uncrash' or cmd == 'unlagserver' then
@@ -1430,7 +1430,7 @@ local function executeCmd(cmd, args)
 						spawn(function()
 							workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.clothes['Riot Police'].ITEMPICKUP)
 						end)
-					end
+					else break end
 				end
 			else log('[Logs]: You need the SWAT gamepass to use this command') end
 		else log('[Logs]: Already FPS spiking all players') end
@@ -1534,7 +1534,7 @@ local function executeCmd(cmd, args)
 							workspace.CurrentCamera.CFrame = camCF
 						end
 					end)
-				end
+				else break end
 			end
 		else log('[Logs]: Already enabled auto refresh') end
 	elseif cmd == 'unautorefresh' or cmd == 'unautore' then
@@ -1556,7 +1556,7 @@ local function executeCmd(cmd, args)
 					workspace.Remote.loadchar:InvokeServer()
 					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
 					workspace.CurrentCamera.CFrame = camCF
-				end
+				else break end
 			end
 		else log('[Logs]: Already enabled god mode') end
 	elseif cmd == 'ungod' or cmd == 'ungodmode' then
@@ -1584,7 +1584,7 @@ local function executeCmd(cmd, args)
 						end
 						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.clothes['Riot Police'].ITEMPICKUP)
 						if workspace[game.Players.LocalPlayer.Name]:FindFirstChild('vest') then workspace[game.Players.LocalPlayer.Name].vest:Destroy() end
-					end
+					else break end
 				end
 			else log('[Logs]: You need the SWAT gamepass to use this command') end
 		else log('[Logs]: Already enabled swat god mode') end
@@ -1646,11 +1646,11 @@ local function executeCmd(cmd, args)
 						log('[Logs]: Loop bringing '..plrName(plr))
 						Toggles.LoopBring = {true, plr}
 						while wait() do
-							if workspace:FindFirstChild(plr.Name) and (not workspace[plr.Name].Humanoid.Sit) and Toggles.LoopBring then
+							if Toggles.LoopBring and workspace:FindFirstChild(plr.Name) and (not workspace[plr.Name].Humanoid.Sit) then
 								local details = plrDetails()
 								local plrCF = details[1]
 								bringPlr(plr, plrCF)
-							else break end
+							elseif not workspace:FindFirstChild(plr.Name) or Toggles.LoopBring then break end
 						end
 					else log("[Logs]: You can't loop bring another player") end
 				else log("[Logs]: You can't loop bring yourself") end
@@ -1723,7 +1723,7 @@ local function executeCmd(cmd, args)
 						while wait() do
 							if PlrSpectated and workspace.CurrentCamera.CameraSubject ~= PlrSpectated.Character then
 								workspace.CurrentCamera.CameraSubject = PlrSpectated.Character
-							end
+							elseif not PlrSpectated then break end
 						end
 					else log('[Logs]: Already spectating '..plrName(plr)) end
 				else log("[Logs]: You can't spectate yourself") end
@@ -1760,12 +1760,12 @@ local function executeCmd(cmd, args)
 								for _, v in pairs(plr.Character:GetDescendants()) do
 									if v:IsA('BasePart') and v.CanCollide and Toggles.AntiFling then
 										v.CanCollide = false
-									end
+									else continue end
 								end
 							end)
-						end
+						else continue end
 					end
-				end
+				else break end
 			end
 		else log('[Logs]: Already enabled antifling') end
 	elseif cmd == 'unantifling' or cmd == 'noantifling' then
@@ -1801,9 +1801,9 @@ local function executeCmd(cmd, args)
 								game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, true)
 								game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16
 								game.Players.LocalPlayer.Character.Humanoid.JumpPower = 50
-							end
+							else continue end
 						end
-					end
+					else break end
 				end
 			else log("[Logs]: You can't enable taser bypass") end
 		else log('[Logs]: Already enabled taser bypass') end
@@ -1825,9 +1825,9 @@ local function executeCmd(cmd, args)
 							plr.Character.Torso.ShieldFolder.shield.Mesh.MeshId = ''
 							plr.Character.Torso.ShieldFolder.shield.CanCollide = false
 							plr.Character.Torso.ShieldFolder.shield.Size = Vector3.new(0,0,0)
-						end
+						else continue end
 					end
-				end
+				else break end
 			end
 		else log('[Logs]: Already enabled anti sheilds') end
 	elseif cmd == 'unantishield' or cmd == 'unantishields' or cmd == 'shields' or cmd == 'shield' then
@@ -1852,7 +1852,7 @@ local function executeCmd(cmd, args)
 					if getsenv(game.Players.LocalPlayer.Character.ClientInputHandler).cs.isFighting ~= false then
 						getsenv(game.Players.LocalPlayer.Character.ClientInputHandler).cs.isFighting = false
 					end
-				end
+				else break end
 			end
 		else log('[Logs]: Already enabled fast punching') end
 	elseif cmd == 'unfastpunch' or cmd == 'unspeedpunch' or cmd == 'slowpunch' or cmd == 'nofastpunch' then
@@ -2154,7 +2154,7 @@ local function executeCmd(cmd, args)
 					if SWAT then
 						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['M4A1'].ITEMPICKUP)
 					end
-				end
+				else break end
 			end
 		else log('[Logs]: Already enabled auto guns') end
 	elseif cmd == 'unautogun' or cmd == 'unautoguns' then
@@ -2458,15 +2458,14 @@ local function executeCmd(cmd, args)
 		if not Toggles.AntiVoid then
 			Toggles.AntiVoid = true
 			log('[Logs]: Enabled anti void')
+			local plr = game.Players.LocalPlayer
 			while wait() do
 				if Toggles.AntiVoid then
-					pcall(function()
-						if game.Players.LocalPlayer.Character.HumanoidRootPart.Position.Y < 1 then
-							local plrCF = plrDetails()[1]
-							game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(780.596985, 97.9999237, 2468.43457)
-						end
-					end)
-				end
+					if plr:FindFirstChild('Character') and plr.Character:FindFirstChild('HumanoidRootPart') and plr.Character.umanoidRootPart.Position.Y < 1 then
+						local plrCF = plrDetails()[1]
+						plr.Character.HumanoidRootPart.CFrame = CFrame.new(780.596985, 97.9999237, 2468.43457)
+					end
+				else break end
 			end
 		else log('[Logs]: Already enabled anti void') end
 	elseif cmd == 'unantivoid' or cmd == 'unantifall' then
