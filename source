@@ -2607,7 +2607,6 @@ chatbox.Focused:Connect(function()
 			local p = string.match(chatbox.Text, '^%s*(.)')
 			if p == prefix then
 				local txt = chatbox.Text:gsub('%'..prefix, ''):split(' ')[1]:lower()
-				print(txt)
 				if txt ~= '' then
 					CmdHandler.CanvasPosition = canvasPos
 					for _, v in pairs(CmdHandler:GetChildren()) do
