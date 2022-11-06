@@ -2495,7 +2495,8 @@ local function executeCmd(cmd, args)
 			if #servers > 0 then
 				game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, servers[math.random(1, #servers)], game.Players.LocalPlayer)
 			else
-				return notify("Serverhop", "Couldn't find a server.")
+				log('[Logs]: Failed to server hop')
+				notif('Failed to server hop')
 			end
 		else game:GetService("TeleportService"):Teleport(game.PlaceId) end
 	elseif cmd == 'prefix' or cmd == 'setprefix' then
@@ -2601,33 +2602,23 @@ CmdBar.FocusLost:Connect(function(_, __)
 end)
 --//vvv CHAT FUNCTIONS vvv\\--
 local chatbox = game.WaitForChild(game.Players.LocalPlayer.PlayerGui, "Chat").Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar
-chatbox.Focused:Connect(function()
-	chatbox:GetPropertyChangedSignal("Text"):Connect(function()
-		if ChatCmd then
-			local p = string.match(chatbox.Text, '^%s*(.)')
-			if p == prefix then
-				local txt = chatbox.Text:gsub('%'..prefix, ''):split(' ')[1]:lower()
-				if txt ~= '' then
-					CmdHandler.CanvasPosition = canvasPos
-					for _, v in pairs(CmdHandler:GetChildren()) do
-						if v:IsA('TextButton') then
-							if not string.find(string.lower(v.Text),string.lower(txt)) then
-								v.Visible = false
-							else 
-								if v.Visible == false then v.Visible = true end
-							end
-						end
-					end
-				else
-					for _, v in pairs(CmdHandler:GetChildren()) do
-						if v:IsA('TextButton') then
-							if not v.Visible then
-								v.Visible = true
-							end
+local function chatboxEnter()
+	if ChatCmd then
+		local p = string.match(chatbox.Text, '^%s*(.)')
+		if p == prefix then
+			local txt = chatbox.Text:gsub('%'..prefix, ''):split(' ')[1]:lower()
+			if txt ~= '' then
+				CmdHandler.CanvasPosition = canvasPos
+				for _, v in pairs(CmdHandler:GetChildren()) do
+					if v:IsA('TextButton') then
+						if not string.find(string.lower(v.Text),string.lower(txt)) then
+							v.Visible = false
+						else 
+							if v.Visible == false then v.Visible = true end
 						end
 					end
 				end
-			else 
+			else
 				for _, v in pairs(CmdHandler:GetChildren()) do
 					if v:IsA('TextButton') then
 						if not v.Visible then
@@ -2636,11 +2627,22 @@ chatbox.Focused:Connect(function()
 					end
 				end
 			end
+		else 
+			for _, v in pairs(CmdHandler:GetChildren()) do
+				if v:IsA('TextButton') then
+					if not v.Visible then
+						v.Visible = true
+					end
+				end
+			end
 		end
-	end)
+	end
+end
+local chatenterfunc = chatbox.Focused:Connect(function()
+	chatbox:GetPropertyChangedSignal("Text"):Connect(chatboxEnter)
 end)
 
-chatbox.FocusLost:Connect(function()
+local function chatboxLeft()
 	if ChatCmd then
 		for _, v in pairs(CmdHandler:GetChildren()) do
 			if v:IsA('TextButton') then
@@ -2651,9 +2653,10 @@ chatbox.FocusLost:Connect(function()
 		end
 		return
 	end
-end)
+end
+local chatleftfunc = chatbox.FocusLost:Connect(chatboxLeft)
 
-game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.OnMessageDoneFiltering.OnClientEvent:Connect(function(d)
+local function executeChatCmd(d)
 	if ChatCmd then
 		local plr = game.Players:FindFirstChild(d.FromSpeaker)
 		local c = d.Message
@@ -2667,25 +2670,109 @@ game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.OnMessageDoneFi
 			end
 		end
 	else return end
-end)
+end
+local chatexecutefunc = game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.OnMessageDoneFiltering.OnClientEvent:Connect(executeChatCmd)
 
 --//vvv CMD LOOPS vvv\\--
-spawn(function()
+spawn(function()--//vvv LOOP TASE vvv\\--
 	while wait() do
-		if CmdGUI.Parent ~= GuiService then
-			GunsAutoModded = {}
-			PlrsLoopKilled = {}
-			PlrsLoopTased = {}
-			Toggles = {}
-			ChatCmd = false
-			dragging:Disconnect()
-			print('Reloaded admin commands')
-			CmdGUI:Destroy()
-		break end
+		if CmdGUI.Parent ~= GuiService then break end
+		for _, v in pairs(PlrsLoopTased) do
+			pcall(function()
+				local plr = getPlr(v.player.Name)
+				if v and plr and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
+					local details = plrDetails()
+					local plrCF = details[1]
+					tasePlr(v.player)
+					workspace.Remote.loadchar:InvokeServer()
+					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
+				end
+			end)
+		end
 	end
 end)
 
-spawn(function()
+spawn(function()--//vvv LOOP KILL PLAYER vvv\\--
+	while wait() do
+		if CmdGUI.Parent ~= GuiService then break end
+		for _, v in pairs(PlrsLoopKilled) do
+			pcall(function()
+				local plr = getPlr(v.player.Name)
+				if v and plr and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
+					local details = plrDetails()
+					local team = details[3]
+					if team == plr.TeamColor.Name then
+						workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+					end
+					killPlr(plr)
+				end
+			end)
+		end
+	end
+end)
+
+
+spawn(function() --//vvv LOOP KILL GROUPS vvv\\--
+	while wait() do
+		if CmdGUI.Parent ~= GuiService then break end
+		if Toggles.LoopKillGuards or Toggles.LoopKillInmates or Toggles.LoopKillCrims or Toggles.LoopKillAll or Toggles.LoopKillEnemies then
+			local team
+			pcall(function()
+				team = plrDetails()[3]
+			end)
+			if team == nil then team = game.Players.LocalPlayer.TeamColor.Name end
+			if Toggles.LoopKillGuards then
+				if team == 'Bright blue' then
+					workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+				end
+				for _, plr in pairs(game.Players:GetChildren()) do
+					if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == 'Bright blue' and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
+						killPlr(plr)
+					end
+				end
+			end
+			if Toggles.LoopKillInmates then
+				if team == 'Bright orange' then
+					workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+				end
+				for _, plr in pairs(game.Players:GetChildren()) do
+					if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == 'Bright orange' and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
+						killPlr(plr)
+					end
+				end
+			end
+			if Toggles.LoopKillCrims then
+				if team == 'Really red' then
+					workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+				end
+				for _, plr in pairs(game.Players:GetChildren()) do
+					if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == 'Really red' and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
+						killPlr(plr)
+					end
+				end
+			end
+			if Toggles.LoopKillAll then
+				if team ~= 'Medium stone grey' then
+					workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+				end
+				for _, plr in pairs(game.Players:GetChildren()) do
+					if plr.Name ~= game.Players.LocalPlayer.Name and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
+						killPlr(plr)
+					end
+				end
+			end
+			if Toggles.LoopKillEnemies then
+				for _, plr in pairs(game.Players:GetChildren()) do
+					if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name ~= team and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
+						killPlr(plr)
+					end
+				end
+			end
+		end
+	end
+end)
+
+spawn(function() --//vvv GUN MODS vvv\\--
 	while wait() do
 		if CmdGUI.Parent ~= GuiService then break end
 		for i, _ in pairs(GunsAutoModded) do
@@ -2749,97 +2836,21 @@ spawn(function()
 	end
 end)
 
-spawn(function()
+spawn(function() --//vvv GUI RELOADED vvv\\--
 	while wait() do
-		if CmdGUI.Parent ~= GuiService then break end
-		for _, v in pairs(PlrsLoopKilled) do
-			pcall(function()
-				local plr = getPlr(v.player.Name)
-				if v and plr and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
-					local details = plrDetails()
-					local team = details[3]
-					if team == plr.TeamColor.Name then
-						workspace.Remote.TeamEvent:FireServer('Medium stone grey')
-					end
-					killPlr(plr)
-				end
-			end)
-		end
-	end
-end)
-
-spawn(function()
-	while wait() do
-		if CmdGUI.Parent ~= GuiService then break end
-		for _, v in pairs(PlrsLoopTased) do
-			pcall(function()
-				local plr = getPlr(v.player.Name)
-				if v and plr and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
-					local details = plrDetails()
-					local plrCF = details[1]
-					tasePlr(v.player)
-					workspace.Remote.loadchar:InvokeServer()
-					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
-				end
-			end)
-		end
-	end
-end)
-
-spawn(function()
-	while wait() do
-		if CmdGUI.Parent ~= GuiService then break end
-		local team
-		pcall(function()
-			team = plrDetails()[3]
-		end)
-		if team == nil then team = game.Players.LocalPlayer.TeamColor.Name end
-		if Toggles.LoopKillGuards then
-			if team == 'Bright blue' then
-				workspace.Remote.TeamEvent:FireServer('Medium stone grey')
-			end
-			for _, plr in pairs(game.Players:GetChildren()) do
-				if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == 'Bright blue' and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
-					killPlr(plr)
-				end
-			end
-		end
-		if Toggles.LoopKillInmates then
-			if team == 'Bright orange' then
-				workspace.Remote.TeamEvent:FireServer('Medium stone grey')
-			end
-			for _, plr in pairs(game.Players:GetChildren()) do
-				if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == 'Bright orange' and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
-					killPlr(plr)
-				end
-			end
-		end
-		if Toggles.LoopKillCrims then
-			if team == 'Really red' then
-				workspace.Remote.TeamEvent:FireServer('Medium stone grey')
-			end
-			for _, plr in pairs(game.Players:GetChildren()) do
-				if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == 'Really red' and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
-					killPlr(plr)
-				end
-			end
-		end
-		if Toggles.LoopKillAll then
-			if team ~= 'Medium stone grey' then
-				workspace.Remote.TeamEvent:FireServer('Medium stone grey')
-			end
-			for _, plr in pairs(game.Players:GetChildren()) do
-				if plr.Name ~= game.Players.LocalPlayer.Name and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
-					killPlr(plr)
-				end
-			end
-		end
-		if Toggles.LoopKillEnemies then
-			for _, plr in pairs(game.Players:GetChildren()) do
-				if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name ~= team and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
-					killPlr(plr)
-				end
-			end
-		end
+		if CmdGUI.Parent ~= GuiService then
+			GunsAutoModded = {}
+			PlrsLoopKilled = {}
+			PlrsLoopTased = {}
+			Toggles = {}
+			ChatCmd = false
+			chatenterfunc:Disconnect()
+			chatleftfunc:Disconnect()
+			executeChatCmd:Disconnect()
+			dragging:Disconnect()
+			print('Reloaded admin commands')
+			CmdGUI:Destroy()
+			wait(.1)
+		break end
 	end
 end)
