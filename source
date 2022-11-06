@@ -1694,7 +1694,8 @@ local function executeCmd(cmd, args)
 			Toggles.AlwaysDay = false
 		else log('[Logs]: Already enabled day cycle') end
 	elseif cmd == 'showinventory' or cmd == 'showinv' then
-
+		game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, true)
+		log('[Logs]: Showed inventory')
 	elseif cmd == 'autoshowinventory' or cmd == 'autoshowinv' then
 		if not Toggles.AutoShowInv then
 			log('[Logs]: Enabled auto show inventory')
