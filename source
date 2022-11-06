@@ -550,8 +550,8 @@ Mouse.Move:Connect(function()
 end)
 
 if reload then
-	notif('Reloaded admin commands', true)
 	log('[Logs]: Reloaded admin commands')
+	notif('Reloaded admin commands', true)
 else 
 	log('[Logs]: Loaded admin commands')
 end
