@@ -224,7 +224,7 @@ if GuiService:FindFirstChild('CmdGUI') then
 	CmdNotifHandler:Destroy()
 	oldNotifHandler.Parent = CmdNotifBox
 	CmdNotifHandler = oldNotifHandler
-	CmdNotifHandler.Position = UDim2.new(0.0331288725, 0, 0.207801834, 0)
+	CmdNotifHandler.CanvasPosition = Vector2.new(0, CmdNotifHandler.AbsoluteCanvasSize.Y)
 	GuiService.CmdGUI.Parent = nil
 	CmdGUI.Enabled = true
 else --//vvv INTRO vvv\\---
@@ -298,7 +298,7 @@ local function log(txt)
 		clone.Name = 'CmdNotification'
 		clone.TextTransparency = 1
 		clone.Parent = CmdNotifHandler
-		CmdNotifHandler.CanvasPosition = Vector2.new(0, 99999)
+		CmdNotifHandler.CanvasPosition = Vector2.new(0, CmdNotifHandler.AbsoluteCanvasSize.Y)
 		repeat wait()
 			clone.TextTransparency = clone.TextTransparency - introSpeed
 		until clone.TextTransparency <= 0
@@ -438,6 +438,8 @@ Cmd[#Cmd + 1] = {Name='goto / to <plr>',Desc='Teleports you to the player'}
 Cmd[#Cmd + 1] = {Name='bring <plr / team / all>',Desc='Teleports the player/team to you or all players if you choose all'}
 Cmd[#Cmd + 1] = {Name='loopbring <plr>',Desc='Loop teleports the player to your position'}
 Cmd[#Cmd + 1] = {Name='unloopbring <plr>',Desc='Disables loop bringing the player'}
+Cmd[#Cmd + 1] = {Name='nodaycycle / alwaysday',Desc='Disables day cycle'}
+Cmd[#Cmd + 1] = {Name='daycycle / unalwaysday',Desc='Enables day cycle'}
 Cmd[#Cmd + 1] = {Name='view / spectate <plr>',Desc='Spectates the player'}
 Cmd[#Cmd + 1] = {Name='unview / unspectate',Desc='Unspectates the player'}
 Cmd[#Cmd + 1] = {Name='antifling',Desc='Prevents you from being flinged'}
@@ -550,8 +552,8 @@ Mouse.Move:Connect(function()
 end)
 
 if reload then
-	log('[Logs]: Reloaded admin commands')
 	notif('Reloaded admin commands', true)
+	log('[Logs]: Reloaded admin commands')
 else 
 	log('[Logs]: Loaded admin commands')
 end
@@ -1947,6 +1949,25 @@ local function executeCmd(cmd, args)
 				log('[Logs]: Disabled loop bringing')
 			else log('[Logs]: You are not loop bringing anyone') end
 		end
+	elseif cmd == 'nodaycycle' or cmd == 'alwaysday' then
+		if not Toggles.AlwaysDay then
+			log('[Logs]: Disabled day cycle')
+			Toggles.AlwaysDay = true
+			RunService.RenderStepped:Connect(function()
+				if Toggles.AlwaysDay then
+					game.Lighting.Brightness = 2
+					game.Lighting.ClockTime = 14
+					game.Lighting.FogEnd = 100000
+					game.Lighting.GlobalShadows = false
+					game.Lighting.OutdoorAmbient = Color3.fromRGB(128, 128, 128)
+				end
+			end)
+		else log('[Logs]: Already disabled day cycle') end
+	elseif cmd == 'daycycle' or cmd == 'unalwaysday' then
+		if Toggles.AlwaysDay then
+			log('[Logs]: Enabled day cycle')
+			Toggles.AlwaysDay = false
+		else log('[Logs]: Already enabled day cycle') end
 	elseif cmd == 'view' or cmd == 'spectate' then
 		if args[1] then
 			local plr = getPlr(args[1])
