@@ -2585,31 +2585,6 @@ CmdBar.Changed:Connect(function()
 					end
 				end
 			end
-		--[[elseif CmdBar.Text == '' and (#CmdHandler:GetChildren()-1) ~= #Cmd  then
-			for _, v in pairs(CmdHandler:GetChildren()) do
-				if v:IsA('TextButton') then
-					v:Destroy()
-				end
-			end
-			for i, v in pairs(CmdMain:GetChildren()) do
-				if i == 'Cmd' then
-					v:Destroy()
-				end
-			end
-			for i = 1,#Cmd do
-				local clone = CmdExample:Clone()	
-				clone.Text = Cmd[i].Name
-				clone.Name = 'Cmd'
-				local Ins = Instance.new('StringValue', clone)
-				Ins.Name = 'Desc'
-				Ins.Value = Cmd[i].Desc
-				clone.Parent = CmdHandler
-				clone.MouseButton1Click:Connect(function()
-					CmdBar:CaptureFocus()
-					CmdBar.Text = clone.Text:split(' ')[1]
-					CmdBar.CursorPosition = #CmdBar.Text + 1
-				end)
-			end]]
 		end
 	end
 end)
@@ -2624,6 +2599,60 @@ CmdBar.FocusLost:Connect(function(_, __)
 	end
 end)
 --//vvv CHAT FUNCTIONS vvv\\--
+local chatbox = game.WaitForChild(game.Players.LocalPlayer.PlayerGui, "Chat").Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar
+chatbox.Focused:Connect(function()
+	chatbox:GetPropertyChangedSignal("Text"):Connect(function()
+		if ChatCmd then
+			local p = string.match(chatbox.Text, '^%s*(.)')
+			if p == prefix then
+				local txt = chatbox.Text:gsub('%'..prefix, ''):split(' ')[1]:lower()
+				print(txt)
+				if txt ~= '' then
+					CmdHandler.CanvasPosition = canvasPos
+					for _, v in pairs(CmdHandler:GetChildren()) do
+						if v:IsA('TextButton') then
+							if not string.find(string.lower(v.Text),string.lower(txt)) then
+								v.Visible = false
+							else 
+								if v.Visible == false then v.Visible = true end
+							end
+						end
+					end
+				else
+					for _, v in pairs(CmdHandler:GetChildren()) do
+						if v:IsA('TextButton') then
+							if not v.Visible then
+								v.Visible = true
+							end
+						end
+					end
+				end
+			else 
+				for _, v in pairs(CmdHandler:GetChildren()) do
+					if v:IsA('TextButton') then
+						if not v.Visible then
+							v.Visible = true
+						end
+					end
+				end
+			end
+		end
+	end)
+end)
+
+chatbox.FocusLost:Connect(function()
+	if ChatCmd then
+		for _, v in pairs(CmdHandler:GetChildren()) do
+			if v:IsA('TextButton') then
+				if not v.Visible then
+					v.Visible = true
+				end
+			end
+		end
+		return
+	end
+end)
+
 game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.OnMessageDoneFiltering.OnClientEvent:Connect(function(d)
 	if ChatCmd then
 		local plr = game.Players:FindFirstChild(d.FromSpeaker)
@@ -2650,13 +2679,13 @@ spawn(function()
 			Toggles = {}
 			ChatCmd = false
 			print('Reloaded admin commands')
-			break
-		end
+		break end
 	end
 end)
 
 spawn(function()
 	while wait() do
+		if CmdGUI.Parent ~= GuiService then break end
 		for i, _ in pairs(GunsAutoModded) do
 			pcall(function()
 				if i then
@@ -2720,6 +2749,7 @@ end)
 
 spawn(function()
 	while wait() do
+		if CmdGUI.Parent ~= GuiService then break end
 		for _, v in pairs(PlrsLoopKilled) do
 			pcall(function()
 				local plr = getPlr(v.player.Name)
@@ -2738,6 +2768,7 @@ end)
 
 spawn(function()
 	while wait() do
+		if CmdGUI.Parent ~= GuiService then break end
 		for _, v in pairs(PlrsLoopTased) do
 			pcall(function()
 				local plr = getPlr(v.player.Name)
@@ -2755,7 +2786,7 @@ end)
 
 spawn(function()
 	while wait() do
-		if CmdGUI.Parent == nil then break end
+		if CmdGUI.Parent ~= GuiService then break end
 		local team
 		pcall(function()
 			team = plrDetails()[3]
