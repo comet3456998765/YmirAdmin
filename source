@@ -3,6 +3,7 @@ local UserInputService = game:GetService('UserInputService')
 local RunService = (game:GetService('RunService'));
 local GuiService = game.Players.LocalPlayer:WaitForChild('PlayerGui')
 local HttpService = game:GetService('HttpService')
+local TweenService = game:GetService('TweenService')
 ---//vvv INSTANCES vvv\\---
 local CmdGUI = Instance.new('ScreenGui')
 CmdGUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -231,6 +232,7 @@ else --//vvv INTRO vvv\\---
 	CmdGUI.Enabled = true
 	CmdNotifBox.Visible = false
 	CmdHandler.Visible = false
+	CmdBar.Visible = false
 	CmdTitle.TextTransparency = 1
 	CmdBar.BackgroundTransparency = 1
 	CmdBar.TextTransparency = 1
@@ -238,14 +240,17 @@ else --//vvv INTRO vvv\\---
 	CmdMain:TweenSize(UDim2.new(0, 200, 0, 269))
 	repeat wait() until CmdMain.Size == UDim2.new(0, 200, 0, 269)
 	wait(.1)
-	repeat wait()
-		CmdTitle.TextTransparency = CmdTitle.TextTransparency - introSpeed
-	until CmdTitle.TextTransparency <= 0
+	local f1 = TweenService:Create(CmdTitle, TweenInfo.new(introSpeed), {TextTransparency = 0})
+	f1:Play()
+	f1.Completed:Wait()
 	wait(.1)
-	repeat wait()
-		CmdBar.BackgroundTransparency = CmdBar.BackgroundTransparency - introSpeed
-		CmdBar.TextTransparency = CmdBar.TextTransparency - introSpeed
-	until CmdBar.BackgroundTransparency <= 0 and CmdBar.TextTransparency <= 0 
+	CmdBar.Visible = true
+	local f2 = TweenService:Create(CmdBar, TweenInfo.new(introSpeed), {BackgroundTransparency = 0})
+	local f3 = TweenService:Create(CmdBar, TweenInfo.new(introSpeed), {TextTransparency = 0})
+	f2:Play()
+	f3:Play()
+	f3.Completed:Wait()
+	wait(.1)
 	CmdHandler.Visible = true
 	CmdNotifBox.Visible = true
 	if logsOpen then
@@ -299,9 +304,8 @@ local function log(txt)
 		clone.TextTransparency = 1
 		clone.Parent = CmdNotifHandler
 		CmdNotifHandler.CanvasPosition = Vector2.new(0, CmdNotifHandler.AbsoluteCanvasSize.Y)
-		repeat wait()
-			clone.TextTransparency = clone.TextTransparency - introSpeed
-		until clone.TextTransparency <= 0
+		local f = TweenService:Create(clone, TweenInfo.new(introSpeed), {TextTransparency = 0})
+		f:Play()
 	end)
 end
 
@@ -382,20 +386,9 @@ Cmd[#Cmd + 1] = {Name='arrestall',Desc='Arrests all players if possible'}
 Cmd[#Cmd + 1] = {Name='looparrest / spamarrest <plr>',Desc='Loop arrests the player (Causes lag)'}
 Cmd[#Cmd + 1] = {Name='arrestaura',Desc='Arrests everyone who is near you'}
 Cmd[#Cmd + 1] = {Name='noarrestaura / unarrestaura',Desc='Disables arrest aura'}
-Cmd[#Cmd + 1] = {Name='kill <plr / team / all>',Desc='Kills the player/team or all players if you choose all'}
-Cmd[#Cmd + 1] = {Name='killenemy / killenemies',Desc='Kills all players who are not in your team'}
-Cmd[#Cmd + 1] = {Name='loopkill / lk <plr / team / all>',Desc='Loop kills the player / team or all players if you choose all'}
-Cmd[#Cmd + 1] = {Name='loopkillall',Desc='Loop kills all players'}
-Cmd[#Cmd + 1] = {Name='loopkillguard / loopkillguards',Desc='Loop kills all players in the guard team'}
-Cmd[#Cmd + 1] = {Name='loopkillinmate / loopkillinmates',Desc='Loop kills all players in the inmate team'}
-Cmd[#Cmd + 1] = {Name='loopkillcriminal / loopkillcriminals',Desc='Loop kills all players in the criminal team'}
-Cmd[#Cmd + 1] = {Name='loopkillenemy / loopkillenemies',Desc='Loop kills all players who are not in your team'}
-Cmd[#Cmd + 1] = {Name='unloopkill / unlk <plr / team / all>',Desc='Disables loopkilling the player'}
-Cmd[#Cmd + 1] = {Name='unloopkillall',Desc='Disables loopkilling all players'}
-Cmd[#Cmd + 1] = {Name='unloopkillguard / unloopkillguards',Desc='Disables loopkillng all players in the guard team'}
-Cmd[#Cmd + 1] = {Name='unloopkillinmate / unloopkillinmates',Desc='Disables loopkillng all players in the inmate team'}
-Cmd[#Cmd + 1] = {Name='unloopkillcriminal / unloopkillcriminals',Desc='Disables loopkillng all players in the criminal team'}
-Cmd[#Cmd + 1] = {Name='unloopkillenemy / unloopkillenemies',Desc='Disables loopkillng all players who are not in your team'}
+Cmd[#Cmd + 1] = {Name='kill <plr / team / enemies all>',Desc='Kills the player/team/all/enemies if you choose one of them'}
+Cmd[#Cmd + 1] = {Name='loopkill / lk <plr / team / enemies / all>',Desc='Loop kills the player/team/all/enemies if you choose one of them'}
+Cmd[#Cmd + 1] = {Name='unloopkill / unlk <plr / team / enemies / all>',Desc='Disables loop killing the player/team/all/enemies if you choose one of them'}
 Cmd[#Cmd + 1] = {Name='clearloopkill / clearloopkills',Desc='Removes all loop kills'}
 Cmd[#Cmd + 1] = {Name='killaura / aura',Desc='Kills everyone who is near you'}
 Cmd[#Cmd + 1] = {Name='nokillaura / noaura',Desc='Disables kill aura'}
@@ -440,6 +433,9 @@ Cmd[#Cmd + 1] = {Name='loopbring <plr>',Desc='Loop teleports the player to your 
 Cmd[#Cmd + 1] = {Name='unloopbring <plr>',Desc='Disables loop bringing the player'}
 Cmd[#Cmd + 1] = {Name='nodaycycle / alwaysday',Desc='Disables day cycle'}
 Cmd[#Cmd + 1] = {Name='daycycle / unalwaysday',Desc='Enables day cycle'}
+Cmd[#Cmd + 1] = {Name='showinventory / showinv',Desc='Shows inventory'}
+Cmd[#Cmd + 1] = {Name='autoshowinventory / autoshowinv',Desc='Auto shows inventory'}
+Cmd[#Cmd + 1] = {Name='unautoshowinventory / unautoshowinv',Desc='Disables auto show inventory'}
 Cmd[#Cmd + 1] = {Name='view / spectate <plr>',Desc='Spectates the player'}
 Cmd[#Cmd + 1] = {Name='unview / unspectate',Desc='Unspectates the player'}
 Cmd[#Cmd + 1] = {Name='antifling',Desc='Prevents you from being flinged'}
@@ -456,6 +452,8 @@ Cmd[#Cmd + 1] = {Name='freepunch',Desc='Running or crawling will not affect punc
 Cmd[#Cmd + 1] = {Name='unfreepunch / nofreepunch',Desc='Disables free punching'}
 Cmd[#Cmd + 1] = {Name='superpunch / allpunch',Desc='Enables fast, free, and one punching'}
 Cmd[#Cmd + 1] = {Name='nosuperpunch / noallpunch',Desc='Disables super punching'}
+Cmd[#Cmd + 1] = {Name='dropitems',Desc='Drops a bunch of items by loop killing you'}
+Cmd[#Cmd + 1] = {Name='undropitems',Desc='Disables item dropping'}
 Cmd[#Cmd + 1] = {Name='keycard / key / card',Desc='Finds for key card or you spawn a key card and auto pick it up'}
 Cmd[#Cmd + 1] = {Name='findkeycard / findkey ',Desc='Finds for a key card'}
 Cmd[#Cmd + 1] = {Name='crudeknife / knife',Desc='Adds crude knife to your backpack'}
@@ -514,9 +512,9 @@ for i = 1,#Cmd do
 	clone.Parent = CmdHandler
 	if reload == false and i <= 11 then
 		clone.TextTransparency = 1
-		repeat wait()
-			clone.TextTransparency = clone.TextTransparency - (introSpeed*2)
-		until clone.TextTransparency <= 0
+		local f = TweenService:Create(clone, TweenInfo.new(introSpeed-0.05), {TextTransparency = 0})
+		f:Play()
+		f.Completed:Wait()
 	end
 	clone.MouseButton1Click:Connect(function()
 		CmdBar:CaptureFocus()
@@ -653,7 +651,6 @@ local function killPlr(plr)
 			}
 			game:GetService('ReplicatedStorage').ShootEvent:FireServer(event, tool)
 			tool.Handle:Destroy()
-			repeat wait() until not tool:FindFirstChild('Handle')
 			tool.Parent = game.Players.LocalPlayer.Character
 			tool:Destroy()
 		else return end
@@ -945,8 +942,7 @@ local function executeCmd(cmd, args)
 		log('[Logs]: Disabled arrest aura')
 		Toggles.ArrestAura = false
 	elseif cmd == 'kill' then
-		local details = plrDetails()
-		local team = details[3]
+		local team = plrDetails()[3]
 		if args[1] then
 			local teamToKill = nil
 			if args[1] == 'guards' or args[1] == 'guard' or args[1] == 'cops' or args[1] == 'cop' then
@@ -958,34 +954,22 @@ local function executeCmd(cmd, args)
 			elseif args[1] == 'all' or args[1] == 'others' then
 				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
 				workspace.Remote.TeamEvent:FireServer('Medium stone grey')
-				local db = false
-				spawn(function()
-					db = true
-					for _, plr in ipairs(game.Players:GetChildren()) do
-						if plr.Name ~= game.Players.LocalPlayer.Name then
-							killPlr(plr)
-						end
-					end
-					db = false
-				end)
-				repeat wait() until db == false
+				for _, plr in pairs(game.Players:GetChildren()) do
+					if plr.Name ~= game.Players.LocalPlayer.Name and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
+						killPlr(plr)
+					else continue end
+				end
 				log('[Logs]: Killed all players')
 				if team ~= 'Really red' then
 					workspace.Remote.TeamEvent:FireServer(team)
 				else workspace.Remote.loadchar:InvokeServer(nil, team) end
 			elseif args[1] == 'enemies' or args[1] == 'enemy' then
 				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
-				local db = false
-				spawn(function()
-					db = true
-					for _, plr in ipairs(game.Players:GetChildren()) do
-						if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name ~= team then
-							killPlr(plr)
-						end
-					end
-					db = false
-				end)
-				repeat wait() until db == false
+				for _, plr in pairs(game.Players:GetChildren()) do
+					if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name ~= team and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
+						killPlr(plr)
+					else continue end
+				end
 				log('[Logs]: Killed all enemies')
 			else
 				local plr = getPlr(args[1])
@@ -1003,380 +987,119 @@ local function executeCmd(cmd, args)
 			end
 			if teamToKill and teamToKill ~= nil then
 				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
-				if team == teamToKill then
+				if team == teamToKill[2] then
 					workspace.Remote.TeamEvent:FireServer('Medium stone grey')
 				end
-				local db = false
-				spawn(function()
-					db = true
-					for _, plr in ipairs(game.Players:GetChildren()) do
-						if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == teamToKill[2] then
-							killPlr(plr)
-						end
-					end
-					db = false
-				end)
-				repeat wait() until db == false
+				for _, plr in pairs(game.Players:GetChildren()) do
+					if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == teamToKill[2] and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
+						killPlr(plr)
+					else continue end
+				end
 				log('[Logs]: Killed all '..teamToKill[1]:lower())
 				if team ~= 'Really red' then
 					workspace.Remote.TeamEvent:FireServer(team)
 				else workspace.Remote.loadchar:InvokeServer(nil, team) end
 			end
 		end
-	elseif cmd == 'killall' then
-		local details = plrDetails()
-		local team = details[3]
-
-		workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
-		workspace.Remote.TeamEvent:FireServer('Medium stone grey')
-		local db = false
-		spawn(function()
-			db = true
-			for _, plr in ipairs(game.Players:GetChildren()) do
-				if plr.Name ~= game.Players.LocalPlayer.Name then
-					killPlr(plr)
-				end
-			end
-			db = false
-		end)
-		repeat wait() until db == false
-		log('[Logs]: Killed all players')
-		if team ~= 'Really red' then
-			workspace.Remote.TeamEvent:FireServer(team)
-		else workspace.Remote.loadchar:InvokeServer(nil, team) end
 	elseif cmd == 'loopkill' or cmd == 'lkill' or cmd == 'lk' then
-		if args[1] == 'all' or args[1] == 'others'  then
-			if not Toggles.LoopKillAll then
-				Toggles.LoopKillAll = true
-				log('[Logs]: Loop killing all players')
-				while wait() do
-					if Toggles.LoopKillAll then
-						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
-						workspace.Remote.TeamEvent:FireServer('Medium stone grey')
-						for _, plr in ipairs(game.Players:GetChildren()) do
-							if plr.Name ~= game.Players.LocalPlayer.Name and Toggles.LoopKillAll then
-								killPlr(plr)
-							end
-						end
-					else break end
+		if args[1] then
+			local already
+			if args[1] == 'guards' or args[1] == 'guard' or args[1] == 'cops' or args[1] == 'cop' then
+				if not Toggles.LoopKillGuards then
+					Toggles.LoopKillGuards = true
+					log('[Logs]: Enabled loop killing guards')
+				else 
+					log('[Logs]: Already enabled loop killing guards')
+					already = true
+				end
+			elseif args[1] == 'inmates' or args[1] == 'inmate' or args[1] == 'prisoners' or args[1] == 'prisoner' then
+				if not Toggles.LoopKillInmates then
+					Toggles.LoopKillInmates = true
+					log('[Logs]: Enabled loop killing inmates')
+				else 
+					log('[Logs]: Already enabled loop killing inmates') 
+					already = true
+				end
+			elseif args[1] == 'criminals' or args[1] == 'criminal' or args[1] == 'crims' or args[1] == 'crim' then
+				if not Toggles.LoopKillCrims then
+					Toggles.LoopKillCrims = true
+					log('[Logs]: Enabled loop killing criminals')
+				else 
+					log('[Logs]: Already enabled loop killing criminals') 
+					already = true
+				end
+			elseif args[1] == 'all' or args[1] == 'others' then
+				if not Toggles.LoopKillAll then
+					Toggles.LoopKillAll = true
+					log('[Logs]: Enabled loop killing all players')
+				else 
+					log('[Logs]: Already enabled loop killing all players') 
+					already = true
+				end
+			elseif args[1] == 'enemies' or args[1] == 'enemy' then
+				if not Toggles.LoopKillEnemies then
+					Toggles.LoopKillEnemies = true
+					log('[Logs]: Enabled loop killing enemies')
+				else 
+					log('[Logs]: Already enabled loop killing enemies') 
+					already = true
 				end
 			else 
-				notif('Already loop killing all players') 
-				log('[Logs]: Already loop killing all players') 
+				local plr = getPlr(args[1])
+				if plr then
+					if not PlrsLoopKilled[plr.UserId] then
+						PlrsLoopKilled[plr.UserId] = {player = plr}
+						log('[Logs]: Loop killing '..plrName(plr))
+					else log('[Logs]: Already loop killing '..plrName(plr)) end
+				else log('[Logs]: No player found') end
 			end
-		elseif args[1] == 'guards' or args[1] == 'guard' then
-			if not Toggles.LoopKillGuards then
-				Toggles.LoopKillGuards = true
-				log('[Logs]: Loop killing guards')
-				while wait() do
-					if Toggles.LoopKillGuards then
-						local details = plrDetails()
-						local team = details[3]
-
-						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
-						if team == 'Bright blue' then
-							workspace.Remote.TeamEvent:FireServer('Medium stone grey')
-						end
-						for _, plr in ipairs(game.Players:GetChildren()) do
-							if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == 'Bright blue' and Toggles.LoopKillGuards then
-								killPlr(plr)
-							end
-						end
-					else break end
-				end
-			else 
-				notif('Already loop killing guards') 
-				log('[Logs]: Already loop killing guards') 
-			end
-		elseif args[1] == 'inmates' or args[1] == 'inmate' or args[1] == 'prisoners' or args[1] == 'prisoner' then
-			if not Toggles.LoopKillInmates then
-				Toggles.LoopKillInmates = true
-				log('[Logs]: Loop killing inmates')
-				while wait() do
-					if Toggles.LoopKillInmates then
-						local details = plrDetails()
-						local team = details[3]
-
-						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
-						if team == 'Bright orange' then
-							workspace.Remote.TeamEvent:FireServer('Medium stone grey')
-						end
-						for _, plr in ipairs(game.Players:GetChildren()) do
-							if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == 'Bright orange' and Toggles.LoopKillInmates then
-								killPlr(plr)
-							end
-						end
-					else break end
-				end
-			else 
-				notif('Already loop killing inmates') 
-				log('[Logs]: Already loop killing inmates') 
-			end
-		elseif args[1] == 'criminals' or args[1] == 'criminal' or args[1] == 'crims' or args[1] == 'crim' then
-			if not Toggles.LoopKillCrims then
-				Toggles.LoopKillCrims = true
-				log('[Logs]: Loop killing criminals')
-				while wait() do
-					if Toggles.LoopKillCrims then
-						local details = plrDetails()
-						local team = details[3]
-
-						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
-						if team == 'Really red' then
-							workspace.Remote.TeamEvent:FireServer('Medium stone grey')
-						end
-						for _, plr in ipairs(game.Players:GetChildren()) do
-							if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == 'Really red' and Toggles.LoopKillCrims then
-								killPlr(plr)
-							end
-						end
-					else break end
-				end
-			else 
-				notif('Already loop killing criminals') 
-				log('[Logs]: Already loop killing criminals') 
-			end
-		elseif args[1] == 'enemies' or args[1] == 'enemy' then
-			if not Toggles.LoopKillEnemies then
-				Toggles.LoopKillEnemies = true
-				log('[Logs]: Loop killing enemies')
-				while wait() do
-					if Toggles.LoopKillEnemies then
-						local details = plrDetails()
-						local team = details[3]
-
-						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
-						for _, plr in ipairs(game.Players:GetChildren()) do
-							if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name ~= team and Toggles.LoopKillEnemies then
-								killPlr(plr)
-							end
-						end
-					else break end
-				end
-			else 
-				notif('Already loop killing enemies') 
-				log('[Logs]: Already loop killing enemies') 
-			end
-		else
-			local plr = getPlr(args[1])
-			if plr then
-				if not PlrsLoopKilled[plr.UserId] then
-					log('[Logs]: Loop killing '..plrName(plr))
-					PlrsLoopKilled[plr.UserId] = {player = plr}
-				else log('[Logs]: Already loop killing '..plrName(plr)) end
-			else log('[Logs]: No player found') end
-		end
-	elseif cmd == 'loopkillall' or cmd == 'lkillall' or cmd == 'lkall' then
-		if not Toggles.LoopKillAll then
-			Toggles.LoopKillAll = true
-			log('[Logs]: Loop killing all players')
-			while wait() do
-				if Toggles.LoopKillAll then
-					workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
-					workspace.Remote.TeamEvent:FireServer('Medium stone grey')
-					for _, plr in ipairs(game.Players:GetChildren()) do
-						if plr.Name ~= game.Players.LocalPlayer.Name and Toggles.LoopKillAll then
-							killPlr(plr)
-						end
-					end
-				else break end
-			end
-		else 
-			notif('Already loop killing all players') 
-			log('[Logs]: Already loop killing all players') 
-		end
-	elseif cmd == 'loopkillguards' or cmd == 'loopkillguard' or cmd == 'lkillguards' or cmd == 'lkillguard' or cmd == 'lkguards'  or cmd == 'lkguard' then
-		if not Toggles.LoopKillGuards then
-			Toggles.LoopKillGuards = true
-			log('[Logs]: Loop killing guards')
-			while wait() do
-				if Toggles.LoopKillGuards then
-					local details = plrDetails()
-					local team = details[3]
-
-					workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
-					if team == 'Bright blue' then
-						workspace.Remote.TeamEvent:FireServer('Medium stone grey')
-					end
-					for _, plr in ipairs(game.Players:GetChildren()) do
-						if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == 'Bright blue' and Toggles.LoopKillGuards then
-							killPlr(plr)
-						end
-					end
-				else break end
-			end
-		else 
-			notif('Already loop killing guards') 
-			log('[Logs]: Already loop killing guards') 
-		end
-	elseif cmd == 'loopkillinmates' or cmd == 'loopkillinmate' or cmd == 'lkillinmates' or cmd == 'lkillinmate' or cmd == 'lkinmates' or cmd == 'lkinmate' or cmd == 'loopkillprisoners' or cmd == 'loopkillprisoner' or cmd == 'lkillprisoners' or cmd == 'lkillprisoner' or cmd == 'lkprisoners' or cmd == 'lkprisoner' then
-		if not Toggles.LoopKillInmates then
-			Toggles.LoopKillInmates = true
-			log('[Logs]: Loop killing inmates')
-			while wait() do
-				if Toggles.LoopKillInmates then
-					local details = plrDetails()
-					local team = details[3]
-
-					workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
-					if team == 'Bright orange' then
-						workspace.Remote.TeamEvent:FireServer('Medium stone grey')
-					end
-					for _, plr in ipairs(game.Players:GetChildren()) do
-						if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == 'Bright orange' and Toggles.LoopKillInmates then
-							killPlr(plr)
-						end
-					end
-				else break end
-			end
-		else 
-			notif('Already loop killing inmates') 
-			log('[Logs]: Already loop killing inmates') 
-		end
-	elseif cmd == 'loopkillcriminals' or cmd == 'loopkillcriminal' or cmd == 'lkillcriminals' or cmd == 'lkillcriminal' or cmd == 'lkcriminals' or cmd == 'lkcriminal' or cmd == 'loopkillcrims' or cmd == 'loopkillcrim' or cmd == 'lkillcrims' or cmd == 'lkillcrim' or cmd == 'lkcrims' or cmd == 'lkcrim' then
-		if not Toggles.LoopKillCrims then
-			Toggles.LoopKillCrims = true
-			log('[Logs]: Loop killing criminals')
-			while wait() do
-				if Toggles.LoopKillCrims then
-					local details = plrDetails()
-					local team = details[3]
-
-					workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
-					if team == 'Really red' then
-						workspace.Remote.TeamEvent:FireServer('Medium stone grey')
-					end
-					for _, plr in ipairs(game.Players:GetChildren()) do
-						if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == 'Really red' and Toggles.LoopKillCrims then
-							killPlr(plr)
-						end
-					end
-				else break end
-			end
-		else 
-			notif('Already loop killing criminals') 
-			log('[Logs]: Already loop killing criminals') 
-		end
-	elseif cmd == 'loopkillenemies' or cmd == 'loopkillenemy' or cmd == 'lkillenemies' or cmd == 'lkillenemy' or cmd == 'lkenemies' or cmd == 'lkenemy' then
-		if not Toggles.LoopKillEnemies then
-			Toggles.LoopKillEnemies = true
-			log('[Logs]: Loop killing enemies')
-			while wait() do
-				if Toggles.LoopKillEnemies then
-					local details = plrDetails()
-					local team = details[3]
-
-					workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
-					for _, plr in ipairs(game.Players:GetChildren()) do
-						if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name ~= team and Toggles.LoopKillEnemies then
-							killPlr(plr)
-						end
-					end
-				else break end
-			end
-		else 
-			notif('Already loop killing enemies') 
-			log('[Logs]: Already loop killing enemies') 
 		end
 	elseif cmd == 'unloopkill' or cmd == 'unlkill' or cmd == 'unlk' then
-		if args[1] == 'all' or args[1] == 'others'  then
-			if Toggles.LoopKillAll then
-				log('[Logs]: Disabled loop killing all players')
-				Toggles.LoopKillAll = false
+		if args[1] then
+			if args[1] == 'guards' or args[1] == 'guard' or args[1] == 'cops' or args[1] == 'cop' then
+				if Toggles.LoopKillGuards then
+					Toggles.LoopKillGuards = false
+					log('[Logs]: Disabled loop killing guards')
+				else log('[Logs]: Already disabled loop killing guards') end
+			elseif args[1] == 'inmates' or args[1] == 'inmate' or args[1] == 'prisoners' or args[1] == 'prisoner' then
+				if Toggles.LoopKillInmates then
+					Toggles.LoopKillInmates = false
+					log('[Logs]: Disabled loop killing inmates')
+				else log('[Logs]: Already disabled loop killing inmates') end
+			elseif args[1] == 'criminals' or args[1] == 'criminal' or args[1] == 'crims' or args[1] == 'crim' then
+				if Toggles.LoopKillCrims then
+					Toggles.LoopKillCrims = false
+					log('[Logs]: Disabled loop killing criminals')
+				else log('[Logs]: Already disabled loop killing criminals') end
+			elseif args[1] == 'all' or args[1] == 'others' then
+				if Toggles.LoopKillAll then
+					Toggles.LoopKillAll = false
+					log('[Logs]: Disabled loop killing all players')
+				else log('[Logs]: Already disabled loop killing all players') end
+			elseif args[1] == 'enemies' or args[1] == 'enemy' then
+				if Toggles.LoopKillEnemies then
+					Toggles.LoopKillEnemies = false
+					log('[Logs]: Disabled loop killing enemies')
+				else log('[Logs]: Already disabled loop killing enemies') end
 			else 
-				notif('Already disabled loop killing all players') 
-				log('[Logs]: Already disabled loop killing all players') 
+				local plr = getPlr(args[1])
+				if plr then
+					if PlrsLoopKilled[plr.UserId] then
+						PlrsLoopKilled[plr.UserId] = nil
+						log('[Logs]: Disabled loop killing '..plrName(plr))
+					else log('[Logs]: Already disabled loop killing '..plrName(plr)) end
+				else log('[Logs]: No player found') end
 			end
-		elseif args[1] == 'guards' or args[1] == 'guard' or cmd == 'cops' or cmd == 'cop' then
-			if Toggles.LoopKillGuards then
-				log('[Logs]: Disabled loop killing guards')
-				Toggles.LoopKillGuards = false
-			else 
-				notif('Already disabled loop killing guards') 
-				log('[Logs]: Already disabled loop killing guards') 
-			end
-		elseif args[1] == 'inmates' or args[1] == 'inmate' or args[1] == 'prisoners' or args[1] == 'prisoner' then
-			if Toggles.LoopKillInmates then
-				log('[Logs]: Disabled loop killing inmates')
-				Toggles.LoopKillInmates = false
-			else 
-				notif('Already disabled loop killing inmates') 
-				log('[Logs]: Already disabled loop killing inmates') 
-			end
-		elseif args[1] == 'criminals' or args[1] == 'criminal' or args[1] == 'crims' or args[1] == 'crim' then
-			if Toggles.LoopKillCrims then
-				log('[Logs]: Disabled loop killing criminals')
-				Toggles.LoopKillCrims = false
-			else 
-				notif('Already disabled loop killing criminals') 
-				log('[Logs]: Already disabled loop killing criminals') 
-			end
-		elseif args[1] == 'enemies' or args[1] == 'enemy' then
-			if Toggles.LoopKillEnemies then
-				log('[Logs]: Disabled loop killing enemies')
-				Toggles.LoopKillEnemies = false
-			else
-				notif('Already disabled loop killing enemies') 
-				log('[Logs]: Already disabled loop killing enemies') 
-			end
-		else
-			local plr = getPlr(args[1])
-			if plr then
-				if PlrsLoopKilled[plr.UserId] then
-					PlrsLoopKilled[plr.UserId] = nil
-					log('[Logs]: Disabled loop killing '..plrName(plr))
-				else log('[Logs]: Already disabled loop killing '..plrName(plr)) end
-			else log('[Logs]: No player found') end
-		end
-	elseif cmd == 'unloopkillall' or cmd == 'unlkillall' or cmd == 'unlkall' then
-		if Toggles.LoopKillAll then
-			log('[Logs]: Disabled loop killing all players')
-			Toggles.LoopKillAll = false
-		else 
-			notif('Already disabled loop killing all players') 
-			log('[Logs]: Already disabled loop killing all players') 
-		end
-	elseif cmd == 'unloopkillguards' or cmd == 'unloopkillguard' or cmd == 'unlkillguards' or cmd == 'unlkillguard' or cmd == 'unlkguards'  or cmd == 'unlkguard' then
-		if Toggles.LoopKillGuards then
-			log('[Logs]: Disabled loop killing guards')
-			Toggles.LoopKillGuards = false
-		else 
-			notif('Already disabled loop killing guards') 
-			log('[Logs]: Already disabled loop killing guards') 
-		end
-	elseif cmd == 'unloopkillinmates' or cmd == 'unloopkillinmate' or cmd == 'unlkillinmates' or cmd == 'unlkillinmate' or cmd == 'unlkinmates' or cmd == 'unlkinmate' or cmd == 'unloopkillprisoners' or cmd == 'unloopkillprisoner' or cmd == 'unlkillprisoners' or cmd == 'unlkillprisoner' or cmd == 'unlkprisoners' or cmd == 'unlkprisoner' then
-		if Toggles.LoopKillInmates then
-			log('[Logs]: Disabled loop killing inmates')
-			Toggles.LoopKillInmates = false
-		else 
-			notif('Already disabled loop killing inmates') 
-			log('[Logs]: Already disabled loop killing inmates') 
-		end
-	elseif cmd == 'unloopkillcriminals' or cmd == 'unloopkillcriminal' or cmd == 'unlkillcriminals' or cmd == 'unlkillcriminal' or cmd == 'unlkcriminals' or cmd == 'unlkcriminal' or cmd == 'unloopkillcrims' or cmd == 'unloopkillcrim' or cmd == 'unlkillcrims' or cmd == 'unlkillcrim' or cmd == 'unlkcrims' or cmd == 'unlkcrim' then
-		if Toggles.LoopKillCrims then
-			log('[Logs]: Disabled loop killing criminals')
-			Toggles.LoopKillCrims = false
-		else 
-			notif('Already disabled loop killing criminals') 
-			log('[Logs]: Already disabled loop killing criminals') 
-		end
-	elseif cmd == 'unloopkillenemies' or cmd == 'unloopkillenemy' or cmd == 'unlkillenemies' or cmd == 'unlkillenemy' or cmd == 'unlkenemies' or cmd == 'unlkenemy' then
-		if Toggles.LoopKillEnemies then
-			log('[Logs]: Disabled loop killing enemies')
-			Toggles.LoopKillEnemies = false
-		else
-			notif('Already disabled loop killing enemies') 
-			log('[Logs]: Already disabled loop killing enemies') 
 		end
 	elseif cmd == 'clearloopkills' or cmd == 'clearloopkill' or cmd == 'clearlks' or cmd == 'clearlk' then
-		log('[Logs]: Cleared loop killing all players')
-		notif('Cleared loop killing all players') 
 		Toggles.LoopKillAll = false
 		Toggles.LoopKillGuards = false
 		Toggles.LoopKillInmates = false
 		Toggles.LoopKillCrims = false
 		Toggles.LoopKillEnemies = false
 		PlrsLoopKilled = {}
+		log('[Logs]: Cleared loop killing all players')
+		notif('Cleared loop killing all players') 
 	elseif cmd == 'killaura' or cmd == 'aura' then
 		if not Toggles.KillAura then
 			log('[Logs]: Enabled kill aura')
@@ -1783,7 +1506,7 @@ local function executeCmd(cmd, args)
 	elseif cmd == 'reset' or cmd == 'oof ' then
 		game.Players.LocalPlayer.Character:BreakJoints()
 		log('[Logs]: Successfully reset')
-	elseif cmd == 'respawn' or cmd == 'res ' then
+	elseif cmd == 'respawn' or cmd == 'res' then
 		workspace.Remote.loadchar:InvokeServer()
 		log('[Logs]: Successfully respawned')
 	elseif cmd == 'refresh' or cmd == 're' then
@@ -1953,14 +1676,15 @@ local function executeCmd(cmd, args)
 		if not Toggles.AlwaysDay then
 			log('[Logs]: Disabled day cycle')
 			Toggles.AlwaysDay = true
-			RunService.RenderStepped:Connect(function()
+			local func
+			func = RunService.RenderStepped:Connect(function()
 				if Toggles.AlwaysDay then
 					game.Lighting.Brightness = 2
 					game.Lighting.ClockTime = 14
 					game.Lighting.FogEnd = 100000
 					game.Lighting.GlobalShadows = false
 					game.Lighting.OutdoorAmbient = Color3.fromRGB(128, 128, 128)
-				end
+				else func:Disconnect() end
 			end)
 		else log('[Logs]: Already disabled day cycle') end
 	elseif cmd == 'daycycle' or cmd == 'unalwaysday' then
@@ -1968,6 +1692,24 @@ local function executeCmd(cmd, args)
 			log('[Logs]: Enabled day cycle')
 			Toggles.AlwaysDay = false
 		else log('[Logs]: Already enabled day cycle') end
+	elseif cmd == 'showinventory' or cmd == 'showinv' then
+
+	elseif cmd == 'autoshowinventory' or cmd == 'autoshowinv' then
+		if not Toggles.AutoShowInv then
+			log('[Logs]: Enabled auto show inventory')
+			Toggles.AutoShowInv = true
+			local func
+			func = RunService.RenderStepped:Connect(function()
+				if Toggles.AutoShowInv then
+					game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, true)
+				else func:Disconnect() end
+			end)
+		else log('[Logs]: Already enabled auto show inventory') end
+	elseif cmd == 'unautoshowinventory' or cmd == 'unautoshowinv' then
+		if Toggles.AutoShowInv then
+			log('[Logs]: Disabled auto show inventory')
+			Toggles.AutoShowInv = false
+		else log('[Logs]: Already disabled auto show inventory') end
 	elseif cmd == 'view' or cmd == 'spectate' then
 		if args[1] then
 			local plr = getPlr(args[1])
@@ -2188,6 +1930,43 @@ local function executeCmd(cmd, args)
 			Toggles.SuperPunch = false
 			log('[Logs]: Disabled super punching')
 		else log('[Logs]: Already disabled super punching') end
+	elseif cmd == 'dropitems' then
+		if not Toggles.DropItems then
+			Toggles.DropItems = true
+			local plrCF
+			local team
+			pcall(function()
+				local details = plrDetails()
+				plrCF = details[1]
+				team = details[3]
+			end)
+			if not plrCF and not team then
+				local plr = game.Players.LocalPlayer
+				repeat wait() until plr:FindFirstChild('Character') and plr.Character:FindFirstChild('HumanoidRootPart')
+				plrCF = plr.Character.HumanoidRootPart
+				team = plr.TeamColor.Name
+			end
+			if team ~= 'Bright blue' then
+				log('[Logs]: Switching to guard team, please wait...')
+				repeat wait() workspace.Remote.TeamEvent:FireServer('Bright blue') until game.Players.LocalPlayer.TeamColor.Name == 'Bright blue'
+			end
+			log('[Logs]: Enabled item dropping')
+			spawn(function()
+				if Toggles.DropItems then
+					repeat wait()
+						game.Players.LocalPlayer.Character:BreakJoints()
+						workspace.Remote.loadchar:InvokeServer()
+						game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
+						wait(.1)
+					until not Toggles.DropItems
+				return end
+			end)
+		else log('[Logs]: Already enabled item dropping') end
+	elseif cmd == 'undropitems' then
+		if Toggles.DropItems then
+			Toggles.DropItems = false
+			log('[Logs]: Disabled item dropping')
+		else log('[Logs]: Already disabled item dropping') end
 	elseif cmd == 'key' or cmd == 'keycard' or cmd == 'card' then
 		if not game.Players.LocalPlayer.Character:FindFirstChild('Key card') and not game.Players.LocalPlayer.Backpack:FindFirstChild('Key card') then
 			local details = plrDetails()
@@ -2198,7 +1977,7 @@ local function executeCmd(cmd, args)
 				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
 				log('[Logs]: Obtained key card') 
 			else 
-				log('[Logs]: Obtaining key card, please wait...')
+				log('[Logs]: Switching to guard team, please wait...')
 				if team ~= 'Bright blue' then
 					repeat wait() workspace.Remote.TeamEvent:FireServer('Bright blue') until game.Players.LocalPlayer.TeamColor.Name == 'Bright blue'
 				end
@@ -2944,7 +2723,7 @@ spawn(function()
 		for _, v in pairs(PlrsLoopKilled) do
 			pcall(function()
 				local plr = getPlr(v.player.Name)
-				if v and plr then
+				if v and plr and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
 					local details = plrDetails()
 					local team = details[3]
 					if team == plr.TeamColor.Name then
@@ -2962,7 +2741,7 @@ spawn(function()
 		for _, v in pairs(PlrsLoopTased) do
 			pcall(function()
 				local plr = getPlr(v.player.Name)
-				if v and plr then
+				if v and plr and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
 					local details = plrDetails()
 					local plrCF = details[1]
 					tasePlr(v.player)
@@ -2970,6 +2749,64 @@ spawn(function()
 					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
 				end
 			end)
+		end
+	end
+end)
+
+spawn(function()
+	while wait() do
+		if CmdGUI.Parent == nil then break end
+		local team
+		pcall(function()
+			team = plrDetails()[3]
+		end)
+		if team == nil then team = game.Players.LocalPlayer.TeamColor.Name end
+		if Toggles.LoopKillGuards then
+			if team == 'Bright blue' then
+				workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+			end
+			for _, plr in pairs(game.Players:GetChildren()) do
+				if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == 'Bright blue' and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
+					killPlr(plr)
+				end
+			end
+		end
+		if Toggles.LoopKillInmates then
+			if team == 'Bright orange' then
+				workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+			end
+			for _, plr in pairs(game.Players:GetChildren()) do
+				if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == 'Bright orange' and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
+					killPlr(plr)
+				end
+			end
+		end
+		if Toggles.LoopKillCrims then
+			if team == 'Really red' then
+				workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+			end
+			for _, plr in pairs(game.Players:GetChildren()) do
+				if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name == 'Really red' and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
+					killPlr(plr)
+				end
+			end
+		end
+		if Toggles.LoopKillAll then
+			if team ~= 'Medium stone grey' then
+				workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+			end
+			for _, plr in pairs(game.Players:GetChildren()) do
+				if plr.Name ~= game.Players.LocalPlayer.Name and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
+					killPlr(plr)
+				end
+			end
+		end
+		if Toggles.LoopKillEnemies then
+			for _, plr in pairs(game.Players:GetChildren()) do
+				if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name ~= team and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
+					killPlr(plr)
+				end
+			end
 		end
 	end
 end)
