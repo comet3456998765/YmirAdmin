@@ -1,5 +1,5 @@
 # ong's Prison Life Admin
-
+![preview](/preview.png)
 
 The best admin commands script for Prison Life with over 100 commands.
 
