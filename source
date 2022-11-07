@@ -387,7 +387,7 @@ Cmd[#Cmd + 1] = {Name='arrestall',Desc='Arrests all players if possible'}
 Cmd[#Cmd + 1] = {Name='looparrest / spamarrest <plr>',Desc='Loop arrests the player (Causes lag)'}
 Cmd[#Cmd + 1] = {Name='arrestaura',Desc='Arrests everyone who is near you'}
 Cmd[#Cmd + 1] = {Name='noarrestaura / unarrestaura',Desc='Disables arrest aura'}
-Cmd[#Cmd + 1] = {Name='kill <plr / team / enemies all>',Desc='Kills the player/team/all/enemies if you choose one of them'}
+Cmd[#Cmd + 1] = {Name='kill <plr / team / enemies / all>',Desc='Kills the player/team/all/enemies if you choose one of them'}
 Cmd[#Cmd + 1] = {Name='loopkill / lk <plr / team / enemies / all>',Desc='Loop kills the player/team/all/enemies if you choose one of them'}
 Cmd[#Cmd + 1] = {Name='unloopkill / unlk <plr / team / enemies / all>',Desc='Disables loop killing the player/team/all/enemies if you choose one of them'}
 Cmd[#Cmd + 1] = {Name='clearloopkill / clearloopkills',Desc='Removes all loop kills'}
