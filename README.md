@@ -17,10 +17,10 @@ loadstring(game:HttpGet(('https://raw.githubusercontent.com/senorkal/ongsPrisonL
 
 > Unobfuscated
 
-### Version 1.0.0 -> Version 1.1.1
+### Version 1.0.0 -> Version 1.1.2
 > Improved UI
 
-> Fixed bugs and tweaked/improved previous commands
+> Currently fixing bugs and tweaking commands to reduce lag
 
 > Removed/added new commands, some commands removed to integrate them on previous commands
 
