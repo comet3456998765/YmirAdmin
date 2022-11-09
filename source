@@ -2625,7 +2625,7 @@ local function executeCmd(cmd, args)
 	elseif cmd == 'nologs' or cmd == 'nonotifications' or cmd == 'nonotifs' then
 		toggleLogs(false)
 	elseif cmd == 'version' or cmd == 'ver' then
-		if pcall(function() loadstring(game:HttpGet(('https://raw.githubusercontent.com/senorkal/YmirAdmin/main/source'),true))() end) then
+		if pcall(function() loadstring(game:HttpGet(('https://raw.githubusercontent.com/senorkal/YmirAdmin/main/version'),true))() end) then
 			if ver ~= _Version then
 				notif('Please update: Current version: '..ver..', Updated version: '.._Version)
 				log('[Logs]: Please update: Current version: '..ver..', Updated version: '.._Version)
