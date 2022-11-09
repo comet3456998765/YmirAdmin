@@ -1,17 +1,28 @@
 ---//vvv SERVICES vvv\\---
+local ver = '2.0.0'
 local UserInputService = game:GetService('UserInputService')
 local RunService = (game:GetService('RunService'));
-local GuiService = game.Players.LocalPlayer:WaitForChild('PlayerGui')
+local CoreGui = game:GetService('CoreGui')
 local HttpService = game:GetService('HttpService')
 local TweenService = game:GetService('TweenService')
 ---//vvv INSTANCES vvv\\---
 local CmdGUI = Instance.new('ScreenGui')
 CmdGUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-CmdGUI.Parent = GuiService
 CmdGUI.Enabled = false
+local par
+if get_hidden_gui or gethui then
+	local hiddenui = get_hidden_gui or gethui
+	par = hiddenui()
+elseif CoreGui:FindFirstChild('RobloxGui ')then
+	par = CoreGui.RobloxGui
+else
+	if (not is_sirhurt_closure) and (syn and syn.protect_gui) then syn.protect_gui(CmdGUI) end
+	par = game:GetService('CoreGui')
+end
+CmdGUI.Parent = par
 
 local CmdMain = Instance.new('Frame')
-CmdMain.Name = 'CmdMain'
+CmdMain.Name = 'YmirAdmin_Main'
 CmdMain.Parent = CmdGUI
 CmdMain.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 CmdMain.BorderColor3 = Color3.fromRGB(31, 31, 31)
@@ -20,18 +31,18 @@ CmdMain.Position = UDim2.new(0.5, 0, 0.5, 0)
 CmdMain.Size = UDim2.new(0, 200, 0, 269)
 CmdMain.AnchorPoint = Vector2.new(0.5, 0.5)
 
-local CmdNotifBox = Instance.new('Frame')
-CmdNotifBox.Name = 'CmdNotifBox'
-CmdNotifBox.Parent = CmdMain
-CmdNotifBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-CmdNotifBox.BorderColor3 = Color3.fromRGB(140, 140, 140)
-CmdNotifBox.BorderSizePixel = 0
-CmdNotifBox.Position = UDim2.new(0, 0, 0.632000029, 0)
-CmdNotifBox.Size = UDim2.new(0.996109784, 0, 0.36981371, 0)
+local CmdBox = Instance.new('Frame')
+CmdBox.Name = 'YmirAdmin_Box'
+CmdBox.Parent = CmdMain
+CmdBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+CmdBox.BorderColor3 = Color3.fromRGB(140, 140, 140)
+CmdBox.BorderSizePixel = 0
+CmdBox.Position = UDim2.new(0, 0, 0.632000029, 0)
+CmdBox.Size = UDim2.new(0.996109784, 0, 0.36981371, 0)
 
 local CmdNotif = Instance.new('TextLabel')
-CmdNotif.Name = 'CmdNotif'
-CmdNotif.Parent = CmdNotifBox
+CmdNotif.Name = 'YmirAdmin_NotifText'
+CmdNotif.Parent = CmdBox
 CmdNotif.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 CmdNotif.BackgroundTransparency = 1.000
 CmdNotif.Position = UDim2.new(0.0128824329, 0, 0.201365471, 0)
@@ -39,55 +50,49 @@ CmdNotif.Size = UDim2.new(0.986970961, 0, 0.820274472, 0)
 CmdNotif.Visible = false
 CmdNotif.ZIndex = 10
 CmdNotif.Font = Enum.Font.SourceSans
-CmdNotif.Text = 'whaddafuck done'
 CmdNotif.TextColor3 = Color3.fromRGB(255, 255, 255)
 CmdNotif.TextSize = 14.000
 CmdNotif.TextWrapped = true
 
-local CmdNotifHandler = Instance.new('ScrollingFrame')
-CmdNotifHandler.Name = 'CmdNotifHandler'
-CmdNotifHandler.Parent = CmdNotifBox
-CmdNotifHandler.Active = true
-CmdNotifHandler.Visible = false
-CmdNotifHandler.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-CmdNotifHandler.BorderSizePixel = 0
-CmdNotifHandler.Position = UDim2.new(0.0331288725, 0, 0.207801834, 0)
-CmdNotifHandler.Size = UDim2.new(0.966870666, 0, 0.785972178, 0)
-CmdNotifHandler.CanvasSize = UDim2.new(0.1, 0, 0.1, 0)
-CmdNotifHandler.AutomaticCanvasSize = 'Y'
-CmdNotifHandler.ScrollingDirection = 'Y'
-CmdNotifHandler.ScrollBarThickness = 6
+local CmdLogHandler = Instance.new('ScrollingFrame')
+CmdLogHandler.Name = 'YmirAdmin_LogHandler'
+CmdLogHandler.Parent = CmdBox
+CmdLogHandler.Active = true
+CmdLogHandler.Visible = false
+CmdLogHandler.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+CmdLogHandler.BorderSizePixel = 0
+CmdLogHandler.Position = UDim2.new(0.0331288725, 0, 0.207801834, 0)
+CmdLogHandler.Size = UDim2.new(0.966870666, 0, 0.785972178, 0)
+CmdLogHandler.CanvasSize = UDim2.new(0.1, 0, 0.1, 0)
+CmdLogHandler.AutomaticCanvasSize = 'Y'
+CmdLogHandler.ScrollingDirection = 'Y'
+CmdLogHandler.ScrollBarThickness = 6
 
-local CmdNotifLayout = Instance.new('UIListLayout')
-CmdNotifLayout.Parent = CmdNotifHandler
-CmdNotifLayout.SortOrder = Enum.SortOrder.LayoutOrder
+local CmdLogExample = Instance.new('TextLabel')
+CmdLogExample.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+CmdLogExample.BackgroundTransparency = 1.000
+CmdLogExample.Size = UDim2.new(0.928425848, 0, 0.14037393, 0)
+CmdLogExample.Font = Enum.Font.SourceSans
+CmdLogExample.TextColor3 = Color3.fromRGB(255, 255, 255)
+CmdLogExample.TextSize = 14.000
+CmdLogExample.TextWrapped = true
+CmdLogExample.TextXAlignment = Enum.TextXAlignment.Left
+CmdLogExample.AutomaticSize = 'Y'
 
-local CmdNotifExample = Instance.new('TextLabel')
-CmdNotifExample.Name = 'CmdNotifExample'
-CmdNotifExample.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-CmdNotifExample.BackgroundTransparency = 1.000
-CmdNotifExample.Size = UDim2.new(0.928425848, 0, 0.14037393, 0)
-CmdNotifExample.Font = Enum.Font.SourceSans
-CmdNotifExample.TextColor3 = Color3.fromRGB(255, 255, 255)
-CmdNotifExample.TextSize = 14.000
-CmdNotifExample.TextWrapped = true
-CmdNotifExample.TextXAlignment = Enum.TextXAlignment.Left
-CmdNotifExample.AutomaticSize = 'Y'
-
-local CmdNotifTitle = Instance.new('TextLabel')
-CmdNotifTitle.Name = 'CmdNotifTitle'
-CmdNotifTitle.Parent = CmdNotifBox
-CmdNotifTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-CmdNotifTitle.BackgroundTransparency = 1.000
-CmdNotifTitle.Position = UDim2.new(0.0128824329, 0, 0, 0)
-CmdNotifTitle.Size = UDim2.new(0.987117469, 0, 0.207801759, 0)
-CmdNotifTitle.Font = Enum.Font.SourceSansBold
-CmdNotifTitle.Text = 'Logs'
-CmdNotifTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-CmdNotifTitle.TextSize = 14.000
+local CmdBoxTitle = Instance.new('TextLabel')
+CmdBoxTitle.Name = 'YmirAdmin_BoxTitle'
+CmdBoxTitle.Parent = CmdBox
+CmdBoxTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+CmdBoxTitle.BackgroundTransparency = 1.000
+CmdBoxTitle.Position = UDim2.new(0.0128824329, 0, 0, 0)
+CmdBoxTitle.Size = UDim2.new(0.987117469, 0, 0.207801759, 0)
+CmdBoxTitle.Font = Enum.Font.SourceSansBold
+CmdBoxTitle.Text = 'Logs'
+CmdBoxTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+CmdBoxTitle.TextSize = 14.000
 
 local CmdHandler = Instance.new('ScrollingFrame')
-CmdHandler.Name = 'CmdHandler'
+CmdHandler.Name = 'YmirAdmin_CmdHandler'
 CmdHandler.Parent = CmdMain
 CmdHandler.Active = true
 CmdHandler.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
@@ -99,7 +104,6 @@ CmdHandler.AutomaticCanvasSize = 'Y'
 CmdHandler.ScrollingDirection = 'Y'
 
 local CmdExample = Instance.new('TextButton')
-CmdExample.Name = 'CmdExample'
 CmdExample.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 CmdExample.BackgroundTransparency = 1.000
 CmdExample.Size = UDim2.new(0, 194, 0, 18)
@@ -110,7 +114,7 @@ CmdExample.TextSize = 14.000
 CmdExample.TextXAlignment = Enum.TextXAlignment.Left
 
 local CmdBar = Instance.new('TextBox')
-CmdBar.Name = 'CmdBar'
+CmdBar.Name = 'YmirAdmin_CmdBar'
 CmdBar.Parent = CmdMain
 CmdBar.BackgroundColor3 = Color3.fromRGB(53, 53, 53)
 CmdBar.BorderSizePixel = 0
@@ -125,18 +129,18 @@ CmdBar.TextXAlignment = Enum.TextXAlignment.Left
 CmdBar.ClearTextOnFocus = false
 
 local CmdTitle = Instance.new('TextLabel')
-CmdTitle.Name = 'CmdTitle'
+CmdTitle.Name = 'YmirAdmin_Title'
 CmdTitle.Parent = CmdMain
 CmdTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 CmdTitle.BackgroundTransparency = 1.000
 CmdTitle.Size = UDim2.new(0, 200, 0, 23)
 CmdTitle.Font = Enum.Font.SourceSansBold
-CmdTitle.Text = "ong's Prison Life Admin"
+CmdTitle.Text = 'Ymir Admin '..ver
 CmdTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
 CmdTitle.TextSize = 14.000
 
 local CmdDescBox = Instance.new('Frame')
-CmdDescBox.Name = 'CmdDescBox'
+CmdDescBox.Name = 'YmirAdmin_DescBox'
 CmdDescBox.Parent = CmdMain
 CmdDescBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 CmdDescBox.BackgroundTransparency = 0.2500
@@ -144,31 +148,31 @@ CmdDescBox.Position = UDim2.new(-0.00237113237, 0, 0.307555377, 0)
 CmdDescBox.Size = UDim2.new(0, 194, 0, 71)
 CmdDescBox.Visible = false
 
-local CmdName = Instance.new('TextLabel')
-CmdName.Name = 'CmdName'
-CmdName.Parent = CmdDescBox
-CmdName.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-CmdName.BackgroundTransparency = 1.000
-CmdName.Size = UDim2.new(0, 191, 0, 23)
-CmdName.Font = Enum.Font.SourceSansBold
-CmdName.TextColor3 = Color3.fromRGB(255, 255, 255)
-CmdName.TextSize = 13.500
+local CmdDescTitle = Instance.new('TextLabel')
+CmdDescTitle.Name = 'YmirAdmin_DescTitle'
+CmdDescTitle.Parent = CmdDescBox
+CmdDescTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+CmdDescTitle.BackgroundTransparency = 1.000
+CmdDescTitle.Size = UDim2.new(0, 191, 0, 23)
+CmdDescTitle.Font = Enum.Font.SourceSansBold
+CmdDescTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+CmdDescTitle.TextSize = 13.500
 
-local CmdDesc = Instance.new('TextLabel')
-CmdDesc.Name = 'CmdDesc'
-CmdDesc.Parent = CmdDescBox
-CmdDesc.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-CmdDesc.BackgroundTransparency = 1.000
-CmdDesc.Position = UDim2.new(0, 0, 0.324, 0)
-CmdDesc.Size = UDim2.new(0, 191, 0, 48)
-CmdDesc.ZIndex = 10
-CmdDesc.Font = Enum.Font.SourceSans
-CmdDesc.Text = ''
-CmdDesc.TextColor3 = Color3.fromRGB(255, 255, 255)
-CmdDesc.TextSize = 14.000
-CmdDesc.TextWrapped = true
+local CmdDescription = Instance.new('TextLabel')
+CmdDescription.Name = 'YmirAdmin_Description'
+CmdDescription.Parent = CmdDescBox
+CmdDescription.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+CmdDescription.BackgroundTransparency = 1.000
+CmdDescription.Position = UDim2.new(0, 0, 0.324, 0)
+CmdDescription.Size = UDim2.new(0, 191, 0, 48)
+CmdDescription.ZIndex = 10
+CmdDescription.Font = Enum.Font.SourceSans
+CmdDescription.Text = ''
+CmdDescription.TextColor3 = Color3.fromRGB(255, 255, 255)
+CmdDescription.TextSize = 14.000
+CmdDescription.TextWrapped = true
 
-Instance.new('UIListLayout', CmdNotifHandler).SortOrder = Enum.SortOrder.LayoutOrder
+Instance.new('UIListLayout', CmdLogHandler).SortOrder = Enum.SortOrder.LayoutOrder
 Instance.new('UIListLayout', CmdHandler).SortOrder = Enum.SortOrder.LayoutOrder
 --//vvv SAVE AND LOAD vvv\\--
 _G.settings = {
@@ -178,7 +182,7 @@ _G.settings = {
 	logsOpen = false,
 	mainPos = {x1 = CmdMain.Position.X.Scale, x2 = CmdMain.Position.X.Offset, x3 = CmdMain.Position.Y.Scale, x4 = CmdMain.Position.Y.Offset},
 }
-local file = 'PrisonLifeSettings.ong'
+local file = 'YmirAdminSettings.pl'
 local function load()
 	if (readfile and isfile and isfile(file)) then
 		_G.settings = HttpService:JSONDecode(readfile(file))
@@ -209,28 +213,30 @@ end
 ---//vvv DESTROY CLONES vvv\\---
 local introSpeed = 0.2
 local reload = false
-if GuiService:FindFirstChild('CmdGUI') then
+if par:FindFirstChild('YmirAdmin_GUI') then
 	reload = true 
-	local oldMain = GuiService.CmdGUI.CmdMain
+	local oldMain = par['YmirAdmin_GUI'][CmdMain.Name]
 	CmdMain.Position = oldMain.Position
-	local oldHandler = oldMain.CmdHandler
+	local oldHandler = oldMain[CmdHandler.Name]
 	CmdHandler.CanvasPosition = oldHandler.CanvasPosition
-	local oldBar = CmdMain.CmdBar
+	local oldBar = CmdMain[CmdBar.Name]
 	CmdBar.Text = oldBar.Text
-	local oldNotifBox = oldMain.CmdNotifBox
-	CmdNotifBox.Position = oldNotifBox.Position
-	local oldNotif = oldNotifBox.CmdNotif
+	local oldBox = oldMain[CmdBox.Name]
+	CmdBox.Position = oldBox.Position
+	local oldNotif = oldBox[CmdNotif.Name]
 	CmdNotif.Visible = oldNotif.Visible
-	local oldNotifHandler = oldNotifBox.CmdNotifHandler:Clone()
-	CmdNotifHandler:Destroy()
-	oldNotifHandler.Parent = CmdNotifBox
-	CmdNotifHandler = oldNotifHandler
-	CmdNotifHandler.CanvasPosition = Vector2.new(0, CmdNotifHandler.AbsoluteCanvasSize.Y)
-	GuiService.CmdGUI.Parent = nil
+	local oldNotifHandler = oldBox[CmdLogHandler.Name]:Clone()
+	CmdLogHandler:Destroy()
+	oldNotifHandler.Parent = CmdBox
+	CmdLogHandler = oldNotifHandler
+	CmdLogHandler.CanvasPosition = Vector2.new(0, CmdLogHandler.AbsoluteCanvasSize.Y)
+	par['YmirAdmin_GUI'].Parent = nil
+	CmdGUI.Name = 'YmirAdmin_GUI'
 	CmdGUI.Enabled = true
 else --//vvv INTRO vvv\\---
+	CmdGUI.Name = 'YmirAdmin_GUI'
 	CmdGUI.Enabled = true
-	CmdNotifBox.Visible = false
+	CmdBox.Visible = false
 	CmdHandler.Visible = false
 	CmdBar.Visible = false
 	CmdTitle.TextTransparency = 1
@@ -252,9 +258,8 @@ else --//vvv INTRO vvv\\---
 	f3.Completed:Wait()
 	wait(.1)
 	CmdHandler.Visible = true
-	CmdNotifBox.Visible = true
+	CmdBox.Visible = true
 end
-CmdGUI.Name = 'CmdGUI'
 ---//vvv VARIABLES vvv\\---
 local canvasPos = CmdHandler.CanvasPosition
 local notified = false
@@ -263,27 +268,27 @@ local function notif(txt, notimer)
 	if notifs and not logsOpen then
 		local counter = 0
 		CmdNotif.Visible = true
-		CmdNotifHandler.Visible = false
+		CmdLogHandler.Visible = false
 		if not notified then
 			CmdNotif.Text = txt
 			if not notimer then wait(0.5) end
 			notified = true
-			CmdNotifBox:TweenPosition(UDim2.new(0.967000008, 0, 0.632000029, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 0.5)
+			CmdBox:TweenPosition(UDim2.new(0.967000008, 0, 0.632000029, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 0.5)
 			wait(3)
 			if not logsOpen then
-				CmdNotifBox:TweenPosition(UDim2.new(0, 0, 0.632000029, 0), Enum.EasingDirection.In, Enum.EasingStyle.Quart, 0.5)
+				CmdBox:TweenPosition(UDim2.new(0, 0, 0.632000029, 0), Enum.EasingDirection.In, Enum.EasingStyle.Quart, 0.5)
 				notified = false
 			end
 		else 
-			CmdNotifBox:TweenPosition(UDim2.new(0, 0, 0.632000029, 0), Enum.EasingDirection.In, Enum.EasingStyle.Quart, 0.5)
+			CmdBox:TweenPosition(UDim2.new(0, 0, 0.632000029, 0), Enum.EasingDirection.In, Enum.EasingStyle.Quart, 0.5)
 			notified = false
-			repeat wait() until CmdNotifBox.Position == UDim2.new(0, 0, 0.632000029, 0)
+			repeat wait() until CmdBox.Position == UDim2.new(0, 0, 0.632000029, 0)
 			CmdNotif.Text = txt
 			notified = true
-			CmdNotifBox:TweenPosition(UDim2.new(0.967000008, 0, 0.632000029, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 0.5)
+			CmdBox:TweenPosition(UDim2.new(0.967000008, 0, 0.632000029, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 0.5)
 			wait(3)
 			if not logsOpen then
-				CmdNotifBox:TweenPosition(UDim2.new(0, 0, 0.632000029, 0), Enum.EasingDirection.In, Enum.EasingStyle.Quart, 0.5)
+				CmdBox:TweenPosition(UDim2.new(0, 0, 0.632000029, 0), Enum.EasingDirection.In, Enum.EasingStyle.Quart, 0.5)
 				notified = false
 			end
 		end
@@ -293,12 +298,12 @@ end
 
 local function log(txt)
 	spawn(function()
-		local clone = CmdNotifExample:Clone()
+		local clone = CmdLogExample:Clone()
 		clone.Text = txt
-		clone.Name = 'CmdNotification'
+		clone.Name = 'YmirAdmin_Log_'..tostring(#CmdLogHandler:GetChildren()+1)
 		clone.TextTransparency = 1
-		clone.Parent = CmdNotifHandler
-		CmdNotifHandler.CanvasPosition = Vector2.new(0, CmdNotifHandler.AbsoluteCanvasSize.Y)
+		clone.Parent = CmdLogHandler
+		CmdLogHandler.CanvasPosition = Vector2.new(0, CmdLogHandler.AbsoluteCanvasSize.Y)
 		local f = TweenService:Create(clone, TweenInfo.new(introSpeed), {TextTransparency = 0})
 		f:Play()
 	end)
@@ -309,13 +314,13 @@ local function toggleLogs(tog)
 	save()
 	if tog then
 		logsOpen = true
-		CmdNotifHandler.Visible = true
-		CmdNotifBox:TweenPosition(UDim2.new(0.967000008, 0, 0.632000029, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 0.5)
+		CmdLogHandler.Visible = true
+		CmdBox:TweenPosition(UDim2.new(0.967000008, 0, 0.632000029, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 0.5)
 	else
 		logsOpen = false
-		CmdNotifBox:TweenPosition(UDim2.new(0, 0, 0.632000029, 0), Enum.EasingDirection.In, Enum.EasingStyle.Quart, 0.5)
-		repeat wait() until CmdNotifBox.Position == UDim2.new(0, 0, 0.632000029, 0)
-		CmdNotifHandler.Visible = false
+		CmdBox:TweenPosition(UDim2.new(0, 0, 0.632000029, 0), Enum.EasingDirection.In, Enum.EasingStyle.Quart, 0.5)
+		repeat wait() until CmdBox.Position == UDim2.new(0, 0, 0.632000029, 0)
+		CmdLogHandler.Visible = false
 	end
 	CmdNotif.Visible = false
 end
@@ -382,7 +387,7 @@ Cmd[#Cmd + 1] = {Name='arrestall',Desc='Arrests all players if possible'}
 Cmd[#Cmd + 1] = {Name='looparrest / spamarrest <plr>',Desc='Loop arrests the player (Causes lag)'}
 Cmd[#Cmd + 1] = {Name='arrestaura',Desc='Arrests everyone who is near you'}
 Cmd[#Cmd + 1] = {Name='noarrestaura / unarrestaura',Desc='Disables arrest aura'}
-Cmd[#Cmd + 1] = {Name='kill <plr / team / enemies all>',Desc='Kills the player/team/all/enemies if you choose one of them'}
+Cmd[#Cmd + 1] = {Name='kill <plr / team / enemies / all>',Desc='Kills the player/team/all/enemies if you choose one of them'}
 Cmd[#Cmd + 1] = {Name='loopkill / lk <plr / team / enemies / all>',Desc='Loop kills the player/team/all/enemies if you choose one of them'}
 Cmd[#Cmd + 1] = {Name='unloopkill / unlk <plr / team / enemies / all>',Desc='Disables loop killing the player/team/all/enemies if you choose one of them'}
 Cmd[#Cmd + 1] = {Name='clearloopkill / clearloopkills',Desc='Removes all loop kills'}
@@ -496,7 +501,8 @@ Cmd[#Cmd + 1] = {Name='notif / notify',Desc='Notifies you when you use a command
 Cmd[#Cmd + 1] = {Name='unnotif / unnotify',Desc='Disable notifying you whenever you use a command'}
 Cmd[#Cmd + 1] = {Name='logs / notifications',Desc='Check command logs'}
 Cmd[#Cmd + 1] = {Name='nologs / nonotifications',Desc='Minimize command logs'}
-Cmd[#Cmd + 1] = {Name='reloadgui / reloadscript',Desc='Reloads GUI and script if there is a new version'}
+Cmd[#Cmd + 1] = {Name='version / ver',Desc='Checks for current version and updated version'}
+Cmd[#Cmd + 1] = {Name='reloadgui / reloadscript',Desc='Reloads GUI and script'}
 Cmd[#Cmd + 1] = {Name='destroygui / destroyscript',Desc='Destroys GUI and script'}
 
 for i = 1,#Cmd do
@@ -521,7 +527,7 @@ for i = 1,#Cmd do
 end
 local Mouse = game.Players.LocalPlayer:GetMouse()
 Mouse.Move:Connect(function()
-	local Guis = GuiService:GetGuiObjectsAtPosition(Mouse.X, Mouse.Y)
+	local Guis = CoreGui:GetGuiObjectsAtPosition(Mouse.X, Mouse.Y)
 	local Gui
 	for _, v in pairs(Guis) do
 		if v.Parent == CmdHandler then
@@ -539,8 +545,8 @@ Mouse.Move:Connect(function()
 		end
 		CmdDescBox.Visible = true
 		CmdDescBox.Position = UDim2.new(0, X, 0, Y)
-		CmdName.Text = Gui.Text
-		CmdDesc.Text = Gui.Desc.Value
+		CmdDescTitle.Text = Gui.Text
+		CmdDescription.Text = Gui.Desc.Value
 	else
 		CmdDescBox.Visible = false
 	end
@@ -551,9 +557,9 @@ if reload then
 	log('[Logs]: Reloaded admin commands')
 else
 	if logsOpen then
-		CmdNotifHandler.Visible = true
-		CmdNotifBox:TweenPosition(UDim2.new(0.967000008, 0, 0.632000029, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 0.5)
-		repeat wait() until CmdNotifBox.Position == UDim2.new(0.967000008, 0, 0.632000029, 0)
+		CmdLogHandler.Visible = true
+		CmdBox:TweenPosition(UDim2.new(0.967000008, 0, 0.632000029, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 0.5)
+		repeat wait() until CmdBox.Position == UDim2.new(0.967000008, 0, 0.632000029, 0)
 	end
 	log('[Logs]: Loaded admin commands')
 end
@@ -606,8 +612,8 @@ local function killPlr(plr)
 	if not plr then return end
 	pcall(function()
 		if workspace:FindFirstChild(plr.Name) then
-			workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
-			local tool = game.Players.LocalPlayer.Character:FindFirstChild('Remington 870') or game.Players.LocalPlayer.Backpack:FindFirstChild('Remington 870')
+			workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['AK-47'].ITEMPICKUP)
+			local tool = game.Players.LocalPlayer.Character:FindFirstChild('AK-47') or game.Players.LocalPlayer.Backpack:FindFirstChild('AK-47')
 			local event = {
 				[1] = {
 					['RayObject'] = Ray.new(Vector3.new(), Vector3.new()), 
@@ -751,6 +757,12 @@ end
 local function spamArrest(plr, t)
 	for i = 1,t do
 		workspace.Remote.arrest:InvokeServer(workspace[plr.Name].Head)
+	end
+end
+
+local function createSound(sound, source, t)
+	for i = 1, t do
+		game:GetService("ReplicatedStorage").SoundEvent:FireServer(sound, source)
 	end
 end
 
@@ -1451,13 +1463,13 @@ local function executeCmd(cmd, args)
 		else log('[Logs]: Input a valid duration') end
 	elseif cmd == 'unlag' then
 		if Toggles.Lag then
-			log('[Logs]: Uncrashing server')
+			log('[Logs]: Stopping lag')
 			Toggles.Lag = false
 			local tool = game.Players.LocalPlayer.Character:FindFirstChild('Remington 870') or game.Players.LocalPlayer.Backpack:FindFirstChild('Remington 870')
 			tool.Handle:Destroy()
 			tool.Parent = game.Players.LocalPlayer.Character
 			tool:Destroy()
-		else log('[Logs]: Already stopped lag') end
+		else log('[Logs]: Already stopping lag') end
 	elseif cmd == 'crash' or cmd == 'crashserver' then
 		if not Toggles.CrashServer then
 			log('[Logs]: Crashing server')
@@ -1546,33 +1558,25 @@ local function executeCmd(cmd, args)
 			log('[Logs]: Disabled infinite stamina')
 		else log('[Logs]: Already disabled infinite stamina') end
 	elseif cmd == 'earbang' or cmd == 'earrape' then
-		if not Toggles.Earrape then
-			Toggles.Earrape = true
+		if not Toggles.Earbang then
+			Toggles.Earbang = true
 			log('[Logs]: Enabled earbang')
 			while wait() do
-				if Toggles.Earrape then
-					pcall(function()
-						for _ ,v in pairs(game.Players:GetChildren()) do
+				if Toggles.Earbang then 
+					for _ ,plr in pairs(game.Players:GetChildren()) do
+						if not Toggles.Earbang then break end
+						if workspace:FindFirstChild(plr.Name) or workspace[plr.Name]:FindFirstChild('Head') then
+							local h = plr.Character.Head
 							local s = game:GetService("Workspace")["Prison_guardspawn"].spawn.Sound
-							pcall(function()
-								local h = v.Character.Head
-								for i = 1, 15 do
-									if not Toggles.Earrape then break end
-									spawn(function()
-										if Toggles.Earrape then
-											game:GetService("ReplicatedStorage").SoundEvent:FireServer(s, h)
-										end
-									end)
-								end
-							end)
+							createSound(s, h, 5)
 						end
-					end)
+					end
 				else break end
 			end
 		else log('[Logs]: Already enabled earbang') end
 	elseif cmd == 'noearbang' or cmd == 'unearbang' or cmd == 'noearape' or cmd == 'unearrape' then
-		if Toggles.Earrape then
-			Toggles.Earrape = false
+		if Toggles.Earbang then
+			Toggles.Earbang = false
 			log('[Logs]: Disabled earbang')
 		else log('[Logs]: Already disabled earbang') end
 	elseif cmd == 'reset' or cmd == 'oof ' then
@@ -2030,7 +2034,7 @@ local function executeCmd(cmd, args)
 						game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
 						wait(.1)
 					until not Toggles.DropItems
-				return end
+					return end
 			end)
 		else log('[Logs]: Already enabled item dropping') end
 	elseif cmd == 'undropitems' then
@@ -2620,8 +2624,18 @@ local function executeCmd(cmd, args)
 		toggleLogs(true)
 	elseif cmd == 'nologs' or cmd == 'nonotifications' or cmd == 'nonotifs' then
 		toggleLogs(false)
+	elseif cmd == 'version' or cmd == 'ver' then
+		if pcall(function() loadstring(game:HttpGet(('https://raw.githubusercontent.com/senorkal/YmirAdmin/main/source'),true))() end) then
+			if ver ~= _Version then
+				notif('Please update: Current version: '..ver..', Updated version: '.._Version)
+				log('[Logs]: Please update: Current version: '..ver..', Updated version: '.._Version)
+			else 
+				notif('Current version: '..ver)
+				log('[Logs]: Current version: '..ver)
+			end
+		end
 	elseif cmd == 'reloadgui' or cmd == 'reloadscript' then
-		loadstring(game:HttpGet(('https://raw.githubusercontent.com/senorkal/ongsPrisonLifeAdmin/main/source'),true))() 
+		loadstring(game:HttpGet(('https://raw.githubusercontent.com/senorkal/YmirAdmin/main/source'),true))() 
 	elseif cmd == 'destroygui' or cmd == 'destroyscript' then
 		GunsAutoModded = {}
 		PlrsLoopKilled = {}
@@ -2745,19 +2759,20 @@ local chatexecutefunc = game:GetService("ReplicatedStorage").DefaultChatSystemCh
 --//vvv CMD LOOPS vvv\\--
 spawn(function()--//vvv LOOP TASE vvv\\--
 	while wait() do
-		if CmdGUI.Parent ~= GuiService then break end
-		for _, v in pairs(PlrsLoopTased) do
-			if v == nil then continue else
-				pcall(function()
-					local plr = getPlr(v.player.Name)
-					if v and plr and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
-						local details = plrDetails()
-						local plrCF = details[1]
-						tasePlr(v.player)
-						workspace.Remote.loadchar:InvokeServer()
-						game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
-					end
-				end)
+		if CmdGUI.Parent ~= par then break else
+			for _, v in pairs(PlrsLoopTased) do
+				if v == nil or not v.player then continue else
+					pcall(function()
+						local plr = getPlr(v.player.Name)
+						if v and plr and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
+							local details = plrDetails()
+							local plrCF = details[1]
+							tasePlr(v.player)
+							workspace.Remote.loadchar:InvokeServer()
+							game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
+						end
+					end)
+				end
 			end
 		end
 	end
@@ -2765,20 +2780,18 @@ end)
 
 spawn(function()--//vvv LOOP KILL PLAYER vvv\\--
 	while wait() do
-		if CmdGUI.Parent ~= GuiService then break end
-		for _, v in pairs(PlrsLoopKilled) do
-			if v == nil then continue else
-				pcall(function()
+		if CmdGUI.Parent ~= par then break else
+			for _, v in pairs(PlrsLoopKilled) do
+				if v == nil or not v.player then continue else
 					local plr = getPlr(v.player.Name)
 					if v and plr and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
-						local details = plrDetails()
-						local team = details[3]
+						local team = game.Players.LocalPlayer.TeamColor.Name
 						if team == plr.TeamColor.Name then
 							workspace.Remote.TeamEvent:FireServer('Medium stone grey')
 						end
 						killPlr(plr)
 					end
-				end)
+				end
 			end
 		end
 	end
@@ -2786,65 +2799,66 @@ end)
 
 spawn(function() --//vvv GUN MODS vvv\\--
 	while wait() do
-		if CmdGUI.Parent ~= GuiService then break end
-		for i, _ in pairs(GunsAutoModded) do
-			if _ == nil then continue else
-				pcall(function()
-					if i then
-						if game.Players.LocalPlayer.Character:FindFirstChild(i) or game.Players.LocalPlayer.Backpack:FindFirstChild(i) then
-							local tool = game.Players.LocalPlayer.Character:FindFirstChild(i) or game.Players.LocalPlayer.Backpack:FindFirstChild(i) 
-							local req = require(tool.GunStates)
-							if tool.Name == 'Remington 870' then
-								req = require(tool.GunStates)
-								req.MaxAmmo = req.MaxAmmo
-								req.StoredAmmo = req.StoredAmmo
-								req.AmmoPerClip = req.AmmoPerClip
-								req.CurrentAmmo = req.CurrentAmmo
-								req.Damage = math.huge
-								req.Range = math.huge
-								req.FireRate = 0.225
-								req.Bullets = 1
-								req.Spread = 0
-								req.AutoFire = true
-							end
-							if not Toggles.AutoModGuns and req.Damage ~= math.huge then
-								GunsAutoModded[i] = nil
-							elseif Toggles.AutoModGuns and req.Damage ~= math.huge then 
-								req = require(tool.GunStates)
-								req.MaxAmmo = req.MaxAmmo
-								req.StoredAmmo = req.StoredAmmo
-								req.AmmoPerClip = req.AmmoPerClip
-								req.CurrentAmmo = req.CurrentAmmo
-								req.Damage = math.huge
-								req.Range = math.huge
-								req.FireRate = -math.huge
-								req.Bullets = 1
-								req.Spread = 0
-								req.AutoFire = true
-							end
-							if req.CurrentAmmo <= 0 then
-								tool.Handle:Destroy()
-								repeat wait() until not tool:FindFirstChild('Handle')
-								tool.Parent = game.Players.LocalPlayer.Character
-								tool:Destroy()
-								workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[tool.Name].ITEMPICKUP)
-								tool = game.Players.LocalPlayer.Backpack:FindFirstChild(tool.Name)
-								tool.Parent = game.Players.LocalPlayer.Character
-								req = require(tool.GunStates)
-								req.MaxAmmo = req.MaxAmmo
-								req.StoredAmmo = req.StoredAmmo
-								req.AmmoPerClip = req.AmmoPerClip
-								req.CurrentAmmo = req.CurrentAmmo
-								req.Damage = math.huge
-								req.Range = math.huge
-								req.FireRate = -math.huge
-								req.Bullets = 1
-								req.Spread = 0
-								req.AutoFire = true
+		if CmdGUI.Parent ~= par then break else
+			for i, _ in pairs(GunsAutoModded) do
+				if i == nil or _ == nil then continue else
+					pcall(function()
+						if i then
+							if game.Players.LocalPlayer.Character:FindFirstChild(i) or game.Players.LocalPlayer.Backpack:FindFirstChild(i) then
+								local tool = game.Players.LocalPlayer.Character:FindFirstChild(i) or game.Players.LocalPlayer.Backpack:FindFirstChild(i) 
+								local req = require(tool.GunStates)
+								if tool.Name == 'Remington 870' then
+									req = require(tool.GunStates)
+									req.MaxAmmo = req.MaxAmmo
+									req.StoredAmmo = req.StoredAmmo
+									req.AmmoPerClip = req.AmmoPerClip
+									req.CurrentAmmo = req.CurrentAmmo
+									req.Damage = math.huge
+									req.Range = math.huge
+									req.FireRate = 0.225
+									req.Bullets = 1
+									req.Spread = 0
+									req.AutoFire = true
+								end
+								if not Toggles.AutoModGuns and req.Damage ~= math.huge then
+									GunsAutoModded[i] = nil
+								elseif Toggles.AutoModGuns and req.Damage ~= math.huge then 
+									req = require(tool.GunStates)
+									req.MaxAmmo = req.MaxAmmo
+									req.StoredAmmo = req.StoredAmmo
+									req.AmmoPerClip = req.AmmoPerClip
+									req.CurrentAmmo = req.CurrentAmmo
+									req.Damage = math.huge
+									req.Range = math.huge
+									req.FireRate = -math.huge
+									req.Bullets = 1
+									req.Spread = 0
+									req.AutoFire = true
+								end
+								if req.CurrentAmmo <= 0 then
+									tool.Handle:Destroy()
+									repeat wait() until not tool:FindFirstChild('Handle')
+									tool.Parent = game.Players.LocalPlayer.Character
+									tool:Destroy()
+									workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[tool.Name].ITEMPICKUP)
+									tool = game.Players.LocalPlayer.Backpack:FindFirstChild(tool.Name)
+									tool.Parent = game.Players.LocalPlayer.Character
+									req = require(tool.GunStates)
+									req.MaxAmmo = req.MaxAmmo
+									req.StoredAmmo = req.StoredAmmo
+									req.AmmoPerClip = req.AmmoPerClip
+									req.CurrentAmmo = req.CurrentAmmo
+									req.Damage = math.huge
+									req.Range = math.huge
+									req.FireRate = -math.huge
+									req.Bullets = 1
+									req.Spread = 0
+									req.AutoFire = true
+								end
 							end
 						end
-					end
-				end)
+					end)
+				end
 			end
 		end
 	end
@@ -2852,19 +2866,22 @@ end)
 
 spawn(function() --//vvv GUI RELOADED vvv\\--
 	while wait() do
-		if CmdGUI.Parent ~= GuiService then
+		if CmdGUI.Parent == par then continue else
 			GunsAutoModded = {}
 			PlrsLoopKilled = {}
 			PlrsLoopTased = {}
 			Toggles = {}
 			ChatCmd = false
-			chatenterfunc:Disconnect()
-			chatleftfunc:Disconnect()
-			executeChatCmd:Disconnect()
-			dragging:Disconnect()
-			print("ong's Prison Life Admin: Reloaded admin commands")
+			pcall(function()
+				chatenterfunc:Disconnect()
+				chatleftfunc:Disconnect()
+				chatexecutefunc:Disconnect()
+				dragging:Disconnect()
+			end)
+			print('Ymir Admin: Reloaded admin commands')
 			CmdGUI:Destroy()
 			wait(.1)
-		break end
+			break 
+		end
 	end
-end)
+end) 
