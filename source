@@ -418,8 +418,8 @@ Cmd[#Cmd + 1] = {Name='fpslag / lagspike',Desc="Makes all players' FPS decrease 
 Cmd[#Cmd + 1] = {Name='unfpslag / unlagspike',Desc='Stops FPS spiking'}
 Cmd[#Cmd + 1] = {Name='infstamina',Desc="Enables infinite stamina"}
 Cmd[#Cmd + 1] = {Name='uninfstamina / noinfstamina',Desc='Disables infinite stamina'}
-Cmd[#Cmd + 1] = {Name='earbang',Desc='Makes the whole server except you hear a loud noise'}
-Cmd[#Cmd + 1] = {Name='noearbang / unearbang',Desc='Disables earbang'}
+Cmd[#Cmd + 1] = {Name='earbang / earrape <intensity>',Desc='Makes the whole server except you hear a loud noise'}
+Cmd[#Cmd + 1] = {Name='noearbang / noearrape',Desc='Disables earbang'}
 Cmd[#Cmd + 1] = {Name='reset / oof',Desc='Reset your character'}
 Cmd[#Cmd + 1] = {Name='respawn / res',Desc='Respawns you on a spawn location'}
 Cmd[#Cmd + 1] = {Name='refresh / re',Desc='Respawns you on your old location'}
@@ -1558,22 +1558,24 @@ local function executeCmd(cmd, args)
 			log('[Logs]: Disabled infinite stamina')
 		else log('[Logs]: Already disabled infinite stamina') end
 	elseif cmd == 'earbang' or cmd == 'earrape' then
-		if not Toggles.Earbang then
-			Toggles.Earbang = true
-			log('[Logs]: Enabled earbang')
-			while wait() do
-				if Toggles.Earbang then 
-					for _ ,plr in pairs(game.Players:GetChildren()) do
-						if not Toggles.Earbang then break end
-						if workspace:FindFirstChild(plr.Name) or workspace[plr.Name]:FindFirstChild('Head') then
-							local h = plr.Character.Head
-							local s = game:GetService("Workspace")["Prison_guardspawn"].spawn.Sound
-							createSound(s, h, 5)
+		if args[1] and tonumber(args[1]) then
+			if not Toggles.Earbang then
+				Toggles.Earbang = true
+				log('[Logs]: Enabled earbang')
+				while wait() do
+					if Toggles.Earbang then 
+						for _ ,plr in pairs(game.Players:GetChildren()) do
+							if not Toggles.Earbang then break end
+							if workspace:FindFirstChild(plr.Name) or workspace[plr.Name]:FindFirstChild('Head') then
+								local h = plr.Character.Head
+								local s = game:GetService("Workspace")["Prison_guardspawn"].spawn.Sound
+								createSound(s, h, tonumber(args[1]))
+							end
 						end
-					end
-				else break end
-			end
-		else log('[Logs]: Already enabled earbang') end
+					else break end
+				end
+			else log('[Logs]: Already enabled earbang') end
+		else log('[Logs]: Input a valid number') end
 	elseif cmd == 'noearbang' or cmd == 'unearbang' or cmd == 'noearape' or cmd == 'unearrape' then
 		if Toggles.Earbang then
 			Toggles.Earbang = false
