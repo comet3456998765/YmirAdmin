@@ -13,11 +13,11 @@ local par
 if get_hidden_gui or gethui then
 	local hiddenui = get_hidden_gui or gethui
 	par = hiddenui()
-elseif CoreGui:FindFirstChild('RobloxGui ')then
+elseif CoreGui:FindFirstChild('RobloxGui')then
 	par = CoreGui.RobloxGui
 else
 	if (not is_sirhurt_closure) and (syn and syn.protect_gui) then syn.protect_gui(CmdGUI) end
-	par = game:GetService('CoreGui')
+	par = CoreGui
 end
 CmdGUI.Parent = par
 
