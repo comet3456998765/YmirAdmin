@@ -27,7 +27,7 @@ CmdMain.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 CmdMain.BorderColor3 = Color3.fromRGB(31, 31, 31)
 CmdMain.BorderSizePixel = 0
 CmdMain.Position = UDim2.new(0.5, 0, 0.5, 0)
-CmdMain.Size = UDim2.new(0, 200, 0, 269)
+CmdMain.Size = UDim2.new(0,0,0,0)
 CmdMain.AnchorPoint = Vector2.new(0.5, 0.5)
 
 local CmdBox = Instance.new('Frame')
@@ -38,6 +38,7 @@ CmdBox.BorderColor3 = Color3.fromRGB(140, 140, 140)
 CmdBox.BorderSizePixel = 0
 CmdBox.Position = UDim2.new(0, 0, 0.632000029, 0)
 CmdBox.Size = UDim2.new(0.996109784, 0, 0.36981371, 0)
+CmdBox.Visible = false
 
 local CmdNotif = Instance.new('TextLabel')
 CmdNotif.Name = 'YmirAdmin_NotifText'
@@ -101,6 +102,7 @@ CmdHandler.Size = UDim2.new(0, 194, 0, 213)
 CmdHandler.CanvasSize = UDim2.new(0, 0, 0, 0)
 CmdHandler.AutomaticCanvasSize = 'Y'
 CmdHandler.ScrollingDirection = 'Y'
+CmdHandler.Visible = false
 
 local CmdExample = Instance.new('TextButton')
 CmdExample.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -126,6 +128,9 @@ CmdBar.TextColor3 = Color3.fromRGB(255, 255, 255)
 CmdBar.TextSize = 14.000
 CmdBar.TextXAlignment = Enum.TextXAlignment.Left
 CmdBar.ClearTextOnFocus = false
+CmdBar.Visible = false
+CmdBar.BackgroundTransparency = 1
+CmdBar.TextTransparency = 1
 
 local CmdTitle = Instance.new('TextLabel')
 CmdTitle.Name = 'YmirAdmin_Title'
@@ -137,6 +142,7 @@ CmdTitle.Font = Enum.Font.SourceSansBold
 CmdTitle.Text = 'Ymir Admin '..ver
 CmdTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
 CmdTitle.TextSize = 14.000
+CmdTitle.TextTransparency = 1
 
 local CmdDescBox = Instance.new('Frame')
 CmdDescBox.Name = 'YmirAdmin_DescBox'
@@ -233,13 +239,6 @@ if par:FindFirstChild('YmirAdmin_GUI') then
 	CmdGUI.Name = 'YmirAdmin_GUI'
 else --//vvv INTRO vvv\\---
 	CmdGUI.Name = 'YmirAdmin_GUI'
-	CmdBox.Visible = false
-	CmdHandler.Visible = false
-	CmdBar.Visible = false
-	CmdTitle.TextTransparency = 1
-	CmdBar.BackgroundTransparency = 1
-	CmdBar.TextTransparency = 1
-	CmdMain.Size = UDim2.new(0,0,0,0)
 	CmdMain:TweenSize(UDim2.new(0, 200, 0, 269))
 	repeat wait() until CmdMain.Size == UDim2.new(0, 200, 0, 269)
 	wait(.1)
