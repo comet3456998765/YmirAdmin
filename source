@@ -8,7 +8,6 @@ local TweenService = game:GetService('TweenService')
 ---//vvv INSTANCES vvv\\---
 local CmdGUI = Instance.new('ScreenGui')
 CmdGUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-CmdGUI.Enabled = false
 local par
 if get_hidden_gui or gethui then
 	local hiddenui = get_hidden_gui or gethui
@@ -232,10 +231,8 @@ if par:FindFirstChild('YmirAdmin_GUI') then
 	CmdLogHandler.CanvasPosition = Vector2.new(0, CmdLogHandler.AbsoluteCanvasSize.Y)
 	par['YmirAdmin_GUI'].Parent = nil
 	CmdGUI.Name = 'YmirAdmin_GUI'
-	CmdGUI.Enabled = true
 else --//vvv INTRO vvv\\---
 	CmdGUI.Name = 'YmirAdmin_GUI'
-	CmdGUI.Enabled = true
 	CmdBox.Visible = false
 	CmdHandler.Visible = false
 	CmdBar.Visible = false
