@@ -556,6 +556,8 @@ if reload then
 	notif('Reloaded admin commands', true)
 	log('[Logs]: Reloaded admin commands')
 else
+	CmdBar:ReleaseFocus()
+	CmdBar.Text = ''
 	if logsOpen then
 		CmdLogHandler.Visible = true
 		CmdBox:TweenPosition(UDim2.new(0.967000008, 0, 0.632000029, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 0.5)
@@ -2880,7 +2882,7 @@ end)
 
 spawn(function() --//vvv GUI RELOADED vvv\\--
 	while wait() do
-		if CmdGUI.Parent ~= nil or CmdGUI.Parent == par then continue else
+		if CmdGUI.Parent ~= nil then continue else
 			GunsAutoModded = {}
 			PlrsLoopKilled = {}
 			PlrsLoopTased = {}
@@ -2892,7 +2894,6 @@ spawn(function() --//vvv GUI RELOADED vvv\\--
 				chatexecutefunc:Disconnect()
 				dragging:Disconnect()
 			end)
-			print('Ymir Admin: Reloaded admin commands')
 			CmdGUI:Destroy()
 			wait(.1)
 			break 
