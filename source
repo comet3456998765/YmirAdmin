@@ -959,7 +959,6 @@ local function executeCmd(cmd, args)
 			elseif args[1] == 'criminals' or args[1] == 'criminal' or args[1] == 'crims' or args[1] == 'crim' then
 				teamToKill = {'Criminals', 'Really red'} 
 			elseif args[1] == 'all' or args[1] == 'others' then
-				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
 				workspace.Remote.TeamEvent:FireServer('Medium stone grey')
 				for _, plr in pairs(game.Players:GetChildren()) do
 					if plr.Name ~= game.Players.LocalPlayer.Name and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
@@ -971,7 +970,6 @@ local function executeCmd(cmd, args)
 					workspace.Remote.TeamEvent:FireServer(team)
 				else workspace.Remote.loadchar:InvokeServer(nil, team) end
 			elseif args[1] == 'enemies' or args[1] == 'enemy' then
-				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
 				for _, plr in pairs(game.Players:GetChildren()) do
 					if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name ~= team and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
 						killPlr(plr)
@@ -993,7 +991,6 @@ local function executeCmd(cmd, args)
 				else log('[Logs]: No player found') end
 			end
 			if teamToKill and teamToKill ~= nil then
-				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
 				if team == teamToKill[2] then
 					workspace.Remote.TeamEvent:FireServer('Medium stone grey')
 				end
