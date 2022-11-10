@@ -2776,10 +2776,13 @@ spawn(function()--//vvv LOOP TASE vvv\\--
 	while RunService.RenderStepped:Wait() do
 		if CmdGUI.Parent ~= par then break else
 			for _, v in pairs(PlrsLoopTased) do
+				wait()
 				if v == nil or not v.player then continue else
+					wait()
 					pcall(function()
 						local plr = getPlr(v.player.Name)
 						if v and plr and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
+							wait()
 							local details = plrDetails()
 							local plrCF = details[1]
 							tasePlr(v.player)
@@ -2797,11 +2800,15 @@ spawn(function()--//vvv LOOP KILL PLAYER vvv\\--
 	while RunService.RenderStepped:Wait() do
 		if CmdGUI.Parent ~= par then break else
 			for _, v in pairs(PlrsLoopKilled) do
+				wait()
 				if v == nil or not v.player then continue else
+						wait()
 					local plr = getPlr(v.player.Name)
 					if v and plr and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
+						wait()
 						local team = game.Players.LocalPlayer.TeamColor.Name
 						if team == plr.TeamColor.Name then
+							wait()
 							workspace.Remote.TeamEvent:FireServer('Medium stone grey')
 						end
 						killPlr(plr)
@@ -2816,8 +2823,11 @@ spawn(function() --//vvv GUN MODS vvv\\--
 	while RunService.RenderStepped:Wait() do
 		if CmdGUI.Parent ~= par then break else
 			for i, _ in pairs(GunsAutoModded) do
+				wait()
 				if i == nil or _ == nil then continue else
+					wait()
 					if game.Players.LocalPlayer.Character:FindFirstChild(i) or game.Players.LocalPlayer.Backpack:FindFirstChild(i) then
+						wait()
 						local tool = game.Players.LocalPlayer.Character:FindFirstChild(i) or game.Players.LocalPlayer.Backpack:FindFirstChild(i) 
 						local req = require(tool.GunStates)
 						if tool.Name == 'Remington 870' then
