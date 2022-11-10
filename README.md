@@ -1,7 +1,7 @@
 # Ymir Admin
 ![preview](/preview.png)
 
-The best admin commands script for Prison Life with over 100 commands. Formely known as ong's Prison Life Admin
+The best admin commands script for Prison Life with over 100 commands. Formerly known as ong's Prison Life Admin.
 
 #### Loadstring: 
 ```lua 
