@@ -1,13 +1,16 @@
 ---//vvv SERVICES vvv\\---
-local ver = '2.0.0'
+local ver = '2.0.1'
 local UserInputService = game:GetService('UserInputService')
 local RunService = (game:GetService('RunService'));
 local CoreGui = game:GetService('CoreGui')
 local HttpService = game:GetService('HttpService')
 local TweenService = game:GetService('TweenService')
+local ReplicatedStorage = game:GetService('ReplicatedStorage')
+local TeleportService = game:GetService('TeleportService')
 ---//vvv INSTANCES vvv\\---
 local CmdGUI = Instance.new('ScreenGui')
 CmdGUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+CmdGUI.Name = 'YmirAdmin_GUI'
 local par
 if get_hidden_gui or gethui then
 	local hiddenui = get_hidden_gui or gethui
@@ -18,7 +21,6 @@ else
 	if (not is_sirhurt_closure) and (syn and syn.protect_gui) then syn.protect_gui(CmdGUI) end
 	par = CoreGui
 end
-CmdGUI.Parent = par
 
 local CmdMain = Instance.new('Frame')
 CmdMain.Name = 'YmirAdmin_Main'
@@ -220,12 +222,15 @@ local introSpeed = 0.2
 local reload = false
 if par:FindFirstChild('YmirAdmin_GUI') then
 	reload = true 
-	local oldMain = par['YmirAdmin_GUI'][CmdMain.Name]
+	local oldGUI = par['YmirAdmin_GUI']
+	if not oldGUI[CmdMain.Name][CmdBox.Name].Visible then 
+		oldGUI[CmdMain.Name][CmdBox.Name]:GetPropertyChangedSignal('Visible'):Wait()
+	end
+	local oldMain = oldGUI[CmdMain.Name]
 	CmdMain.Position = oldMain.Position
+	CmdMain.Size = oldMain.Size
 	local oldHandler = oldMain[CmdHandler.Name]
 	CmdHandler.CanvasPosition = oldHandler.CanvasPosition
-	local oldBar = CmdMain[CmdBar.Name]
-	CmdBar.Text = oldBar.Text
 	local oldBox = oldMain[CmdBox.Name]
 	CmdBox.Position = oldBox.Position
 	local oldNotif = oldBox[CmdNotif.Name]
@@ -235,10 +240,16 @@ if par:FindFirstChild('YmirAdmin_GUI') then
 	oldNotifHandler.Parent = CmdBox
 	CmdLogHandler = oldNotifHandler
 	CmdLogHandler.CanvasPosition = Vector2.new(0, CmdLogHandler.AbsoluteCanvasSize.Y)
-	par['YmirAdmin_GUI'].Parent = nil
-	CmdGUI.Name = 'YmirAdmin_GUI'
+	oldGUI:Destroy()
+	CmdGUI.Parent = par
+	CmdHandler.Visible = true
+	CmdBox.Visible = true
+	CmdBar.Visible = true
+	CmdTitle.TextTransparency = 0
+	CmdBar.TextTransparency = 0
+	CmdBar.BackgroundTransparency = 0
 else --//vvv INTRO vvv\\---
-	CmdGUI.Name = 'YmirAdmin_GUI'
+	CmdGUI.Parent = par
 	CmdMain:TweenSize(UDim2.new(0, 200, 0, 269))
 	repeat wait() until CmdMain.Size == UDim2.new(0, 200, 0, 269)
 	wait(.1)
@@ -655,7 +666,7 @@ local function killPlr(plr)
 					['Hit'] = workspace[plr.Name].Head
 				}
 			}
-			game:GetService('ReplicatedStorage').ShootEvent:FireServer(event, tool)
+			ReplicatedStorage.ShootEvent:FireServer(event, tool)
 			tool.Handle:Destroy()
 			tool.Parent = game.Players.LocalPlayer.Character
 			tool:Destroy()
@@ -687,7 +698,7 @@ local function tasePlr(plr)
 					['Cframe'] = CFrame.new(), 
 					['Hit'] = workspace[plr.Name].Torso
 				}}
-			game:GetService('ReplicatedStorage').ShootEvent:FireServer(event, tool)
+			ReplicatedStorage.ShootEvent:FireServer(event, tool)
 		else return end
 	end)
 end
@@ -760,7 +771,7 @@ end
 
 local function createSound(sound, source, t)
 	for i = 1, t do
-		game:GetService("ReplicatedStorage").SoundEvent:FireServer(sound, source)
+		ReplicatedStorage.SoundEvent:FireServer(sound, source)
 	end
 end
 
@@ -789,7 +800,7 @@ local function onePunch()
 		if game.Players:FindFirstChild(h.Parent.Name) and h.Parent ~= game.Players.LocalPlayer and workspace[h.Parent.Name].Humanoid.Health > 0 then
 			punchCooldown = true
 			for i= 1, 15 do
-				game:GetService('ReplicatedStorage').meleeEvent:FireServer(game.Players[h.Parent.Name])
+				ReplicatedStorage.meleeEvent:FireServer(game.Players[h.Parent.Name])
 			end
 		end
 	end)
@@ -1180,7 +1191,7 @@ local function executeCmd(cmd, args)
 								local Distance = (v.Character:FindFirstChildOfClass('Part').Position - game.Players.LocalPlayer.Character:FindFirstChildOfClass('Part').Position).magnitude
 								if Distance <= 10 and Toggles.KillAura then
 									for i = 1,25 do
-										game.ReplicatedStorage.meleeEvent:FireServer(v)
+										ReplicatedStorage.meleeEvent:FireServer(v)
 									end
 								end
 							end
@@ -1464,7 +1475,7 @@ local function executeCmd(cmd, args)
 							['Hit'] = workspace[game.Players.LocalPlayer.Name].Head
 						}
 					}
-					game:GetService('ReplicatedStorage').ShootEvent:FireServer(event, tool)
+					ReplicatedStorage.ShootEvent:FireServer(event, tool)
 				end
 			else log('[Logs]: Input a valid duration') end
 		else log('[Logs]: Input a valid duration') end
@@ -1493,7 +1504,7 @@ local function executeCmd(cmd, args)
 							['Hit'] = workspace[game.Players.LocalPlayer.Name].Head
 						}
 					}
-					game:GetService('ReplicatedStorage').ShootEvent:FireServer(event, tool)
+					ReplicatedStorage.ShootEvent:FireServer(event, tool)
 				else break end
 			end
 		else log('[Logs]: Already crashing server') end
@@ -1575,7 +1586,7 @@ local function executeCmd(cmd, args)
 							if not Toggles.Earbang then break end
 							if workspace:FindFirstChild(plr.Name) or workspace[plr.Name]:FindFirstChild('Head') then
 								local h = plr.Character.Head
-								local s = game:GetService("Workspace")["Prison_guardspawn"].spawn.Sound
+								local s = workspace['Prison_guardspawn'].spawn.Sound
 								createSound(s, h, tonumber(args[1]))
 							end
 						end
@@ -2127,7 +2138,7 @@ local function executeCmd(cmd, args)
 						if game.Players:FindFirstChild(h.Parent.Name) and h.Parent ~= game.Players.LocalPlayer and workspace[h.Parent.Name].Humanoid.Health > 0 then
 							knifeCooldown = true
 							for i = 1,15 do
-								game.ReplicatedStorage.meleeEvent:FireServer(game.Players[h.Parent.Name])
+								ReplicatedStorage.meleeEvent:FireServer(game.Players[h.Parent.Name])
 							end
 							knifeCooldown = false
 						else knifeCooldown = false end
@@ -2178,7 +2189,7 @@ local function executeCmd(cmd, args)
 							if game.Players:FindFirstChild(h.Parent.Name) and h.Parent ~= game.Players.LocalPlayer and workspace[h.Parent.Name].Humanoid.Health > 0 then
 								batCooldown = true
 								for i = 1,15 do
-									game.ReplicatedStorage.meleeEvent:FireServer(game.Players[h.Parent.Name])
+									ReplicatedStorage.meleeEvent:FireServer(game.Players[h.Parent.Name])
 								end
 								batCooldown = false
 							else batCooldown = false end
@@ -2418,7 +2429,7 @@ local function executeCmd(cmd, args)
 		else log('[Logs]: Already teleported to the gate') end
 	elseif cmd == 'opengate' or cmd == 'openfrontgate' then
 		if not Toggles.GateOpen then
-			workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.buttons["Prison Gate"]["Prison Gate"])
+			workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.buttons['Prison Gate']['Prison Gate'])
 			spawn(function()
 				Toggles.GateOpen = true
 				wait(13)
@@ -2558,29 +2569,29 @@ local function executeCmd(cmd, args)
 	elseif cmd == 'rejoin' or cmd == 'rj' then
 		log('[Logs]: Rejoining server')
 		notif('Rejoining server...')
-		game:GetService("TeleportService"):Teleport(game.PlaceId, game.Players.LocalPlayer)
+		TeleportService:Teleport(game.PlaceId, game.Players.LocalPlayer)
 	elseif cmd == 'serverhop' or cmd == 'shop' then
 		log('[Logs]: Joining new server')
 		notif('Joining new server...')
 		local httprequest =  (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 		if httprequest then
 			local servers = {}
-			local req = httprequest({Url = string.format("https://games.roblox.com/v1/games/%s/servers/Public?sortOrder=Asc&limit=100", game.PlaceId)})
+			local req = httprequest({Url = string.format('https://games.roblox.com/v1/games/%s/servers/Public?sortOrder=Asc&limit=100', game.PlaceId)})
 			local body = HttpService:JSONDecode(req.Body)
 			if body and body.data then
 				for i, v in next, body.data do
-					if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers and v.id ~= game.JobId then
+					if type(v) == 'table' and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers and v.id ~= game.JobId then
 						table.insert(servers, 1, v.id)
 					end 
 				end
 			end
 			if #servers > 0 then
-				game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, servers[math.random(1, #servers)], game.Players.LocalPlayer)
+				TeleportService:TeleportToPlaceInstance(game.PlaceId, servers[math.random(1, #servers)], game.Players.LocalPlayer)
 			else
 				log('[Logs]: Failed to server hop')
 				notif('Failed to server hop')
 			end
-		else game:GetService("TeleportService"):Teleport(game.PlaceId) end
+		else TeleportService:Teleport(game.PlaceId) end
 	elseif cmd == 'prefix' or cmd == 'setprefix' then
 		if args[1] then
 			if prefix ~= args[1] then
@@ -2646,12 +2657,7 @@ local function executeCmd(cmd, args)
 	elseif cmd == 'reloadgui' or cmd == 'reloadscript' then
 		loadstring(game:HttpGet(('https://raw.githubusercontent.com/senorkal/YmirAdmin/main/source'),true))() 
 	elseif cmd == 'destroygui' or cmd == 'destroyscript' then
-		GunsAutoModded = {}
-		PlrsLoopKilled = {}
-		PlrsLoopTased = {}
-		Toggles = {}
-		ChatCmd = false
-		CmdGUI.Parent= nil
+		CmdGUI:Remove()
 	end
 end
 --//vvv GUI FUNCTIONS vvv\\--
@@ -2693,7 +2699,7 @@ CmdBar.FocusLost:Connect(function(_, __)
 	end
 end)
 --//vvv CHAT FUNCTIONS vvv\\--
-local chatbox = game.WaitForChild(game.Players.LocalPlayer.PlayerGui, "Chat").Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar
+local chatbox = game.WaitForChild(game.Players.LocalPlayer.PlayerGui, 'Chat').Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar
 local function chatboxEnter()
 	if ChatCmd then
 		local p = string.match(chatbox.Text, '^%s*(.)')
@@ -2731,7 +2737,7 @@ local function chatboxEnter()
 	end
 end
 local chatenterfunc = chatbox.Focused:Connect(function()
-	chatbox:GetPropertyChangedSignal("Text"):Connect(chatboxEnter)
+	chatbox:GetPropertyChangedSignal('Text'):Connect(chatboxEnter)
 end)
 
 local function chatboxLeft()
@@ -2763,7 +2769,7 @@ local function executeChatCmd(d)
 		end
 	else return end
 end
-local chatexecutefunc = game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.OnMessageDoneFiltering.OnClientEvent:Connect(executeChatCmd)
+local chatexecutefunc = ReplicatedStorage.DefaultChatSystemChatEvents.OnMessageDoneFiltering.OnClientEvent:Connect(executeChatCmd)
 
 --//vvv CMD LOOPS vvv\\--
 spawn(function()--//vvv LOOP TASE vvv\\--
@@ -2869,20 +2875,21 @@ spawn(function() --//vvv GUN MODS vvv\\--
 	end
 end)
 
+local reloadgui
 spawn(function() --//vvv GUI RELOADED vvv\\--
-	repeat RunService.RenderStepped:Wait() until CmdGUI.Parent == nil
-	GunsAutoModded = {}
-	PlrsLoopKilled = {}
-	PlrsLoopTased = {}
-	Toggles = {}
-	ChatCmd = false
-	pcall(function()
-		chatenterfunc:Disconnect()
-		chatleftfunc:Disconnect()
-		chatexecutefunc:Disconnect()
-		dragging:Disconnect()
+	reloadgui = CmdGUI:GetPropertyChangedSignal('Parent'):Connect(function()
+		GunsAutoModded = {}
+		PlrsLoopKilled = {}
+		PlrsLoopTased = {}
+		Toggles = {}
+		ChatCmd = false
+		pcall(function()
+			chatenterfunc:Disconnect()
+			chatleftfunc:Disconnect()
+			chatexecutefunc:Disconnect()
+			dragging:Disconnect()
+		end)
+		CmdGUI:Destroy()
+		reloadgui:Disconnect()
 	end)
-	CmdGUI:Destroy()
-	wait(.1)
-	break 
 end) 
