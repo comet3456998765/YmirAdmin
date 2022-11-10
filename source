@@ -2314,12 +2314,12 @@ local function executeCmd(cmd, args)
 				if GunsAutoModded[tool.Name] then
 					GunsAutoModded[tool.Name] = nil
 					tool.Handle:Destroy()
-					local par = tool.Parent
+					local toolPar = tool.Parent
 					repeat wait() until not tool:FindFirstChild('Handle')
 					tool.Parent = plr.Character
 					tool:Destroy()				
 					workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[tool.Name].ITEMPICKUP)
-					plr.Backpack[tool.Name].Parent = par
+					plr.Backpack[tool.Name].Parent = toolPar
 					log('[Logs]: Disabled gun mods for '..tool.Name)
 				else log('[Logs]: Already disabled gun mods for '..tool.Name) end
 			else log('[Logs]: Equip a gun before using this command') end
@@ -2391,22 +2391,22 @@ local function executeCmd(cmd, args)
 			if plr.Character:FindFirstChildOfClass('Tool') and plr.Character:FindFirstChildOfClass('Tool'):FindFirstChild('GunStates') then
 				local tool = plr.Character:FindFirstChildOfClass('Tool')
 				tool.Handle:Destroy()
-				local par = tool.Parent
+				local toolPar = tool.Parent
 				repeat wait() until not tool:FindFirstChild('Handle')
 				tool.Parent = plr.Character
 				tool:Destroy()				
 				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[tool.Name].ITEMPICKUP)
-				plr.Backpack[tool.Name].Parent = par
+				plr.Backpack[tool.Name].Parent = toolPar
 			end
 			for _, tool in pairs(plr.Backpack:GetChildren()) do
 				if tool:FindFirstChild('GunStates') then
 					tool.Handle:Destroy()
-					local par = tool.Parent
+					local toolPar = tool.Parent
 					repeat wait() until not tool:FindFirstChild('Handle')
 					tool.Parent = plr.Character
 					tool:Destroy()				
 					workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[tool.Name].ITEMPICKUP)
-					plr.Backpack[tool.Name].Parent = par
+					plr.Backpack[tool.Name].Parent = toolPar
 				end
 			end
 			log('[Logs]: Disabled auto mod guns')
@@ -2880,7 +2880,7 @@ end)
 
 spawn(function() --//vvv GUI RELOADED vvv\\--
 	while wait() do
-		if CmdGUI.Parent == par or CmdGUI.Parent.Name == par.Name then continue else
+		if CmdGUI.Parent == par then continue else
 			GunsAutoModded = {}
 			PlrsLoopKilled = {}
 			PlrsLoopTased = {}
