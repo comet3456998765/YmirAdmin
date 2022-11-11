@@ -2733,11 +2733,11 @@ local chatexecutefunc = ReplicatedStorage.DefaultChatSystemChatEvents.OnMessageD
 coroutine.wrap(function() --//vvv LOOP TASE vvv\\--
 	repeat wait()
 		for i, v in pairs(PlrsLoopTased) do
-			if v == nil or not v.player then pcall(function() table.remove(PlrsLoopTased, i) end) continue else
+			if not v or not v.player then pcall(function() table.remove(PlrsLoopTased, i) end) continue else
 				wait()
 				pcall(function()
 					local plr = getPlr(v.player.Name)
-					if v and plr and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
+					if workspace:FindFirstChild(v.player.Name) and workspace[v.player.Name]:FindFirstChild('Humanoid') and workspace[v.player.Name].Humanoid.Health > 0 then
 						wait()
 						local details = plrDetails()
 						local plrCF = details[1]
@@ -2754,16 +2754,13 @@ end)
 coroutine.wrap(function()--//vvv LOOP KILL PLAYER vvv\\--
 	repeat wait()
 		for i, v in pairs(PlrsLoopKilled) do
-			if v == nil or not v.player then pcall(function() table.remove(PlrsLoopKilled, i) end) continue else
-				local plr = getPlr(v.player.Name)
-				if v and plr and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
-					wait()
+			if not v or not v.player then pcall(function() table.remove(PlrsLoopKilled, i) end) continue else
+				if workspace:FindFirstChild(v.player.Name) and workspace[v.player.Name]:FindFirstChild('Humanoid') and workspace[v.player.Name].Humanoid.Health > 0 and not workspace[v.player.Name]:FindFirstChild('ForceField') then
 					local team = game.Players.LocalPlayer.TeamColor.Name
-					if team == plr.TeamColor.Name then
-						wait()
+					if team == v.player.TeamColor.Name then
 						workspace.Remote.TeamEvent:FireServer('Medium stone grey')
 					end
-					killPlr(plr)
+					killPlr(v.player)
 				end
 			end
 		end
