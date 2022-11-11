@@ -1273,8 +1273,8 @@ local function executeCmd(cmd, args)
 					workspace.Remote.loadchar:InvokeServer(nil, 'Really red')
 					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
 					workspace.CurrentCamera.CFrame = camCF
-					log('[Logs]: Joined criminals team')
 				end
+				log('[Logs]: Joined criminals team')
 			else log('[Logs]: Already joined criminals team') end
 		end
 	elseif cmd == 'criminals' or cmd == 'crims' then
