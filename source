@@ -281,7 +281,7 @@ local function notif(txt, notimer)
 			CmdNotif.Text = txt
 			if not notimer then wait(0.5) end
 			notified = true
-			local tween = TweenService:Create(CmdMain, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {Position = UDim2.new(0.967000008, 0, 0.632000029, 0)})
+			local tween = TweenService:Create(CmdBox, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {Position = UDim2.new(0.967000008, 0, 0.632000029, 0)})
 			tween:Play()
 			notified = true
 			tween.Completed:Wait()
@@ -292,18 +292,18 @@ local function notif(txt, notimer)
 				notified = false
 			end
 		else 
-			local tween = TweenService:Create(CmdMain, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Position = UDim2.new(0, 0, 0.632000029, 0)})
+			local tween = TweenService:Create(CmdBox, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Position = UDim2.new(0, 0, 0.632000029, 0)})
 			tween:Play()
 			notified = false
 			tween.Completed:Wait()
 			CmdNotif.Text = txt
-			tween = TweenService:Create(CmdMain, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {Position = UDim2.new(0.967000008, 0, 0.632000029, 0)})
+			tween = TweenService:Create(CmdBox, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {Position = UDim2.new(0.967000008, 0, 0.632000029, 0)})
 			tween:Play()
 			notified = true
 			tween.Completed:Wait()
 			wait(3)
 			if not logsOpen then
-				tween = TweenService:Create(CmdMain, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Position = UDim2.new(0, 0, 0.632000029, 0)})
+				tween = TweenService:Create(CmdBox, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Position = UDim2.new(0, 0, 0.632000029, 0)})
 				tween:Play()
 				notified = false
 			end
@@ -334,7 +334,7 @@ local function toggleLogs(tog)
 		CmdBox:TweenPosition(UDim2.new(0.967000008, 0, 0.632000029, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 0.5)
 	else
 		logsOpen = false
-		local tween = TweenService:Create(CmdMain, TweenInfo.new(0.5, Enum.EasingDirection.In, Enum.EasingStyle.Quart, 0.5), {Position = UDim2.new(0, 0, 0.632000029, 0)})
+		local tween = TweenService:Create(CmdBox, TweenInfo.new(0.5, Enum.EasingDirection.In, Enum.EasingStyle.Quart, 0.5), {Position = UDim2.new(0, 0, 0.632000029, 0)})
 		tween:Play()
 		tween.Completed:Wait()
 		CmdLogHandler.Visible = false
@@ -577,7 +577,7 @@ else
 	CmdBar.Text = ''
 	if logsOpen then
 		CmdLogHandler.Visible = true
-		local tween = TweenService:Create(CmdMain, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Position = UDim2.new(0.967000008, 0, 0.632000029, 0)})
+		local tween = TweenService:Create(CmdBox, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Position = UDim2.new(0.967000008, 0, 0.632000029, 0)})
 		tween:Play()
 		tween.Completed:Wait()
 	end
