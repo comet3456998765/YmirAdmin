@@ -861,6 +861,12 @@ local function executeCmd(cmd, args)
 					if not PlrsLoopTased[plr.UserId] then
 						log('[Logs]: Loop tasing '..plrName(plr))
 						PlrsLoopTased[plr.UserId] = plr
+						local _plr = PlrsLoopKilled[plr.UserId]
+						repeat wait()
+							if _plr.TeamColor.Name ~= 'Bright blue' and workspace:FindFirstChild(_plr.Name) and workspace[_plr.Name]:FindFirstChild('Humanoid') and workspace[_plr.Name].Humanoid.Health > 0 then
+								tasePlr(_plr)
+							end
+						until PlrsLoopKilled[plr.UserId] == nil
 					else log('[Logs]: Already loop tasing '..plrName(plr)) end
 				else log('[Logs]: Failed to loop tase '..plrName(plr)) end
 			else log('[Logs]: No player found') end
@@ -1063,6 +1069,16 @@ local function executeCmd(cmd, args)
 					if not PlrsLoopKilled[plr.UserId] then
 						PlrsLoopKilled[plr.UserId] = plr
 						log('[Logs]: Loop killing '..plrName(plr))
+						local _plr = PlrsLoopKilled[plr.UserId]
+						repeat wait()
+							if workspace:FindFirstChild(_plr.Name) and workspace[_plr.Name]:FindFirstChild('Humanoid') and workspace[_plr.Name].Humanoid.Health > 0 and not workspace[_plr.Name]:FindFirstChild('ForceField') then
+								local team = game.Players.LocalPlayer.TeamColor.Name
+								if team == _plr.TeamColor.Name then
+									workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+								end
+								killPlr(_plr)
+							end
+						until PlrsLoopKilled[plr.UserId] == nil
 					else log('[Logs]: Already loop killing '..plrName(plr)) end
 				else log('[Logs]: No player found') end
 			end
@@ -2256,18 +2272,57 @@ local function executeCmd(cmd, args)
 			local tool = plr.Character:FindFirstChildOfClass('Tool')
 			if tool:FindFirstChild('GunStates') then
 				if not GunsAutoModded[tool.Name] then
-					local req = require(tool.GunStates)
-					req.MaxAmmo = req.MaxAmmo
-					req.StoredAmmo = req.StoredAmmo
-					req.AmmoPerClip = req.AmmoPerClip
-					req.CurrentAmmo = req.CurrentAmmo
-					req.Damage = math.huge
-					req.Range = math.huge
-					req.FireRate = -math.huge
-					req.Bullets = 1
-					req.Spread = 0
-					req.AutoFire = true
-					GunsAutoModded[tool.Name] = true
+					repeat wait()
+						if game.Players.LocalPlayer.Character:FindFirstChild(tool.Name) or game.Players.LocalPlayer.Backpack:FindFirstChild(tool.Name) then
+							local tool = game.Players.LocalPlayer.Character:FindFirstChild(tool.Name) or game.Players.LocalPlayer.Backpack:FindFirstChild(tool.Name) 
+							local req = require(tool.GunStates)
+							if tool.Name == 'Remington 870' then
+								req = require(tool.GunStates)
+								req.MaxAmmo = req.MaxAmmo
+								req.StoredAmmo = req.StoredAmmo
+								req.AmmoPerClip = req.AmmoPerClip
+								req.CurrentAmmo = req.CurrentAmmo
+								req.Damage = math.huge
+								req.Range = math.huge
+								req.FireRate = 0.225
+								req.Bullets = 1
+								req.Spread = 0
+								req.AutoFire = true
+							else
+								req = require(tool.GunStates)
+								req.MaxAmmo = req.MaxAmmo
+								req.StoredAmmo = req.StoredAmmo
+								req.AmmoPerClip = req.AmmoPerClip
+								req.CurrentAmmo = req.CurrentAmmo
+								req.Damage = math.huge
+								req.Range = math.huge
+								req.FireRate = -math.huge
+								req.Bullets = 1
+								req.Spread = 0
+								req.AutoFire = true
+							end
+							if req.CurrentAmmo <= 0 then
+								tool.Handle:Destroy()
+								repeat wait() until not tool:FindFirstChild('Handle')
+								tool.Parent = game.Players.LocalPlayer.Character
+								tool:Destroy()
+								workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[tool.Name].ITEMPICKUP)
+								tool = game.Players.LocalPlayer.Backpack:FindFirstChild(tool.Name)
+								tool.Parent = game.Players.LocalPlayer.Character
+								req = require(tool.GunStates)
+								req.MaxAmmo = req.MaxAmmo
+								req.StoredAmmo = req.StoredAmmo
+								req.AmmoPerClip = req.AmmoPerClip
+								req.CurrentAmmo = req.CurrentAmmo
+								req.Damage = math.huge
+								req.Range = math.huge
+								req.FireRate = -math.huge
+								req.Bullets = 1
+								req.Spread = 0
+								req.AutoFire = true
+							end
+						end
+					until not GunsAutoModded[tool.Name]
 					log('[Logs]: Enabled gun mods for '..tool.Name)
 				else log('[Logs]: Already enabled gun mods for '..tool.Name) end
 			else log('[Logs]: Equip a gun before using this command') end
@@ -2295,59 +2350,125 @@ local function executeCmd(cmd, args)
 			local plr = game.Players.LocalPlayer
 			Toggles.AutoModGuns = true
 			log('[Logs]: Enabled auto mod guns')
-			plr.Backpack.ChildAdded:Connect(function(tool)
-				if Toggles.AutoModGuns then
-					if tool:FindFirstChild('GunStates') then
-						local req = require(tool.GunStates)
-						req.MaxAmmo = req.MaxAmmo
-						req.StoredAmmo = req.StoredAmmo
-						req.AmmoPerClip = req.AmmoPerClip
-						req.CurrentAmmo = req.CurrentAmmo
-						req.Damage = math.huge
-						req.Range = math.huge
-						req.FireRate = -math.huge
-						req.Bullets = 1
-						req.Spread = 0
-						req.AutoFire = true
+			spawn(function()
+				if plr.Character:FindFirstChildOfClass('Tool') and plr.Character:FindFirstChildOfClass('Tool'):FindFirstChild('GunStates') then
+					local tool = plr.Character:FindFirstChildOfClass('Tool')
+					if not GunsAutoModded[tool.Name] then
 						GunsAutoModded[tool.Name] = true
-						tool.Parent = plr.Character
-						plr.Character[tool.Name] = plr.Backpack
+						repeat wait()
+							if game.Players.LocalPlayer.Character:FindFirstChild(tool.Name) or game.Players.LocalPlayer.Backpack:FindFirstChild(tool.Name) then
+								local tool = game.Players.LocalPlayer.Character:FindFirstChild(tool.Name) or game.Players.LocalPlayer.Backpack:FindFirstChild(tool.Name) 
+								local req = require(tool.GunStates)
+								if tool.Name == 'Remington 870' then
+									req = require(tool.GunStates)
+									req.MaxAmmo = req.MaxAmmo
+									req.StoredAmmo = req.StoredAmmo
+									req.AmmoPerClip = req.AmmoPerClip
+									req.CurrentAmmo = req.CurrentAmmo
+									req.Damage = math.huge
+									req.Range = math.huge
+									req.FireRate = 0.225
+									req.Bullets = 1
+									req.Spread = 0
+									req.AutoFire = true
+								else
+									req = require(tool.GunStates)
+									req.MaxAmmo = req.MaxAmmo
+									req.StoredAmmo = req.StoredAmmo
+									req.AmmoPerClip = req.AmmoPerClip
+									req.CurrentAmmo = req.CurrentAmmo
+									req.Damage = math.huge
+									req.Range = math.huge
+									req.FireRate = -math.huge
+									req.Bullets = 1
+									req.Spread = 0
+									req.AutoFire = true
+								end
+								if req.CurrentAmmo <= 0 then
+									tool.Handle:Destroy()
+									repeat wait() until not tool:FindFirstChild('Handle')
+									tool.Parent = game.Players.LocalPlayer.Character
+									tool:Destroy()
+									workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[tool.Name].ITEMPICKUP)
+									tool = game.Players.LocalPlayer.Backpack:FindFirstChild(tool.Name)
+									tool.Parent = game.Players.LocalPlayer.Character
+									req = require(tool.GunStates)
+									req.MaxAmmo = req.MaxAmmo
+									req.StoredAmmo = req.StoredAmmo
+									req.AmmoPerClip = req.AmmoPerClip
+									req.CurrentAmmo = req.CurrentAmmo
+									req.Damage = math.huge
+									req.Range = math.huge
+									req.FireRate = -math.huge
+									req.Bullets = 1
+									req.Spread = 0
+									req.AutoFire = true
+								end
+							end
+						until not GunsAutoModded[tool.Name] or not Toggles.AutoModGuns
 					end
-				else return end
+				end
 			end)
-			if plr.Character:FindFirstChildOfClass('Tool') and plr.Character:FindFirstChildOfClass('Tool'):FindFirstChild('GunStates') then
-				local tool = plr.Character:FindFirstChildOfClass('Tool')
-				if not GunsAutoModded[tool.Name] then
-					local req = require(tool.GunStates)
-					req.MaxAmmo = req.MaxAmmo
-					req.StoredAmmo = req.StoredAmmo
-					req.AmmoPerClip = req.AmmoPerClip
-					req.CurrentAmmo = req.CurrentAmmo
-					req.Damage = math.huge
-					req.Range = math.huge
-					req.FireRate = -math.huge
-					req.Bullets = 1
-					req.Spread = 0
-					req.AutoFire = true
-					GunsAutoModded[tool.Name] = true
+			repeat wait()
+				for _, tool in pairs(plr.Backpack:GetChildren()) do
+					if tool:FindFirstChild('GunStates') and not GunsAutoModded[tool.Name] then
+						GunsAutoModded[tool.Name] = true
+						spawn(function()
+							repeat wait()
+								if game.Players.LocalPlayer.Character:FindFirstChild(tool.Name) or game.Players.LocalPlayer.Backpack:FindFirstChild(tool.Name) then
+									local tool = game.Players.LocalPlayer.Character:FindFirstChild(tool.Name) or game.Players.LocalPlayer.Backpack:FindFirstChild(tool.Name) 
+									local req = require(tool.GunStates)
+									if tool.Name == 'Remington 870' then
+										req = require(tool.GunStates)
+										req.MaxAmmo = req.MaxAmmo
+										req.StoredAmmo = req.StoredAmmo
+										req.AmmoPerClip = req.AmmoPerClip
+										req.CurrentAmmo = req.CurrentAmmo
+										req.Damage = math.huge
+										req.Range = math.huge
+										req.FireRate = 0.225
+										req.Bullets = 1
+										req.Spread = 0
+										req.AutoFire = true
+									else
+										req = require(tool.GunStates)
+										req.MaxAmmo = req.MaxAmmo
+										req.StoredAmmo = req.StoredAmmo
+										req.AmmoPerClip = req.AmmoPerClip
+										req.CurrentAmmo = req.CurrentAmmo
+										req.Damage = math.huge
+										req.Range = math.huge
+										req.FireRate = -math.huge
+										req.Bullets = 1
+										req.Spread = 0
+										req.AutoFire = true
+									end
+									if req.CurrentAmmo <= 0 then
+										tool.Handle:Destroy()
+										repeat wait() until not tool:FindFirstChild('Handle')
+										tool.Parent = game.Players.LocalPlayer.Character
+										tool:Destroy()
+										workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[tool.Name].ITEMPICKUP)
+										tool = game.Players.LocalPlayer.Backpack:FindFirstChild(tool.Name)
+										tool.Parent = game.Players.LocalPlayer.Character
+										req = require(tool.GunStates)
+										req.MaxAmmo = req.MaxAmmo
+										req.StoredAmmo = req.StoredAmmo
+										req.AmmoPerClip = req.AmmoPerClip
+										req.CurrentAmmo = req.CurrentAmmo
+										req.Damage = math.huge
+										req.Range = math.huge
+										req.FireRate = -math.huge
+										req.Bullets = 1
+										req.Spread = 0
+										req.AutoFire = true
+									end
+								end
+							until not GunsAutoModded[tool.Name] or not Toggles.AutoModGuns
+						end)
+					end
 				end
-			end
-			for _, tool in pairs(plr.Backpack:GetChildren()) do
-				if tool:FindFirstChild('GunStates') then
-					local req = require(tool.GunStates)
-					req.MaxAmmo = req.MaxAmmo
-					req.StoredAmmo = req.StoredAmmo
-					req.AmmoPerClip = req.AmmoPerClip
-					req.CurrentAmmo = req.CurrentAmmo
-					req.Damage = math.huge
-					req.Range = math.huge
-					req.FireRate = -math.huge
-					req.Bullets = 1
-					req.Spread = 0
-					req.AutoFire = true
-					GunsAutoModded[tool.Name] = true
-				end
-			end
+			until not Toggles.AutoModGuns
 		else log('[Logs]: Already enabled auto mod guns') end
 	elseif cmd == 'unautomodguns' or cmd == 'unautosuperguns' then
 		if Toggles.AutoModGuns then
@@ -2728,105 +2849,6 @@ local function executeChatCmd(d)
 	else return end
 end
 local chatexecutefunc = ReplicatedStorage.DefaultChatSystemChatEvents.OnMessageDoneFiltering.OnClientEvent:Connect(executeChatCmd)
-
---//vvv CMD LOOPS vvv\\--
-coroutine.wrap(function() --//vvv LOOP TASE vvv\\--
-	repeat wait()
-		for i, v in pairs(PlrsLoopTased) do
-			if not v then pcall(function() table.remove(PlrsLoopTased, i) end) continue else
-				wait()
-				pcall(function()
-					local plr = getPlr(v.Name)
-					if workspace:FindFirstChild(v.Name) and workspace[v.Name]:FindFirstChild('Humanoid') and workspace[v.Name].Humanoid.Health > 0 then
-						wait()
-						local details = plrDetails()
-						local plrCF = details[1]
-						tasePlr(v)
-						workspace.Remote.loadchar:InvokeServer()
-						game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
-					end
-				end)
-			end
-		end
-	until CmdGUI.Parent ~= par
-end)()
-
-coroutine.wrap(function()--//vvv LOOP KILL PLAYER vvv\\--
-	repeat wait()
-		for i, v in pairs(PlrsLoopKilled) do
-			if not v then pcall(function() table.remove(PlrsLoopKilled, i) end) continue else
-				if workspace:FindFirstChild(v.Name) and workspace[v.Name]:FindFirstChild('Humanoid') and workspace[v.Name].Humanoid.Health > 0 and not workspace[v.Name]:FindFirstChild('ForceField') then
-					local team = game.Players.LocalPlayer.TeamColor.Name
-					if team == v.TeamColor.Name then
-						workspace.Remote.TeamEvent:FireServer('Medium stone grey')
-					end
-					killPlr(v)
-				end
-			end
-		end
-	until CmdGUI.Parent ~= par
-end)()
-
-coroutine.wrap(function() --//vvv GUN MODS vvv\\--
-	repeat wait()
-		for i, v in pairs(GunsAutoModded) do
-			if not v then pcall(function() table.remove(GunsAutoModded, i) end) continue else
-				if game.Players.LocalPlayer.Character:FindFirstChild(i) or game.Players.LocalPlayer.Backpack:FindFirstChild(i) then
-					local tool = game.Players.LocalPlayer.Character:FindFirstChild(i) or game.Players.LocalPlayer.Backpack:FindFirstChild(i) 
-					local req = require(tool.GunStates)
-					if tool.Name == 'Remington 870' then
-						req = require(tool.GunStates)
-						req.MaxAmmo = req.MaxAmmo
-						req.StoredAmmo = req.StoredAmmo
-						req.AmmoPerClip = req.AmmoPerClip
-						req.CurrentAmmo = req.CurrentAmmo
-						req.Damage = math.huge
-						req.Range = math.huge
-						req.FireRate = 0.225
-						req.Bullets = 1
-						req.Spread = 0
-						req.AutoFire = true
-					end
-					if not Toggles.AutoModGuns and req.Damage ~= math.huge then
-						GunsAutoModded[i] = nil
-					elseif Toggles.AutoModGuns and req.Damage ~= math.huge then 
-						req = require(tool.GunStates)
-						req.MaxAmmo = req.MaxAmmo
-						req.StoredAmmo = req.StoredAmmo
-						req.AmmoPerClip = req.AmmoPerClip
-						req.CurrentAmmo = req.CurrentAmmo
-						req.Damage = math.huge
-						req.Range = math.huge
-						req.FireRate = -math.huge
-						req.Bullets = 1
-						req.Spread = 0
-						req.AutoFire = true
-					end
-					if req.CurrentAmmo <= 0 then
-						tool.Handle:Destroy()
-						repeat wait() until not tool:FindFirstChild('Handle')
-						tool.Parent = game.Players.LocalPlayer.Character
-						tool:Destroy()
-						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[tool.Name].ITEMPICKUP)
-						tool = game.Players.LocalPlayer.Backpack:FindFirstChild(tool.Name)
-						tool.Parent = game.Players.LocalPlayer.Character
-						req = require(tool.GunStates)
-						req.MaxAmmo = req.MaxAmmo
-						req.StoredAmmo = req.StoredAmmo
-						req.AmmoPerClip = req.AmmoPerClip
-						req.CurrentAmmo = req.CurrentAmmo
-						req.Damage = math.huge
-						req.Range = math.huge
-						req.FireRate = -math.huge
-						req.Bullets = 1
-						req.Spread = 0
-						req.AutoFire = true
-					end
-				end
-			end
-		end
-	until CmdGUI.Parent ~= par
-end)()
 
 local destroygui
 destroygui = CmdGUI:GetPropertyChangedSignal('Parent'):Connect(function()
