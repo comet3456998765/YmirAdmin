@@ -2749,7 +2749,7 @@ coroutine.wrap(function() --//vvv LOOP TASE vvv\\--
 			end
 		end
 	until CmdGUI.Parent ~= par
-end)
+end)()
 
 coroutine.wrap(function()--//vvv LOOP KILL PLAYER vvv\\--
 	repeat wait()
@@ -2765,7 +2765,7 @@ coroutine.wrap(function()--//vvv LOOP KILL PLAYER vvv\\--
 			end
 		end
 	until CmdGUI.Parent ~= par
-end)
+end)()
 
 coroutine.wrap(function() --//vvv GUN MODS vvv\\--
 	repeat wait()
@@ -2826,7 +2826,7 @@ coroutine.wrap(function() --//vvv GUN MODS vvv\\--
 			end
 		end
 	until CmdGUI.Parent ~= par
-end)
+end)()
 
 local destroygui
 destroygui = CmdGUI:GetPropertyChangedSignal('Parent'):Connect(function()
