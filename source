@@ -860,7 +860,7 @@ local function executeCmd(cmd, args)
 				if plr.TeamColor.Name ~= 'Bright blue' then
 					if not PlrsLoopTased[plr.UserId] then
 						log('[Logs]: Loop tasing '..plrName(plr))
-						PlrsLoopTased[plr.UserId] = {player = plr}
+						PlrsLoopTased[plr.UserId] = plr
 					else log('[Logs]: Already loop tasing '..plrName(plr)) end
 				else log('[Logs]: Failed to loop tase '..plrName(plr)) end
 			else log('[Logs]: No player found') end
@@ -1061,7 +1061,7 @@ local function executeCmd(cmd, args)
 				local plr = getPlr(args[1])
 				if plr then
 					if not PlrsLoopKilled[plr.UserId] then
-						PlrsLoopKilled[plr.UserId] = {player = plr}
+						PlrsLoopKilled[plr.UserId] = plr
 						log('[Logs]: Loop killing '..plrName(plr))
 					else log('[Logs]: Already loop killing '..plrName(plr)) end
 				else log('[Logs]: No player found') end
@@ -1786,8 +1786,8 @@ local function executeCmd(cmd, args)
 						PlrSpectated = plr
 						log('[Logs]: Spectating '..plrName(plr))
 						repeat wait()
-							if workspace.CurrentCamera.CameraSubject ~= PlrSpectated.Character then
-								workspace.CurrentCamera.CameraSubject = PlrSpectated.Character
+							if PlrSpectated and workspace.CurrentCamera.CameraSubject ~= plr.Character then
+								workspace.CurrentCamera.CameraSubject = plr.Character
 							end
 						until PlrSpectated ~= plr
 					else log('[Logs]: Already spectating '..plrName(plr)) end
@@ -2733,15 +2733,15 @@ local chatexecutefunc = ReplicatedStorage.DefaultChatSystemChatEvents.OnMessageD
 coroutine.wrap(function() --//vvv LOOP TASE vvv\\--
 	repeat wait()
 		for i, v in pairs(PlrsLoopTased) do
-			if not v or not v.player then pcall(function() table.remove(PlrsLoopTased, i) end) continue else
+			if not v then pcall(function() table.remove(PlrsLoopTased, i) end) continue else
 				wait()
 				pcall(function()
-					local plr = getPlr(v.player.Name)
-					if workspace:FindFirstChild(v.player.Name) and workspace[v.player.Name]:FindFirstChild('Humanoid') and workspace[v.player.Name].Humanoid.Health > 0 then
+					local plr = getPlr(v.Name)
+					if workspace:FindFirstChild(v.Name) and workspace[v.Name]:FindFirstChild('Humanoid') and workspace[v.Name].Humanoid.Health > 0 then
 						wait()
 						local details = plrDetails()
 						local plrCF = details[1]
-						tasePlr(v.player)
+						tasePlr(v)
 						workspace.Remote.loadchar:InvokeServer()
 						game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
 					end
@@ -2754,13 +2754,13 @@ end)
 coroutine.wrap(function()--//vvv LOOP KILL PLAYER vvv\\--
 	repeat wait()
 		for i, v in pairs(PlrsLoopKilled) do
-			if not v or not v.player then pcall(function() table.remove(PlrsLoopKilled, i) end) continue else
-				if workspace:FindFirstChild(v.player.Name) and workspace[v.player.Name]:FindFirstChild('Humanoid') and workspace[v.player.Name].Humanoid.Health > 0 and not workspace[v.player.Name]:FindFirstChild('ForceField') then
+			if not v then pcall(function() table.remove(PlrsLoopKilled, i) end) continue else
+				if workspace:FindFirstChild(v.Name) and workspace[v.Name]:FindFirstChild('Humanoid') and workspace[v.Name].Humanoid.Health > 0 and not workspace[v.Name]:FindFirstChild('ForceField') then
 					local team = game.Players.LocalPlayer.TeamColor.Name
-					if team == v.player.TeamColor.Name then
+					if team == v.TeamColor.Name then
 						workspace.Remote.TeamEvent:FireServer('Medium stone grey')
 					end
-					killPlr(v.player)
+					killPlr(v)
 				end
 			end
 		end
