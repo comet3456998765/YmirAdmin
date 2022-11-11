@@ -1240,7 +1240,7 @@ local function executeCmd(cmd, args)
 						local team = details[3]
 						if team == 'Bright orange' then
 							repeat wait()
-								local CF = CFrame.new(-365.976562, 84.2401199, 1987.99207)
+								local CF = CFrame.new(-975.127686, 109.323769, 2045.06262)
 								if game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame ~= CF then 
 									game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CF 
 								end
@@ -1263,7 +1263,7 @@ local function executeCmd(cmd, args)
 				local team = details[3]
 				if team == 'Bright orange' then
 					repeat wait()
-						local CF = CFrame.new(-365.976562, 84.2401199, 1987.99207)
+						local CF = CFrame.new(-975.127686, 109.323769, 2045.06262)
 						if game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame ~= CF then 
 							game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CF 
 						end
@@ -1285,7 +1285,7 @@ local function executeCmd(cmd, args)
 			local team = details[3]
 			if team == 'Bright orange' then
 				repeat wait()
-					local CF = CFrame.new(-365.976562, 84.2401199, 1987.99207)
+					local CF = CFrame.new(-975.127686, 109.323769, 2045.06262)
 					if game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame ~= CF then 
 						game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CF 
 					end
@@ -1435,7 +1435,7 @@ local function executeCmd(cmd, args)
 						local team = details[3]
 						if team == 'Bright orange' then
 							repeat wait()
-								local CF = CFrame.new(-365.976562, 84.2401199, 1987.99207)
+								local CF = CFrame.new(-975.127686, 109.323769, 2045.06262)
 								if game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame ~= CF then 
 									game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CF 
 								end
