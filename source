@@ -250,19 +250,20 @@ if par:FindFirstChild('YmirAdmin_GUI') then
 	CmdBar.BackgroundTransparency = 0
 else --//vvv INTRO vvv\\---
 	CmdGUI.Parent = par
-	CmdMain:TweenSize(UDim2.new(0, 200, 0, 269))
-	repeat wait() until CmdMain.Size == UDim2.new(0, 200, 0, 269)
-	wait(.1)
-	local f1 = TweenService:Create(CmdTitle, TweenInfo.new(introSpeed), {TextTransparency = 0})
+	local f1 = TweenService:Create(CmdMain, TweenInfo.new(introSpeed), {Size = UDim2.new(0, 200, 0, 269)})
 	f1:Play()
 	f1.Completed:Wait()
 	wait(.1)
-	CmdBar.Visible = true
-	local f2 = TweenService:Create(CmdBar, TweenInfo.new(introSpeed), {BackgroundTransparency = 0})
-	local f3 = TweenService:Create(CmdBar, TweenInfo.new(introSpeed), {TextTransparency = 0})
+	local f2 = TweenService:Create(CmdTitle, TweenInfo.new(introSpeed), {TextTransparency = 0})
 	f2:Play()
+	f2.Completed:Wait()
+	wait(.1)
+	CmdBar.Visible = true
+	local f3 = TweenService:Create(CmdBar, TweenInfo.new(introSpeed), {BackgroundTransparency = 0})
+	local f4 = TweenService:Create(CmdBar, TweenInfo.new(introSpeed), {TextTransparency = 0})
 	f3:Play()
-	f3.Completed:Wait()
+	f4:Play()
+	f4.Completed:Wait()
 	wait(.1)
 	CmdHandler.Visible = true
 	CmdBox.Visible = true
@@ -280,22 +281,31 @@ local function notif(txt, notimer)
 			CmdNotif.Text = txt
 			if not notimer then wait(0.5) end
 			notified = true
-			CmdBox:TweenPosition(UDim2.new(0.967000008, 0, 0.632000029, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 0.5)
+			local tween = TweenService:Create(CmdMain, TweenInfo.new(0.5, Enum.EasingDirection.Out, Enum.EasingStyle.Quart), {Position = UDim2.new(0.967000008, 0, 0.632000029, 0})
+			tween:Play()
+			notified = true
+			tween.Completed:Wait()
 			wait(3)
 			if not logsOpen then
-				CmdBox:TweenPosition(UDim2.new(0, 0, 0.632000029, 0), Enum.EasingDirection.In, Enum.EasingStyle.Quart, 0.5)
+				tween = TweenService:Create(CmdMain, TweenInfo.new(0.5, Enum.EasingDirection.Out, Enum.EasingStyle.Quart), {Position = UDim2.new(0, 0, 0.632000029, 0)})
+				tween:Play()
 				notified = false
 			end
 		else 
-			CmdBox:TweenPosition(UDim2.new(0, 0, 0.632000029, 0), Enum.EasingDirection.In, Enum.EasingStyle.Quart, 0.5)
+			CmdBox:TweenPosition(, Enum.EasingDirection.In, Enum.EasingStyle.Quart, 0.5)
+			local tween = TweenService:Create(CmdMain, TweenInfo.new(0.5, Enum.EasingDirection.Out, Enum.EasingStyle.Quart), {Position = UDim2.new(0, 0, 0.632000029, 0)})
+			tween:Play()
 			notified = false
-			repeat wait() until CmdBox.Position == UDim2.new(0, 0, 0.632000029, 0)
+			tween.Completed:Wait()
 			CmdNotif.Text = txt
+			tween = TweenService:Create(CmdMain, TweenInfo.new(0.5, Enum.EasingDirection.Out, Enum.EasingStyle.Quart), {Position = UDim2.new(0.967000008, 0, 0.632000029, 0})
+			tween:Play()
 			notified = true
-			CmdBox:TweenPosition(UDim2.new(0.967000008, 0, 0.632000029, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 0.5)
+			tween.Completed:Wait()
 			wait(3)
 			if not logsOpen then
-				CmdBox:TweenPosition(UDim2.new(0, 0, 0.632000029, 0), Enum.EasingDirection.In, Enum.EasingStyle.Quart, 0.5)
+				tween = TweenService:Create(CmdMain, TweenInfo.new(0.5, Enum.EasingDirection.Out, Enum.EasingStyle.Quart), {Position = UDim2.new(0, 0, 0.632000029, 0)})
+				tween:Play()
 				notified = false
 			end
 		end
