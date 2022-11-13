@@ -736,9 +736,11 @@ local function bringPlr(plr, cf)
 	repeat wait(.1)
 		goTo(plr)
 	until not plr or tool.Parent == plr.Character
-	for i = 1, 10 do
+	local counter = 0
+	repeat wait(.1)
+		counter = counter + 1
 		workspace:FindFirstChild(game.Players.LocalPlayer.Name).HumanoidRootPart.CFrame = cf
-	end
+	until counter > 10
 	workspace.Remote.loadchar:InvokeServer()
 	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
 end
