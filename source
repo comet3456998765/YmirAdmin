@@ -937,7 +937,7 @@ local function executeCmd(cmd, args)
 								spamArrest(plr, math.huge)
 							end)()
 						end
-					until game.Players:FindFirstChild(plr.Name) or not workspace[plr.Name] or plr.TeamColor.Name ~= 'Really red'
+					until not game.Players:FindFirstChild(plr.Name) or not workspace[plr.Name] or plr.TeamColor.Name ~= 'Really red'
 					workspace.Remote.loadchar:InvokeServer()
 					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
 					workspace.CurrentCamera.CFrame = camCF
