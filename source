@@ -1621,8 +1621,8 @@ local function executeCmd(cmd, args)
 			log('[Logs]: Enabled auto refresh')
 			Toggles.AutoRefresh = true
 			local func 
-			func = game.Players.LocalPlayer.Character.Humanoid.Died:Connect(function()
-				if Toggles.AutoRefresh then
+			repeat wait(.1)
+				if game.Players.LocalPlayer.Character.Humanoid.Health <= 0 then
 					local details = plrDetails()
 					local plrCF = details[1]
 					local camCF = details[2]
@@ -1630,7 +1630,7 @@ local function executeCmd(cmd, args)
 					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plrCF
 					workspace.CurrentCamera.CFrame = camCF
 				else func:Disconnect() end
-			end)
+			until not Toggles.AutoRefresh
 		else log('[Logs]: Already enabled auto refresh') end
 	elseif cmd == 'unautorefresh' or cmd == 'unautore' then
 		if Toggles.AutoRefresh then
