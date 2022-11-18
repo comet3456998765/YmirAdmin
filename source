@@ -1238,9 +1238,11 @@ local function executeCmd(cmd, args)
 							workspace.Remote.TeamEvent:FireServer('Medium stone grey')
 						end
 						killPlr(plr)
-						if team ~= 'Really red' then
-							workspace.Remote.TeamEvent:FireServer(team)
-						else workspace.Remote.loadchar:InvokeServer(nil, team) end
+						if game.Players.LocalPlayer.TeamColor.Name ~= team then
+							if team ~= 'Really red' then
+								workspace.Remote.TeamEvent:FireServer(team)
+							else workspace.Remote.loadchar:InvokeServer(nil, team) end
+						end
 					end
 				else return end
 			end)
