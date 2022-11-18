@@ -1,5 +1,5 @@
 ---//vvv SERVICES vvv\\---
-local ver = '2.0.3'
+local ver = '2.1.0'
 local UserInputService = game:GetService('UserInputService')
 local RunService = (game:GetService('RunService'));
 local CoreGui = game:GetService('CoreGui')
@@ -403,10 +403,13 @@ Cmd[#Cmd + 1] = {Name='arrest <plr / all>',Desc='Arrests the player or all crimi
 Cmd[#Cmd + 1] = {Name='looparrest / spamarrest <plr>',Desc='Loop arrests the player (Causes lag)'}
 Cmd[#Cmd + 1] = {Name='arrestaura',Desc='Arrests everyone who is near you'}
 Cmd[#Cmd + 1] = {Name='noarrestaura / unarrestaura',Desc='Disables arrest aura'}
+Cmd[#Cmd + 1] = {Name='killtool / killgun <gun>',Desc='Set the gun that you will use for killing players via command'}
 Cmd[#Cmd + 1] = {Name='kill <plr / team / enemies / all>',Desc='Kills the player/team/all/enemies if you choose one of them'}
 Cmd[#Cmd + 1] = {Name='loopkill / lk <plr / team / enemies / all>',Desc='Loop kills the player/team/all/enemies if you choose one of them'}
 Cmd[#Cmd + 1] = {Name='unloopkill / unlk <plr / team / enemies / all>',Desc='Disables loop killing the player/team/all/enemies if you choose one of them'}
 Cmd[#Cmd + 1] = {Name='clearloopkill / clearloopkills',Desc='Removes all loop kills'}
+Cmd[#Cmd + 1] = {Name='clickkill',Desc='Kills the player you click'}
+Cmd[#Cmd + 1] = {Name='noclickkill / unclickkill',Desc='Disables click kill'}
 Cmd[#Cmd + 1] = {Name='killaura / aura',Desc='Kills everyone who is near you'}
 Cmd[#Cmd + 1] = {Name='nokillaura / noaura',Desc='Disables kill aura'}
 Cmd[#Cmd + 1] = {Name='inmate / inmates',Desc='Join the inmate team'}
@@ -590,6 +593,7 @@ local GunsAutoModded = {}
 local Toggles = {}
 local PlrSpectated = nil
 local PlrLoopBringing = nil
+local KillTool = 'AK-47'
 local punchCooldown
 local knifeCooldown
 local batCooldown
@@ -632,8 +636,8 @@ local function killPlr(plr)
 	if not plr then return end
 	pcall(function()
 		if workspace:FindFirstChild(plr.Name) then
-			workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['AK-47'].ITEMPICKUP)
-			local tool = game.Players.LocalPlayer.Character:FindFirstChild('AK-47') or game.Players.LocalPlayer.Backpack:FindFirstChild('AK-47')
+			workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[KillTool].ITEMPICKUP)
+			local tool = game.Players.LocalPlayer.Character:FindFirstChild(KillTool) or game.Players.LocalPlayer.Backpack:FindFirstChild('AK-47')
 			local event = {
 				[1] = {
 					['RayObject'] = Ray.new(Vector3.new(), Vector3.new()), 
@@ -966,6 +970,32 @@ local function executeCmd(cmd, args)
 			log('[Logs]: Disabled arrest aura')
 			Toggles.ArrestAura = false
 		else log('[Logs]: Already disabled arrest aura') end
+	elseif cmd == 'killtool' or cmd == 'killgun' or cmd == 'killweapon' then
+		if args[1] then
+			if args[1] == 'ak' or args[1] == 'ak47' or args[1] == 'ak-47' then
+				if KillTool ~= 'AK-47' then
+					KillTool = 'Ak-47'
+					log('[Logs]: Set AK-47 as kill tool')
+				else log('[Logs]: Already set AK-47 as kill tool') end
+			elseif args[1] == 'm4' or args[1] == 'm4a1'then
+				if KillTool ~= 'M4A1' then
+					if SWAT then
+						KillTool = 'M4A1'
+						log('[Logs]: Set M4A1 as kill tool')
+					else log('[Logs]: You need the SWAT gamepass to use this gun') end
+				else log('[Logs]: Already set AK-47 as kill tool') end
+			elseif args[1] == 'm9' or args[1] == 'pistol'then
+				if KillTool ~= 'M9' then
+					KillTool = 'M9'
+					log('[Logs]: Set M9 as kill tool')
+				else log('[Logs]: Already set M9 as kill tool') end
+			elseif args[1] == 'remington' or args[1] == 'shotgun' or cmd == 'remington870' then
+				if KillTool ~= 'Remington 870' then
+					KillTool = 'Remington 870'
+					log('[Logs]: Set Remington 870 as kill tool')
+				else log('[Logs]: Already set M9 as kill tool') end
+			else log('[Logs]: Input a valid gun') end
+		end
 	elseif cmd == 'kill' then
 		local team = plrDetails()[3]
 		if args[1] then
@@ -1192,6 +1222,34 @@ local function executeCmd(cmd, args)
 		PlrsLoopKilled = {}
 		log('[Logs]: Cleared loop killing all players')
 		notif('Cleared loop killing all players') 
+	elseif cmd == 'clickkill' then
+		if not Toggles.ClickKill then
+			log('[Logs]: Enabled click kill')
+			Toggles.ClickKill = true
+			local func
+			func = Mouse.Button1Down:Connect(function()
+				if not Toggles.ClickKill then func:Disconnect() end
+				local hit = Mouse.Target
+				if hit:IsA('BasePart') and hit.Parent and getPlr(hit.Parent.Name) then
+					local plr = getPlr(hit.Parent.Name) 
+					if hit.Parent:FindFirstChild('Humanoid') and hit.Parent.Humanoid.Health > 0 then
+						local team = game.Players.LocalPlayer.TeamColor.Name
+						if team == plr.TeamColor.Name then
+							workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+						end
+						killPlr(plr)
+						if team ~= 'Really red' then
+							workspace.Remote.TeamEvent:FireServer(team)
+						else workspace.Remote.loadchar:InvokeServer(nil, team) end
+					end
+				else return end
+			end)
+		else log('[Logs]: Already enabled clickill') end
+	elseif cmd == 'noclickkill' or cmd == 'unclickkill' then
+		if Toggles.ClickKill then
+			log('[Logs]: Disabled kill aura')
+			Toggles.ClickKill = false
+		end 
 	elseif cmd == 'killaura' or cmd == 'aura' then
 		if not Toggles.KillAura then
 			log('[Logs]: Enabled kill aura')
@@ -1938,8 +1996,10 @@ local function executeCmd(cmd, args)
 		if not Toggles.OnePunch then
 			log('[Logs]: Enabled one punching')
 			Toggles.OnePunch = true
-			Mouse.KeyDown:connect(function(k)
-				if k:lower() == 'f' and Toggles.OnePunch and not punchCooldown then
+			local func
+			func = Mouse.KeyDown:connect(function(k)
+				if not Toggles.OnePunch then func:Disconnect() end
+				if k:lower() == 'f' and not punchCooldown then
 					onePunch()
 				end	
 			end)
@@ -1953,21 +2013,21 @@ local function executeCmd(cmd, args)
 		if not Toggles.FreePunch then
 			log('[Logs]: Enabled free punching')
 			Toggles.FreePunch = true
-			Mouse.KeyDown:connect(function(k)
-				if Toggles.FreePunch then
-					if k:lower() == 'f' then
-						if getsenv(game.Players.LocalPlayer.Character.ClientInputHandler).cs.isRunning ~= false then
-							getsenv(game.Players.LocalPlayer.Character.ClientInputHandler).cs.isRunning = false
-							wait(.1)
-							getsenv(game.Players.LocalPlayer.Character.ClientInputHandler).cs.isRunning = true
-						end
-						if getsenv(game.Players.LocalPlayer.Character.ClientInputHandler).cs.isCrouching ~= false then
-							getsenv(game.Players.LocalPlayer.Character.ClientInputHandler).cs.isCrouching = false
-							wait(.1)
-							getsenv(game.Players.LocalPlayer.Character.ClientInputHandler).cs.isCrouching = true
-						end
-					end				
-				end
+			local func
+			func = Mouse.KeyDown:connect(function(k)
+				if not Toggles.FreePunch then func:Disconnect() end
+				if k:lower() == 'f' then
+					if getsenv(game.Players.LocalPlayer.Character.ClientInputHandler).cs.isRunning ~= false then
+						getsenv(game.Players.LocalPlayer.Character.ClientInputHandler).cs.isRunning = false
+						wait(.1)
+						getsenv(game.Players.LocalPlayer.Character.ClientInputHandler).cs.isRunning = true
+					end
+					if getsenv(game.Players.LocalPlayer.Character.ClientInputHandler).cs.isCrouching ~= false then
+						getsenv(game.Players.LocalPlayer.Character.ClientInputHandler).cs.isCrouching = false
+						wait(.1)
+						getsenv(game.Players.LocalPlayer.Character.ClientInputHandler).cs.isCrouching = true
+					end
+				end		
 			end)
 		else log('[Logs]: Already enabled free punching') end
 	elseif cmd == 'unfreepunch' or cmd == 'nofreepunch' then
@@ -1982,8 +2042,10 @@ local function executeCmd(cmd, args)
 			Toggles.FreePunch = false
 			Toggles.OnePunch = false
 			Toggles.SuperPunch = true
-			Mouse.KeyDown:connect(function(k)
-				if k:lower() == 'f' and Toggles.SuperPunch and not punchCooldown then
+			local func
+			func = Mouse.KeyDown:connect(function(k)
+				if not Toggles.SuperPunch then func:Disconnect() end
+				if k:lower() == 'f' and not punchCooldown then
 					onePunch()
 					if getsenv(game.Players.LocalPlayer.Character.ClientInputHandler).cs.isFighting ~= false then
 						getsenv(game.Players.LocalPlayer.Character.ClientInputHandler).cs.isFighting = false
