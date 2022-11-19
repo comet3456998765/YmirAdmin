@@ -397,7 +397,7 @@ dragging = RunService.Heartbeat:Connect(Update)
 ---//vvv COMMANDS vvv\\---
 local Cmd = {}
 Cmd[#Cmd + 1] = {Name='whitelist / wl <plr>',Desc='Whitelist the player from getting tased/killed/arrested and etc.'}
-Cmd[#Cmd + 1] = {Name='unwhitelist / unwl',Desc='Unwhitelists the player'}
+Cmd[#Cmd + 1] = {Name='unwhitelist / unwl <plr>',Desc='Unwhitelists the player'}
 Cmd[#Cmd + 1] = {Name='getwhitelist / getwl',Desc='Prints whitelisted players in the current server'}
 Cmd[#Cmd + 1] = {Name='tase / taze <plr / team / all>',Desc='Tases the player/team/all if you choose one of them'}
 Cmd[#Cmd + 1] = {Name='looptase / looptaze <plr / team / all>',Desc='Loop tases the player/team/all if you choose one of them'}
