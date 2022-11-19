@@ -1023,9 +1023,11 @@ local function executeCmd(cmd, args)
 					else continue end
 				end
 				log('[Logs]: Killed all players')
-				if team ~= 'Really red' then
-					workspace.Remote.TeamEvent:FireServer(team)
-				else workspace.Remote.loadchar:InvokeServer(nil, team) end
+				if game.Players.LocalPlayer.TeamColor.Name ~= team then
+					if team ~= 'Really red' then
+						workspace.Remote.TeamEvent:FireServer(team)
+					else workspace.Remote.loadchar:InvokeServer(nil, team) end
+				end
 			elseif args[1] == 'enemies' or args[1] == 'enemy' then
 				for _, plr in pairs(game.Players:GetChildren()) do
 					if plr.Name ~= game.Players.LocalPlayer.Name and plr.TeamColor.Name ~= team and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
@@ -1042,9 +1044,11 @@ local function executeCmd(cmd, args)
 					killPlr(plr)
 					log('[Logs]: Killed '..plrName(plr))
 					notif('Killed '..plrName(plr))
-					if team ~= 'Really red' then
-						workspace.Remote.TeamEvent:FireServer(team)
-					else workspace.Remote.loadchar:InvokeServer(nil, team) end
+					if game.Players.LocalPlayer.TeamColor.Name ~= team then
+						if team ~= 'Really red' then
+							workspace.Remote.TeamEvent:FireServer(team)
+						else workspace.Remote.loadchar:InvokeServer(nil, team) end
+					end
 				else log('[Logs]: No player found') end
 			end
 			if teamToKill and teamToKill ~= nil then
@@ -1057,9 +1061,11 @@ local function executeCmd(cmd, args)
 					else continue end
 				end
 				log('[Logs]: Killed all '..teamToKill[1]:lower())
-				if team ~= 'Really red' then
-					workspace.Remote.TeamEvent:FireServer(team)
-				else workspace.Remote.loadchar:InvokeServer(nil, team) end
+				if game.Players.LocalPlayer.TeamColor.Name ~= team then
+					if team ~= 'Really red' then
+						workspace.Remote.TeamEvent:FireServer(team)
+					else workspace.Remote.loadchar:InvokeServer(nil, team) end
+				end
 			end
 		end
 	elseif cmd == 'loopkill' or cmd == 'lkill' or cmd == 'lk' then
