@@ -853,6 +853,7 @@ local function executeCmd(cmd, args)
 		for _, plr in ipairs(game.Players:GetChildren()) do
 			if plr.TeamColor.Name ~= 'Bright blue' then
 				tasePlr(plr)
+				workspace.Remote.loadchar:InvokeServer()
 			end
 		end
 		log('[Logs]: Tased all players')
@@ -869,6 +870,7 @@ local function executeCmd(cmd, args)
 						repeat wait(.1)
 							if _plr.TeamColor.Name ~= 'Bright blue' and workspace:FindFirstChild(_plr.Name) and workspace[_plr.Name]:FindFirstChild('Humanoid') and workspace[_plr.Name].Humanoid.Health > 0 then
 								tasePlr(_plr)
+								workspace.Remote.loadchar:InvokeServer()
 							end
 						until PlrsLoopKilled[plr.UserId] == nil
 					else log('[Logs]: Already loop tasing '..plrName(plr)) end
