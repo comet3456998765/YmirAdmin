@@ -637,7 +637,7 @@ local function killPlr(plr)
 	pcall(function()
 		if workspace:FindFirstChild(plr.Name) then
 			workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[KillTool].ITEMPICKUP)
-			local tool = game.Players.LocalPlayer.Character:FindFirstChild(KillTool) or game.Players.LocalPlayer.Backpack:FindFirstChild(KillTool)
+			local tool = game.Players.LocalPlayer.Character[KillTool] or game.Players.LocalPlayer.Backpack[KillTool]
 			local event = {
 				[1] = {
 					['RayObject'] = Ray.new(Vector3.new(), Vector3.new()), 
@@ -974,7 +974,7 @@ local function executeCmd(cmd, args)
 		if args[1] then
 			if args[1] == 'ak' or args[1] == 'ak47' or args[1] == 'ak-47' then
 				if KillTool ~= 'AK-47' then
-					KillTool = 'Ak-47'
+					KillTool = 'AK-47'
 					log('[Logs]: Set AK-47 as kill tool')
 				else log('[Logs]: Already set AK-47 as kill tool') end
 			elseif args[1] == 'm4' or args[1] == 'm4a1'then
