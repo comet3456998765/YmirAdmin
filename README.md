@@ -9,25 +9,25 @@ loadstring(game:HttpGet(('https://raw.githubusercontent.com/senorkal/YmirAdmin/m
 ```
 
 ## Current information
-> **Version 2.1.1** (18 November 2022)
+> **Version 2.2.0** (19 November 2022)
 
-> 130 commands
+> 134 commands
 
 > May contain bugs
 
 > Unobfuscated
 
-### Version 1.0.0 -> Version 2.1.1
+### Version 1.0.0 -> Version 2.2.0
 > Improved UI
 
 > Currently fixing bugs and tweaking commands to reduce lag
 
 > Removed/added new commands, some commands removed to integrate them on previous commands
 
-### Script doesn't execute?
+### Script or certain commands doesn't execute?
 > This could be due to an error in the source, it will be fixed as soon as possible
 
-> The workspace file dedicated to this is outdated, go to YourExecutorFolder/workspace, look for a file named YmirAdminSettings.pl, and delete that file. Execute the script again to see if it works.
+> The workspace file dedicated to this is outdated, go to YourExecutorFolder/workspace, look for a file named YmirAdminSettings.pl, and delete that file. Reload the script again to see if it works.
 
 
 ## Credits
