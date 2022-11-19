@@ -1836,13 +1836,15 @@ local function executeCmd(cmd, args)
 		if not Toggles.AlwaysDay then
 			log('[Logs]: Disabled day cycle')
 			Toggles.AlwaysDay = true
-			repeat wait(.1)
+			local func
+			func = RunService.RenderStepped:Connect(function()
+				if not Toggles.AlwaysDay then func:Disconnect() end
 				game.Lighting.Brightness = 2
 				game.Lighting.ClockTime = 14
 				game.Lighting.FogEnd = 100000
 				game.Lighting.GlobalShadows = false
 				game.Lighting.OutdoorAmbient = Color3.fromRGB(128, 128, 128)
-			until not Toggles.AlwaysDay
+			end)
 		else log('[Logs]: Already disabled day cycle') end
 	elseif cmd == 'daycycle' or cmd == 'unalwaysday' then
 		if Toggles.AlwaysDay then
