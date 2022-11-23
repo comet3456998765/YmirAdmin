@@ -1194,14 +1194,12 @@ local function executeCmd(cmd, args)
 			Toggles.ArrestAura = true
 			repeat wait(.1)
 				for i, v in pairs(game.Players:GetPlayers()) do
-					pcall(function()
-						if v ~= fag then
-							local Distance = (v.Character:FindFirstChildOfClass('Part').Position - fag.Character:FindFirstChildOfClass('Part').Position).magnitude
-							if not Whitelisted[v.Name] and (not v.Character:FindFirstChild('handcuffedGui')) and Distance <= 10 and Toggles.ArrestAura then
-								workspace.Remote.arrest:InvokeServer(workspace[i].Head)
-							end
+					if not Whitelisted[v.Name] and v ~= fag and workspace:FindFirstChild(v.Name) and workspace[v.Name]:FindFirstChild('Head') and not v.Character:FindFirstChild('handcuffedGui') then
+						local Distance = (v.Character:FindFirstChildOfClass('Part').Position - fag.Character:FindFirstChildOfClass('Part').Position).magnitude
+						if Distance <= 10 and Toggles.ArrestAura then
+							workspace.Remote.arrest:InvokeServer(workspace[v.Name].Head)
 						end
-					end)
+					else continue end
 				end
 			until not Toggles.ArrestAura
 		else log('[Logs]: Already enabled arrest aura') end
@@ -1529,7 +1527,7 @@ local function executeCmd(cmd, args)
 			repeat wait(.1)
 				for _, v in pairs(game.Players:GetPlayers()) do
 					pcall(function()
-						if not Whitelisted[v.Name] and v ~= fag then
+						if if not Whitelisted[v.Name] and v ~= fag and workspace:FindFirstChild(v.Name) and workspace[v.Name]:FindFirstChild('Humanoid') and workspace[v.Name].Humanoid.Health > 0 then
 							local Distance = (v.Character:FindFirstChildOfClass('Part').Position - fag.Character:FindFirstChildOfClass('Part').Position).magnitude
 							if Distance <= 10 and Toggles.KillAura then
 								for i = 1,25 do
