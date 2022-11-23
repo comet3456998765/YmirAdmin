@@ -1527,7 +1527,7 @@ local function executeCmd(cmd, args)
 			repeat wait(.1)
 				for _, v in pairs(game.Players:GetPlayers()) do
 					pcall(function()
-						if if not Whitelisted[v.Name] and v ~= fag and workspace:FindFirstChild(v.Name) and workspace[v.Name]:FindFirstChild('Humanoid') and workspace[v.Name].Humanoid.Health > 0 then
+						if not Whitelisted[v.Name] and v ~= fag and workspace:FindFirstChild(v.Name) and workspace[v.Name]:FindFirstChild('Humanoid') and workspace[v.Name].Humanoid.Health > 0 then
 							local Distance = (v.Character:FindFirstChildOfClass('Part').Position - fag.Character:FindFirstChildOfClass('Part').Position).magnitude
 							if Distance <= 10 and Toggles.KillAura then
 								for i = 1,25 do
