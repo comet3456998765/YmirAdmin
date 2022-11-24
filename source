@@ -1,5 +1,5 @@
 ---//vvv SERVICES vvv\\---
-local ver = '2.2.0'
+local ver = '2.2.1'
 local fag = game.Players.LocalPlayer
 local UserInputService = game:GetService('UserInputService')
 local RunService = (game:GetService('RunService'));
@@ -479,7 +479,7 @@ Cmd[#Cmd + 1] = {Name='superpunch / allpunch',Desc='Enables fast, free, and one 
 Cmd[#Cmd + 1] = {Name='nosuperpunch / noallpunch',Desc='Disables super punching'}
 Cmd[#Cmd + 1] = {Name='dropitems',Desc='Drops a bunch of items by loop killing you'}
 Cmd[#Cmd + 1] = {Name='undropitems',Desc='Disables item dropping'}
-Cmd[#Cmd + 1] = {Name='keycard / key / card',Desc='Finds for key card or you spawn a key card and auto pick it up'}
+Cmd[#Cmd + 1] = {Name='keycard / key [plr]',Desc='Finds for key card or you spawn a key card and auto pick it up, or give keycard to a player'}
 Cmd[#Cmd + 1] = {Name='findkeycard / findkey ',Desc='Finds for a key card'}
 Cmd[#Cmd + 1] = {Name='unfindkeycard / unfindkey ',Desc='Stops finding for a key card'}
 Cmd[#Cmd + 1] = {Name='crudeknife / knife',Desc='Adds crude knife to your backpack'}
@@ -833,22 +833,12 @@ local function godMode()
 	local Char = fag.Character
 	fag.Character = nil
 	fag.Character = Char
+	fag.Character.Torso.Anchored = true
+	wait(5.65)
+	fag.Character.Torso.Anchored = false
 	fag.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
 	fag.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
 	fag.Character.Humanoid.BreakJointsOnDeath = false
-	fag.Character.Humanoid.Health = 0
-	local event = Instance.new('BindableEvent')
-	local func
-	func = event.Event:Connect(function()
-		fag.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Dead, true)
-		fag.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, true)
-		fag.Character.Humanoid.BreakJointsOnDeath = true
-		fag.Character.Humanoid:BreakJoints()
-		gui:SetCore('ResetButtonCallback', true)
-		func:Disconnect()
-		event:Remove()
-	end)
-	gui:SetCore('ResetButtonCallback', event)
 end
 
 local function onePunch()
@@ -1955,9 +1945,10 @@ local function executeCmd(cmd, args)
 		else log('[Logs]: Already disabled auto refresh') end
 	elseif cmd == 'god' or cmd == 'godmode' then
 		if not Toggles.GodMode then
-			log('[Logs]: Enabled god mode')
 			Toggles.GodMode = true
+			log('[Logs]: Enabling god mode... please wait.')
 			godMode()
+			log('[Logs]: Enabled god mode')
 		else log('[Logs]: Already enabled god mode') end
 	elseif cmd == 'ungod' or cmd == 'ungodmode' then
 		if Toggles.GodMode then
@@ -2321,31 +2312,95 @@ local function executeCmd(cmd, args)
 		else log('[Logs]: Already disabled item dropping') end
 	elseif cmd == 'key' or cmd == 'keycard' or cmd == 'card' then
 		if not Toggles.FindKey then
-			if not fag.Character:FindFirstChild('Key card') and not fag.Backpack:FindFirstChild('Key card') then
-				Toggles.FindKey = true
-				if workspace.Prison_ITEMS.single:FindFirstChild('Key card') then
-					workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
-					log('[Logs]: Obtained key card') 
-				else 
-					log('[Logs]: Switching to guard team, please wait...')
-					if team ~= 'Bright blue' then
-						repeat wait(.1) workspace.Remote.TeamEvent:FireServer('Bright blue') until fag.TeamColor.Name == 'Bright blue' or not Toggles.FindKey
-					end
-					repeat wait(.1)
-						fag.Character.HumanoidRootPart.CFrame = CFrame.new(-365.976562, 84.2401199, 1987.99207)
-						fag.Character:BreakJoints()
+			if args[1] then
+				local plr = getPlr(args[1])
+				if plr then
+					if plr ~= fag then
+						log('[Logs]: Attempting to give key to '..plrName(plr))
+						local plrCF = getPos()
+						if workspace.Prison_ITEMS.single:FindFirstChild('Key card') then
+							workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
+						else 
+							if team ~= 'Bright blue' then
+								repeat wait(.1) workspace.Remote.TeamEvent:FireServer('Bright blue') until fag.TeamColor.Name == 'Bright blue' or not Toggles.FindKey
+							end
+						end
+						local char = fag.Character
+						char.Humanoid.Name = 'fuck'
+						local c = char.fuck:Clone()
+						c.Name = 'Humanoid'
+						c.Parent = char
+						char.fuck:Destroy()
+						workspace.CurrentCamera.CameraSubject = char
+						char.Animate.Disabled = true
+						wait()
+						char.Animate.Disabled = false
+						char.Humanoid.DisplayDistanceType = 'None'
+						local tool = fag.Backpack:FindFirstChild('Key card') or fag.Character:FindFirstChild('Key card')
+						tool.Parent = char
+						repeat wait(.1)
+							goTo(plr)
+						until not plr or tool.Parent == plr.Character
 						workspace.Remote.loadchar:InvokeServer()
-					until workspace.Prison_ITEMS.single:FindFirstChild('Key card') or not Toggles.FindKey
-					if Toggles.FindKey then
-						workspace.Remote.loadchar:InvokeServer(nil, team)
 						fag.Character.HumanoidRootPart.CFrame = plrCF
-						workspace.CurrentCamera.CFrame = camCF
-						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
-						log('[Logs]: Obtained key card')
-						Toggles.FindKey = false
+						if plr and plr:FindFirstChild('Character') and (plr.Backpack:FindFirstChild(tool.Name) or plr.Character:FindFirstChild(tool.Name)) then
+							log('[Logs]: Gave key card to '..plrName(plr))
+						end
+					else 
+						if not fag.Character:FindFirstChild('Key card') and not fag.Backpack:FindFirstChild('Key card') then
+							Toggles.FindKey = true
+							if workspace.Prison_ITEMS.single:FindFirstChild('Key card') then
+								workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
+								log('[Logs]: Obtained key card') 
+							else 
+								log('[Logs]: Switching to guard team, please wait...')
+								if team ~= 'Bright blue' then
+									repeat wait(.1) workspace.Remote.TeamEvent:FireServer('Bright blue') until fag.TeamColor.Name == 'Bright blue' or not Toggles.FindKey
+								end
+								repeat wait(.1)
+									fag.Character.HumanoidRootPart.CFrame = CFrame.new(-365.976562, 84.2401199, 1987.99207)
+									fag.Character:BreakJoints()
+									workspace.Remote.loadchar:InvokeServer()
+								until workspace.Prison_ITEMS.single:FindFirstChild('Key card') or not Toggles.FindKey
+								if Toggles.FindKey then
+									workspace.Remote.loadchar:InvokeServer(nil, team)
+									fag.Character.HumanoidRootPart.CFrame = plrCF
+									workspace.CurrentCamera.CFrame = camCF
+									workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
+									log('[Logs]: Obtained key card')
+									Toggles.FindKey = false
+								end
+							end
+						else log('[Logs]: You already obtained a key card') end
 					end
-				end
-			else log('[Logs]: You already obtained a key card') end
+				else log('[Logs]: No player found') end
+			else 
+				if not fag.Character:FindFirstChild('Key card') and not fag.Backpack:FindFirstChild('Key card') then
+					Toggles.FindKey = true
+					if workspace.Prison_ITEMS.single:FindFirstChild('Key card') then
+						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
+						log('[Logs]: Obtained key card') 
+					else 
+						log('[Logs]: Switching to guard team, please wait...')
+						if team ~= 'Bright blue' then
+							repeat wait(.1) workspace.Remote.TeamEvent:FireServer('Bright blue') until fag.TeamColor.Name == 'Bright blue' or not Toggles.FindKey
+						end
+						repeat wait(.1)
+							fag.Character.HumanoidRootPart.CFrame = CFrame.new(-365.976562, 84.2401199, 1987.99207)
+							fag.Character:BreakJoints()
+							workspace.Remote.loadchar:InvokeServer()
+						until workspace.Prison_ITEMS.single:FindFirstChild('Key card') or not Toggles.FindKey
+						if Toggles.FindKey then
+							workspace.Remote.loadchar:InvokeServer(nil, team)
+							fag.Character.HumanoidRootPart.CFrame = plrCF
+							workspace.CurrentCamera.CFrame = camCF
+							workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
+							log('[Logs]: Obtained key card')
+							Toggles.FindKey = false
+						end
+					end
+				else log('[Logs]: You already obtained a key card') end
+			end
 		else log('[Logs]: Already finding key card') end
 	elseif cmd == 'findkey' or cmd == 'findkeycard' or cmd == 'findcard' then
 		if not Toggles.FindKey then
