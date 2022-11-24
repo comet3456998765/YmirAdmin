@@ -830,15 +830,19 @@ local function createSound(sound, source, t)
 end
 
 local function godMode()
-	fag.Character.Humanoid.Name = 1
-	local l = fag.Character['1']:Clone()
-	l.Parent = fag.Character
-	l.Name = 'Humanoid'
-	fag.Character.Animate.Disabled = true
-	wait()
-	fag.Character.Animate.Disabled = false
-	fag.Character['1']:Destroy()
-	game.Workspace.CurrentCamera.CameraSubject = fag.Character
+	fag.Character = nil
+	fag.Character = Char
+	fag.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
+	fag.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
+	fag.Character.Humanoid.BreakJointsOnDeath = false
+	fag.Character.Humanoid.Health = 0
+	gui:SetCore('ResetButtonCallback', {
+		fag.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Dead, true)
+		fag.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, true)
+		fag.Character.Humanoid.BreakJointsOnDeath = true
+		fag.Character.Humanoid:BreakJoints()
+		gui:SetCore('ResetButtonCallback', true)
+	})
 end
 
 local function onePunch()
@@ -1947,25 +1951,15 @@ local function executeCmd(cmd, args)
 		if not Toggles.GodMode then
 			log('[Logs]: Enabled god mode')
 			Toggles.GodMode = true
-			repeat wait(.1)
-				godMode()
-				wait(5)
-				local newPos = getPos()
-				local newCam = getCam()
-				workspace.Remote.loadchar:InvokeServer()
-				fag.Character.HumanoidRootPart.CFrame = newPos
-				workspace.CurrentCamera.CFrame = newCam
-			until not Toggles.GodMode
+			godMode()
 		else log('[Logs]: Already enabled god mode') end
 	elseif cmd == 'ungod' or cmd == 'ungodmode' then
 		if Toggles.GodMode then
 			log('[Logs]: Disabled god mode')
 			Toggles.GodMode = false
-			if not fag.Character:FindFirstChild('ForceField') then
-				workspace.Remote.loadchar:InvokeServer()
-				fag.Character.HumanoidRootPart.CFrame = plrCF
-				workspace.CurrentCamera.CFrame = camCF
-			end
+			workspace.Remote.loadchar:InvokeServer()
+			fag.Character.HumanoidRootPart.CFrame = plrCF
+			workspace.CurrentCamera.CFrame = camCF
 		else log('[Logs]: Already disabled god mode') end
 	elseif cmd == 'swatgod' or cmd == 'swatgodmode' then
 		if not Toggles.SwatGodMode then
