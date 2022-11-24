@@ -836,13 +836,18 @@ local function godMode()
 	fag.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
 	fag.Character.Humanoid.BreakJointsOnDeath = false
 	fag.Character.Humanoid.Health = 0
-	gui:SetCore('ResetButtonCallback', {
+	local event = Instance.new('BindableEvent')
+	local func
+	func = event.Event:Connect(function()
 		fag.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Dead, true)
 		fag.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, true)
 		fag.Character.Humanoid.BreakJointsOnDeath = true
 		fag.Character.Humanoid:BreakJoints()
 		gui:SetCore('ResetButtonCallback', true)
-	})
+		func:Disconnect()
+		event:Remove()
+	end)
+	gui:SetCore('ResetButtonCallback', event)
 end
 
 local function onePunch()
