@@ -1896,7 +1896,7 @@ local function executeCmd(cmd, args)
 		end
 		if intensity and not Toggles.Earbang then
 			Toggles.Earbang = true
-			log('[Logs]: Enabled earbang (Intensity level: '..args[1]..')')
+			log('[Logs]: Enabled earbang (Intensity level: '..intensity..')')
 			repeat wait(.1) 
 				for _ ,plr in pairs(game.Players:GetChildren()) do
 					if not Toggles.Earbang then break end
