@@ -2368,6 +2368,7 @@ local function executeCmd(cmd, args)
 						if workspace.Prison_ITEMS.single:FindFirstChild('Key card') then
 							workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
 							log('[Logs]: Obtained key card') 
+							Toggles.FindKey = false
 						else 
 							log('[Logs]: Switching to guard team, please wait...')
 							if team ~= 'Bright blue' then
@@ -2398,6 +2399,7 @@ local function executeCmd(cmd, args)
 					if workspace.Prison_ITEMS.single:FindFirstChild('Key card') then
 						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
 						log('[Logs]: Obtained key card') 
+						Toggles.FindKey = false
 					else 
 						log('[Logs]: Switching to guard team, please wait...')
 						if team ~= 'Bright blue' then
@@ -2433,8 +2435,8 @@ local function executeCmd(cmd, args)
 						repeat wait(.1) until workspace.Prison_ITEMS.single:FindFirstChild('Key card')
 						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
 						log('[Logs]: Obtained key card')
-						Toggles.FindKey = false
 					end)
+					Toggles.FindKey = false
 				end
 			else log('[Logs]: You already obtained a key card') end
 		else log('[Logs]: Already finding key card') end
