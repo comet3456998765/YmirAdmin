@@ -830,6 +830,7 @@ local function createSound(sound, source, t)
 end
 
 local function godMode()
+	local Char = fag.Character
 	fag.Character = nil
 	fag.Character = Char
 	fag.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
