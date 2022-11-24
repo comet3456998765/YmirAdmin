@@ -696,7 +696,17 @@ local function killPlr(plr)
 					['Distance'] = 0, 
 					['Cframe'] = CFrame.new(), 
 					['Hit'] = workspace[plr.Name].Head
-				}
+				}, [9] = {
+					['RayObject'] = Ray.new(Vector3.new(), Vector3.new()), 
+					['Distance'] = 0, 
+					['Cframe'] = CFrame.new(), 
+					['Hit'] = workspace[plr.Name].Head
+				}, [10] = {
+					['RayObject'] = Ray.new(Vector3.new(), Vector3.new()), 
+					['Distance'] = 0, 
+					['Cframe'] = CFrame.new(), 
+					['Hit'] = workspace[plr.Name].Head
+				},
 			}
 			ReplicatedStorage.ShootEvent:FireServer(event, tool)
 			tool.Handle:Destroy()
