@@ -2321,16 +2321,55 @@ local function executeCmd(cmd, args)
 			log('[Logs]: Disabled item dropping')
 		else log('[Logs]: Already disabled item dropping') end
 	elseif cmd == 'key' or cmd == 'keycard' or cmd == 'card' then
-		if not Toggles.FindKey then
-			if args[1] then
-				local plr = getPlr(args[1])
-				if plr then
-					if plr ~= fag then
-						log('[Logs]: Attempting to give key to '..plrName(plr))
-						local plrCF = getPos()
+		if args[1] then
+			local plr = getPlr(args[1])
+			if plr then
+				if plr ~= fag then
+					log('[Logs]: Attempting to give key to '..plrName(plr))
+					local plrCF = getPos()
+					if workspace.Prison_ITEMS.single:FindFirstChild('Key card') then
+						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
+					else 
+						if team ~= 'Bright blue' then
+							repeat wait(.1) workspace.Remote.TeamEvent:FireServer('Bright blue') until fag.TeamColor.Name == 'Bright blue' or not Toggles.FindKey
+						end
+						repeat wait(.1)
+							fag.Character.HumanoidRootPart.CFrame = CFrame.new(-365.976562, 84.2401199, 1987.99207)
+							fag.Character:BreakJoints()
+							workspace.Remote.loadchar:InvokeServer()
+						until not plr or workspace.Prison_ITEMS.single:FindFirstChild('Key card')
+					end
+					if plr then
+						local char = fag.Character
+						char.Humanoid.Name = 'fuck'
+						local c = char.fuck:Clone()
+						c.Name = 'Humanoid'
+						c.Parent = char
+						char.fuck:Destroy()
+						workspace.CurrentCamera.CameraSubject = char
+						char.Animate.Disabled = true
+						wait()
+						char.Animate.Disabled = false
+						char.Humanoid.DisplayDistanceType = 'None'
+						local tool = fag.Backpack:FindFirstChild('Key card') or fag.Character:FindFirstChild('Key card')
+						tool.Parent = char
+						repeat wait(.1)
+							goTo(plr)
+						until not plr or tool.Parent ~= fag.Character
+						workspace.Remote.loadchar:InvokeServer()
+						fag.Character.HumanoidRootPart.CFrame = plrCF
+						if plr and plr:FindFirstChild('Character') and (plr.Backpack:FindFirstChild(tool.Name) or plr.Character:FindFirstChild(tool.Name)) then
+							log('[Logs]: Gave key card to '..plrName(plr))
+						else log('[Logs]: Failed to give key card to '..plrName(plr)) end
+					else log('[Logs]: Failed to give key card to '..plrName(plr)) end
+				else 
+					if not fag.Character:FindFirstChild('Key card') and not fag.Backpack:FindFirstChild('Key card') then
+						Toggles.FindKey = true
 						if workspace.Prison_ITEMS.single:FindFirstChild('Key card') then
 							workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
+							log('[Logs]: Obtained key card') 
 						else 
+							log('[Logs]: Switching to guard team, please wait...')
 							if team ~= 'Bright blue' then
 								repeat wait(.1) workspace.Remote.TeamEvent:FireServer('Bright blue') until fag.TeamColor.Name == 'Bright blue' or not Toggles.FindKey
 							end
@@ -2338,60 +2377,22 @@ local function executeCmd(cmd, args)
 								fag.Character.HumanoidRootPart.CFrame = CFrame.new(-365.976562, 84.2401199, 1987.99207)
 								fag.Character:BreakJoints()
 								workspace.Remote.loadchar:InvokeServer()
-							until not plr or workspace.Prison_ITEMS.single:FindFirstChild('Key card')
-						end
-						if plr then
-							local char = fag.Character
-							char.Humanoid.Name = 'fuck'
-							local c = char.fuck:Clone()
-							c.Name = 'Humanoid'
-							c.Parent = char
-							char.fuck:Destroy()
-							workspace.CurrentCamera.CameraSubject = char
-							char.Animate.Disabled = true
-							wait()
-							char.Animate.Disabled = false
-							char.Humanoid.DisplayDistanceType = 'None'
-							local tool = fag.Backpack:FindFirstChild('Key card') or fag.Character:FindFirstChild('Key card')
-							tool.Parent = char
-							repeat wait(.1)
-								goTo(plr)
-							until not plr or tool.Parent ~= fag.Character
-							workspace.Remote.loadchar:InvokeServer()
-							fag.Character.HumanoidRootPart.CFrame = plrCF
-							if plr and plr:FindFirstChild('Character') and (plr.Backpack:FindFirstChild(tool.Name) or plr.Character:FindFirstChild(tool.Name)) then
-								log('[Logs]: Gave key card to '..plrName(plr))
-							else log('[Logs]: Failed to give key card to '..plrName(plr)) end
-						else log('[Logs]: Failed to give key card to '..plrName(plr)) end
-					else 
-						if not fag.Character:FindFirstChild('Key card') and not fag.Backpack:FindFirstChild('Key card') then
-							Toggles.FindKey = true
-							if workspace.Prison_ITEMS.single:FindFirstChild('Key card') then
+							until workspace.Prison_ITEMS.single:FindFirstChild('Key card') or not Toggles.FindKey
+							if Toggles.FindKey then
+								workspace.Remote.loadchar:InvokeServer(nil, team)
+								fag.Character.HumanoidRootPart.CFrame = plrCF
+								workspace.CurrentCamera.CFrame = camCF
 								workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
-								log('[Logs]: Obtained key card') 
-							else 
-								log('[Logs]: Switching to guard team, please wait...')
-								if team ~= 'Bright blue' then
-									repeat wait(.1) workspace.Remote.TeamEvent:FireServer('Bright blue') until fag.TeamColor.Name == 'Bright blue' or not Toggles.FindKey
-								end
-								repeat wait(.1)
-									fag.Character.HumanoidRootPart.CFrame = CFrame.new(-365.976562, 84.2401199, 1987.99207)
-									fag.Character:BreakJoints()
-									workspace.Remote.loadchar:InvokeServer()
-								until workspace.Prison_ITEMS.single:FindFirstChild('Key card') or not Toggles.FindKey
-								if Toggles.FindKey then
-									workspace.Remote.loadchar:InvokeServer(nil, team)
-									fag.Character.HumanoidRootPart.CFrame = plrCF
-									workspace.CurrentCamera.CFrame = camCF
-									workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
-									log('[Logs]: Obtained key card')
-									Toggles.FindKey = false
-								end
+								log('[Logs]: Obtained key card')
+								Toggles.FindKey = false
 							end
-						else log('[Logs]: You already obtained a key card') end
-					end
-				else log('[Logs]: No player found') end
-			else 
+						end
+					else log('[Logs]: You already obtained a key card') end
+				end
+			else log('[Logs]: No player found') end
+		else 
+			
+			if not Toggles.FindKey then
 				if not fag.Character:FindFirstChild('Key card') and not fag.Backpack:FindFirstChild('Key card') then
 					Toggles.FindKey = true
 					if workspace.Prison_ITEMS.single:FindFirstChild('Key card') then
@@ -2417,8 +2418,8 @@ local function executeCmd(cmd, args)
 						end
 					end
 				else log('[Logs]: You already obtained a key card') end
-			end
-		else log('[Logs]: Already finding key card') end
+			else log('[Logs]: Already finding key card') end
+		end
 	elseif cmd == 'findkey' or cmd == 'findkeycard' or cmd == 'findcard' then
 		if not Toggles.FindKey then
 			if not fag.Character:FindFirstChild('Key card') and not fag.Backpack:FindFirstChild('Key card') then
