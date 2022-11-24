@@ -9,7 +9,7 @@ loadstring(game:HttpGet(('https://raw.githubusercontent.com/senorkal/YmirAdmin/m
 ```
 
 ## Current information
-> **Version 2.2.0** (19 November 2022)
+> **Version 2.2.1** 24 November 2022)
 
 > 134 commands
 
@@ -17,7 +17,7 @@ loadstring(game:HttpGet(('https://raw.githubusercontent.com/senorkal/YmirAdmin/m
 
 > Unobfuscated
 
-### Version 1.0.0 -> Version 2.2.0
+### Version 1.0.0 -> Version 2.2.1
 > Improved UI
 
 > Currently fixing bugs and tweaking commands to reduce lag
