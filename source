@@ -785,7 +785,7 @@ local function bringPlr(plr, cf)
 	tool.Parent = char
 	repeat wait(.1)
 		goTo(plr)
-	until not plr or tool.Parent == plr.Character
+	until not plr or tool.Parent ~= fag.Character
 	local counter = 0
 	repeat wait(.1)
 		counter = counter + 1
@@ -2346,7 +2346,7 @@ local function executeCmd(cmd, args)
 							tool.Parent = char
 							repeat wait(.1)
 								goTo(plr)
-							until not plr or tool.Parent == plr.Character
+							until not plr or tool.Parent ~= fag.Character
 							workspace.Remote.loadchar:InvokeServer()
 							fag.Character.HumanoidRootPart.CFrame = plrCF
 							if plr and plr:FindFirstChild('Character') and (plr.Backpack:FindFirstChild(tool.Name) or plr.Character:FindFirstChild(tool.Name)) then
