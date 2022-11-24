@@ -1517,9 +1517,9 @@ local function executeCmd(cmd, args)
 		else log('[Logs]: Already enabled clickill') end
 	elseif cmd == 'noclickkill' or cmd == 'unclickkill' then
 		if Toggles.ClickKill then
-			log('[Logs]: Disabled kill aura')
+			log('[Logs]: Disabled click kill')
 			Toggles.ClickKill = false
-		end 
+		else log('[Logs]: Already disabled click kill') end 
 	elseif cmd == 'killaura' or cmd == 'aura' then
 		if not Toggles.KillAura then
 			log('[Logs]: Enabled kill aura')
