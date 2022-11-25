@@ -17,9 +17,7 @@ loadstring(game:HttpGet(('https://raw.githubusercontent.com/senorkal/YmirAdmin/m
 
 > Open source
 
-### Version 1.0.0 -> Version 2.3.1
-> Improved UI
-
+### Newer versions
 > Currently fixing bugs and tweaking commands to reduce lag
 
 > Removed/added new commands, some commands removed to integrate them on previous commands
