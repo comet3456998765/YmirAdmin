@@ -2365,10 +2365,24 @@ local function executeCmd(cmd, args)
 			log('[Logs]: Enabled antifling')
 			Toggles.AntiFling = true
 			repeat wait(.1)
-				for _, v in pairs(fag.Character:GetDescendants()) do
-					if v:IsA("BasePart") then
-						v.CustomPhysicalProperties = PhysicalProperties.new(2, 0.3, 0.5)
-					end
+				for _, plr in next, game.Players:GetPlayers() do
+					if workspace:FindFirstChild(plr.Name) then
+						for _, v in next, workspace[plr.Name]:GetDescendants() do
+							if v:IsA('BasePart') and v.CanCollide then
+								if not v:FindFirstChild('collidepart') then
+									local cPart = Instance.new('Part', v)
+									cPart.Name = 'collidepart'
+									cPart.Transparency = 1
+									cPart.Size = workspace[plr.Name].Torso.Size
+									local cWeld = Instance.new('Weld', cPart)
+									cWeld.Part0 = workspace[plr.Name].Torso
+									cWeld.Part1 = cPart
+								end
+								v.CanCollide = false
+								
+							else continue end
+						end
+					else continue end
 				end
 			until not Toggles.AntiFling
 		else log('[Logs]: Already enabled antifling') end
