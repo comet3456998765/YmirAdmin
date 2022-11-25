@@ -402,7 +402,7 @@ dragging = RunService.Heartbeat:Connect(Update)
 local Cmd = {}
 Cmd[#Cmd + 1] = {Name='whitelist / wl <plr>',Desc='Whitelist the player from getting tased/killed/arrested and etc.'}
 Cmd[#Cmd + 1] = {Name='unwhitelist / unwl <plr>',Desc='Unwhitelists the player'}
-Cmd[#Cmd + 1] = {Name='getwhitelist / getwl',Desc='Prints whitelisted players in the current server'}
+Cmd[#Cmd + 1] = {Name='getwhitelist / getwl',Desc='Logs whitelisted players in the current server'}
 Cmd[#Cmd + 1] = {Name='tase / taze <plr / team / all>',Desc='Tases the player/team/all if you choose one of them'}
 Cmd[#Cmd + 1] = {Name='looptase / looptaze <plr / team / all>',Desc='Loop tases the player/team/all if you choose one of them'}
 Cmd[#Cmd + 1] = {Name='unlooptase / unlooptaze <plr / team / all>',Desc='Disables loop tasing the player/team/all if you choose one of them'}
@@ -1154,7 +1154,7 @@ local function executeCmd(cmd, args)
 			if plr then
 				local name = plrName(plr)
 				if str == '' then str = name else
-					str = str..'\n'..name
+					str = '> '..str..'\n'..name
 				end
 			else continue end
 		end
