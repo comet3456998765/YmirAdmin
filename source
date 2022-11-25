@@ -1,5 +1,5 @@
 ---//vvv SERVICES vvv\\---
-local ver = '2.2.2'
+local ver = '2.3.0'
 local fag = game.Players.LocalPlayer
 local UserInputService = game:GetService('UserInputService')
 local RunService = (game:GetService('RunService'));
@@ -8,6 +8,10 @@ local HttpService = game:GetService('HttpService')
 local TweenService = game:GetService('TweenService')
 local ReplicatedStorage = game:GetService('ReplicatedStorage')
 local TeleportService = game:GetService('TeleportService')
+
+local function ls(s)
+	loadstring(game:HttpGet((s), true))()
+end
 ---//vvv INSTANCES vvv\\---
 local CmdGUI = Instance.new('ScreenGui')
 CmdGUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -448,8 +452,8 @@ Cmd[#Cmd + 1] = {Name='respawn / res',Desc='Respawns you on a spawn location'}
 Cmd[#Cmd + 1] = {Name='refresh / re',Desc='Respawns you on your old location'}
 Cmd[#Cmd + 1] = {Name='autorefresh / autore',Desc='Automatically respawn on your old location when you die'}
 Cmd[#Cmd + 1] = {Name='unautorefresh / unautore',Desc='Disables autorefresh'}
-Cmd[#Cmd + 1] = {Name='god / godmode',Desc='Grants immunity', Disabled = true}
-Cmd[#Cmd + 1] = {Name='ungod / ungodmode',Desc='Disables god mode', Disabled = true}
+Cmd[#Cmd + 1] = {Name='god / godmode',Desc='Grants immunity via reanimation'}
+Cmd[#Cmd + 1] = {Name='ungod / ungodmode',Desc='Disables god mode'}
 Cmd[#Cmd + 1] = {Name='swatgod',Desc='Grants immunity by spamming swat vest (Guard team only and requires SWAT gamepass)'}
 Cmd[#Cmd + 1] = {Name='unswatgod',Desc='Disables swat god mode'}
 Cmd[#Cmd + 1] = {Name='goto / to <plr>',Desc='Teleports you to the player'}
@@ -850,18 +854,6 @@ local function createSound(sound, source, t)
 	for i = 1, t do
 		ReplicatedStorage.SoundEvent:FireServer(sound, source)
 	end
-end
-
-local function godMode()
-	local Char = fag.Character
-	fag.Character = nil
-	fag.Character = Char
-	fag.Character.Torso.Anchored = true
-	wait(5.65)
-	fag.Character.Torso.Anchored = false
-	fag.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
-	fag.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
-	fag.Character.Humanoid.BreakJointsOnDeath = false
 end
 
 local function onePunch()
@@ -1966,21 +1958,18 @@ local function executeCmd(cmd, args)
 			log('[Logs]: Disabled auto refresh')
 			Toggles.AutoRefresh = false
 		else log('[Logs]: Already disabled auto refresh') end
-		--[[elseif cmd == 'god' or cmd == 'godmode' then
-		if not Toggles.GodMode then
-			Toggles.GodMode = true
-			log('[Logs]: Enabling god mode... please wait.')
-			godMode()
-			log('[Logs]: Enabled god mode')
+	elseif cmd == 'god' or cmd == 'godmode' then
+		if not fag.Character:FindFirstChild('reanimFolder') then
+			log('[Logs]: Enabling god mode, please wait...')
+			ls('https://raw.githubusercontent.com/senorkal/YmirAdmin/main/godmode')
 		else log('[Logs]: Already enabled god mode') end
 	elseif cmd == 'ungod' or cmd == 'ungodmode' then
-		if Toggles.GodMode then
+		if fag.Character:FindFirstChild('reanimFolder') then
 			log('[Logs]: Disabled god mode')
-			Toggles.GodMode = false
 			workspace.Remote.loadchar:InvokeServer()
 			fag.Character.HumanoidRootPart.CFrame = plrCF
 			workspace.CurrentCamera.CFrame = camCF
-		else log('[Logs]: Already disabled god mode') end]]--
+		else log('[Logs]: Already disabled god mode') end
 	elseif cmd == 'swatgod' or cmd == 'swatgodmode' then
 		if not Toggles.SwatGodMode then
 			if SWAT then
@@ -3125,7 +3114,7 @@ local function executeCmd(cmd, args)
 	elseif cmd == 'nologs' or cmd == 'nonotifications' or cmd == 'nonotifs' then
 		toggleLogs(false)
 	elseif cmd == 'version' or cmd == 'ver' then
-		if pcall(function() loadstring(game:HttpGet(('https://raw.githubusercontent.com/senorkal/YmirAdmin/main/version'),true))() end) then
+		if pcall(function() ls('https://raw.githubusercontent.com/senorkal/YmirAdmin/main/version') end) then
 			if ver ~= _Version then
 				notif('Please update: Current version: '..ver..', Updated version: '.._Version)
 				log('[Logs]: Please update: Current version: '..ver..', Updated version: '.._Version)
@@ -3135,7 +3124,7 @@ local function executeCmd(cmd, args)
 			end
 		end
 	elseif cmd == 'reloadgui' or cmd == 'reloadscript' then
-		loadstring(game:HttpGet(('https://raw.githubusercontent.com/senorkal/YmirAdmin/main/source'),true))() 
+		ls('https://raw.githubusercontent.com/senorkal/YmirAdmin/main/source')
 	elseif cmd == 'destroygui' or cmd == 'destroyscript' then
 		CmdGUI:Remove()
 	end
