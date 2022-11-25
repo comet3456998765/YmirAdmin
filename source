@@ -822,16 +822,15 @@ end
 local function arrestPlr(plr)
 	if not plr then return end
 	pcall(function()
-		if workspace:FindFirstChild(plr.Name) then
+		if not workspace:FindFirstChild(plr.Name) then repeat wait() until workspace:FindFirstChild(plr.Name) or not plr end
+		if plr then
 			local plrCF = getPos()
 			local camCF = getCam()
 			local team = getTeam()
 			repeat wait(.1)
 				fag.Character.HumanoidRootPart.CFrame = plr.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1)
-				spawn(function()
-					workspace.Remote.arrest:InvokeServer(workspace[plr.Name].Head)
-				end)()
-			until plr.Character:FindFirstChild('Head'):FindFirstChild('handcuffedGui')
+				workspace.Remote.arrest:InvokeServer(workspace[plr.Name].Head)
+			until workspace[plr.Name].Head:FindFirstChild('handcuffedGui')
 			wait()
 			workspace.Remote.loadchar:InvokeServer(nil, team)
 			fag.Character.Humanoid.Sit = false
