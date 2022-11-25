@@ -9,15 +9,15 @@ loadstring(game:HttpGet(('https://raw.githubusercontent.com/senorkal/YmirAdmin/m
 ```
 
 ## Current information
-> **Version 2.2.2** (24 November 2022)
+> **Version 2.3.0** (25 November 2022)
 
-> 134 commands / 132 working commands 
+> 134 commands 
 
 > May contain bugs
 
-> Unobfuscated
+> Open source
 
-### Version 1.0.0 -> Version 2.2.2
+### Version 1.0.0 -> Version 2.3.0
 > Improved UI
 
 > Currently fixing bugs and tweaking commands to reduce lag
