@@ -448,8 +448,8 @@ Cmd[#Cmd + 1] = {Name='respawn / res',Desc='Respawns you on a spawn location'}
 Cmd[#Cmd + 1] = {Name='refresh / re',Desc='Respawns you on your old location'}
 Cmd[#Cmd + 1] = {Name='autorefresh / autore',Desc='Automatically respawn on your old location when you die'}
 Cmd[#Cmd + 1] = {Name='unautorefresh / unautore',Desc='Disables autorefresh'}
-Cmd[#Cmd + 1] = {Name='god / godmode',Desc='Command is temporarily disabled until further notice.', Disabled = true} -- Desc='Grants immunity'
-Cmd[#Cmd + 1] = {Name='ungod / ungodmode',Desc='Command is temporarily disabled until further notice.', Disabled = true} -- Desc='Disables god mode'
+Cmd[#Cmd + 1] = {Name='god / godmode',Desc='Grants immunity', Disabled = true}
+Cmd[#Cmd + 1] = {Name='ungod / ungodmode',Desc='Disables god mode', Disabled = true}
 Cmd[#Cmd + 1] = {Name='swatgod',Desc='Grants immunity by spamming swat vest (Guard team only and requires SWAT gamepass)'}
 Cmd[#Cmd + 1] = {Name='unswatgod',Desc='Disables swat god mode'}
 Cmd[#Cmd + 1] = {Name='goto / to <plr>',Desc='Teleports you to the player'}
@@ -535,13 +535,22 @@ for i = 1, #Cmd do
 	local clone = CmdExample:Clone()	
 	clone.Text = Cmd[i].Name
 	clone.Name = 'Cmd'
-	local Ins = Instance.new('StringValue', clone)
-	Ins.Name = 'Desc'
-	Ins.Value = Cmd[i].Desc
+	local desc = Instance.new('StringValue', clone)
+	desc.Name = 'Desc'
+	desc.Value = Cmd[i].Desc
 	clone.Parent = CmdHandler
 	if Cmd[i].Disabled then
+		local disabled = Instance.new('BoolValue', clone)
+		disabled.Name = 'Disabled'
+		disabled.Value = true
 		clone.Text = clone.Text..' ⚠️'
-		clone.TextColor = Color3.new(0.823529, 0.835294, 0.14902)
+		clone.TextColor3 = Color3.new(0.988235, 1, 0.176471)
+	else 
+		clone.MouseButton1Click:Connect(function()
+			CmdBar:CaptureFocus()
+			CmdBar.Text = clone.Text:split(' ')[1]
+			CmdBar.CursorPosition = #CmdBar.Text + 1
+		end)
 	end
 	if reload == false and i <= 11 then
 		clone.TextTransparency = 1
@@ -549,11 +558,6 @@ for i = 1, #Cmd do
 		f:Play()
 		f.Completed:Wait()
 	end
-	clone.MouseButton1Click:Connect(function()
-		CmdBar:CaptureFocus()
-		CmdBar.Text = clone.Text:split(' ')[1]
-		CmdBar.CursorPosition = #CmdBar.Text + 1
-	end)
 end
 local Mouse = fag:GetMouse()
 Mouse.Move:Connect(function()
@@ -576,7 +580,13 @@ Mouse.Move:Connect(function()
 		CmdDescBox.Visible = true
 		CmdDescBox.Position = UDim2.new(0, X, 0, Y)
 		CmdDescTitle.Text = Gui.Text
-		CmdDescription.Text = Gui.Desc.Value
+		if Gui:FindFirstChild('Disabled') then
+			CmdDescTitle.TextColor3 = Color3.new(0.988235, 1, 0.176471)
+			CmdDescription.Text = 'Command is temporarily disabled until further notice.'
+		else 
+			CmdDescTitle.TextColor3 = Color3.new(1, 1, 1)
+			CmdDescription.Text = Gui.Desc.Value
+		end
 	else
 		CmdDescBox.Visible = false
 	end
@@ -1957,7 +1967,7 @@ local function executeCmd(cmd, args)
 			log('[Logs]: Disabled auto refresh')
 			Toggles.AutoRefresh = false
 		else log('[Logs]: Already disabled auto refresh') end
-		-[[elseif cmd == 'god' or cmd == 'godmode' then
+		--[[elseif cmd == 'god' or cmd == 'godmode' then
 		if not Toggles.GodMode then
 			Toggles.GodMode = true
 			log('[Logs]: Enabling god mode... please wait.')
