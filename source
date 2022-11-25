@@ -1,5 +1,5 @@
 ---//vvv SERVICES vvv\\---
-local ver = '2.2.1'
+local ver = '2.2.2'
 local fag = game.Players.LocalPlayer
 local UserInputService = game:GetService('UserInputService')
 local RunService = (game:GetService('RunService'));
@@ -448,8 +448,8 @@ Cmd[#Cmd + 1] = {Name='respawn / res',Desc='Respawns you on a spawn location'}
 Cmd[#Cmd + 1] = {Name='refresh / re',Desc='Respawns you on your old location'}
 Cmd[#Cmd + 1] = {Name='autorefresh / autore',Desc='Automatically respawn on your old location when you die'}
 Cmd[#Cmd + 1] = {Name='unautorefresh / unautore',Desc='Disables autorefresh'}
-Cmd[#Cmd + 1] = {Name='god / godmode',Desc='Grants immunity (With the cost of your avatar)'}
-Cmd[#Cmd + 1] = {Name='ungod / ungodmode',Desc='Disables god mode'}
+Cmd[#Cmd + 1] = {Name='god / godmode',Desc='Command is temporarily disabled until further notice.', Disabled = true} -- Desc='Grants immunity'
+Cmd[#Cmd + 1] = {Name='ungod / ungodmode',Desc='Command is temporarily disabled until further notice.', Disabled = true} -- Desc='Disables god mode'
 Cmd[#Cmd + 1] = {Name='swatgod',Desc='Grants immunity by spamming swat vest (Guard team only and requires SWAT gamepass)'}
 Cmd[#Cmd + 1] = {Name='unswatgod',Desc='Disables swat god mode'}
 Cmd[#Cmd + 1] = {Name='goto / to <plr>',Desc='Teleports you to the player'}
@@ -531,7 +531,7 @@ Cmd[#Cmd + 1] = {Name='version / ver',Desc='Checks for current version and updat
 Cmd[#Cmd + 1] = {Name='reloadgui / reloadscript',Desc='Reloads GUI and script'}
 Cmd[#Cmd + 1] = {Name='destroygui / destroyscript',Desc='Destroys GUI and script'}
 
-for i = 1,#Cmd do
+for i = 1, #Cmd do
 	local clone = CmdExample:Clone()	
 	clone.Text = Cmd[i].Name
 	clone.Name = 'Cmd'
@@ -539,6 +539,10 @@ for i = 1,#Cmd do
 	Ins.Name = 'Desc'
 	Ins.Value = Cmd[i].Desc
 	clone.Parent = CmdHandler
+	if Cmd[i].Disabled then
+		clone.Text = clone.Text..' ⚠️'
+		clone.TextColor = Color3.new(0.823529, 0.835294, 0.14902)
+	end
 	if reload == false and i <= 11 then
 		clone.TextTransparency = 1
 		local f = TweenService:Create(clone, TweenInfo.new(introSpeed-0.05), {TextTransparency = 0})
@@ -1953,7 +1957,7 @@ local function executeCmd(cmd, args)
 			log('[Logs]: Disabled auto refresh')
 			Toggles.AutoRefresh = false
 		else log('[Logs]: Already disabled auto refresh') end
-	elseif cmd == 'god' or cmd == 'godmode' then
+		-[[elseif cmd == 'god' or cmd == 'godmode' then
 		if not Toggles.GodMode then
 			Toggles.GodMode = true
 			log('[Logs]: Enabling god mode... please wait.')
@@ -1967,7 +1971,7 @@ local function executeCmd(cmd, args)
 			workspace.Remote.loadchar:InvokeServer()
 			fag.Character.HumanoidRootPart.CFrame = plrCF
 			workspace.CurrentCamera.CFrame = camCF
-		else log('[Logs]: Already disabled god mode') end
+		else log('[Logs]: Already disabled god mode') end]]--
 	elseif cmd == 'swatgod' or cmd == 'swatgodmode' then
 		if not Toggles.SwatGodMode then
 			if SWAT then
@@ -2392,7 +2396,7 @@ local function executeCmd(cmd, args)
 				end
 			else log('[Logs]: No player found') end
 		else 
-			
+
 			if not Toggles.FindKey then
 				if not fag.Character:FindFirstChild('Key card') and not fag.Backpack:FindFirstChild('Key card') then
 					Toggles.FindKey = true
