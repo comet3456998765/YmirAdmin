@@ -2589,27 +2589,25 @@ local function executeCmd(cmd, args)
 			local team = getTeam()
 			log('[ ✅ ]: Enabled anti shields')
 			Toggles.AntiShield = true
-			repeat wait(.1)
+			repeat 
 				for _, plr in pairs(game.Players:GetChildren()) do
 					if workspace:FindFirstChild(plr.Name) and workspace[plr.Name].Torso:FindFirstChild('ShieldFolder') and workspace[plr.Name].Torso.ShieldFolder:FindFirstChild('shield') then
-						plr.Character.Torso.ShieldFolder.shield.Transparency = 1
-						plr.Character.Torso.ShieldFolder.shield.Mesh.MeshId = ''
-						plr.Character.Torso.ShieldFolder.shield.CanCollide = false
-						plr.Character.Torso.ShieldFolder.shield.Size = Vector3.new(0,0,0)
+						local val = Instance.new('ObjectValue', plr.Character.Torso.ShieldFolder.shield)
+						val.Name = 'origin'
+						val.Value = plr.Character.Torso.ShieldFolder.shield.Parent
+						plr.Character.Torso.ShieldFolder.shield.Parent = par
 					else continue end
 				end
+				wait(.1)
 			until not Toggles.AntiShield
 		else log('[ ❌ ]: Already enabled anti sheilds') end
 	elseif cmd == 'unantishield' or cmd == 'unantishields' or cmd == 'shields' then
 		if Toggles.AntiShield then
 			log('[ ✅ ]: Disabled anti sheilds')
 			Toggles.AntiShield = false
-			for _, plr in pairs(game.Players:GetChildren()) do
-				if workspace:FindFirstChild(plr.Name) and workspace[plr.Name].Torso:FindFirstChild('ShieldFolder') and workspace[plr.Name].Torso.ShieldFolder:FindFirstChild('shield') then
-					workspace[plr.Name].Torso.ShieldFolder.shield.Transparency = 0
-					workspace[plr.Name].Torso.ShieldFolder.shield.Mesh.MeshId = 'rbxassetid://82265009'
-					workspace[plr.Name].Torso.ShieldFolder.shield.CanCollide = true
-					plr.Character.Torso.ShieldFolder.shield.Size = Vector3.new(2.6, 4.2, 0.4)
+			for _, v in next, par:GetChildren() do
+				if v.Name == 'shield' then
+					v.Parent = v.origin.Value
 				end
 			end
 		else log('[ ❌ ]: Already disabled anti sheilds') end
