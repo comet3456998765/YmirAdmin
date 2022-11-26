@@ -2243,7 +2243,7 @@ local function executeCmd(cmd, args)
 					if not Whitelisted[plr.Name] and workspace:FindFirstChild(plr.Name) or workspace[plr.Name]:FindFirstChild('Head') then
 						local h = plr.Character.Head
 						local s = workspace['Prison_guardspawn'].spawn.Sound
-						createSound(s, h, tonumber(intensity))
+						createSound(s, h, intensity)
 					end
 				end
 			until not Toggles.Earbang
