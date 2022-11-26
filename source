@@ -897,7 +897,7 @@ local function createSound(sound, source, t)
 end
 
 local function godMode()
-	local char = fag.Character
+		local char = fag.Character
 	local folderName = 'reanimFolder'
 	local reanimName = 'reanim'
 	local hum = char.Humanoid
@@ -942,8 +942,6 @@ local function godMode()
 	wait(5.65)
 	char.Torso.Anchored = false
 	log('[Logs]: Enabled god mode')
-	--char.Animate.Disabled = true
-	--reanim.Animate.Disabled = true
 	hum.Health = 0
 	reanim.Parent = folder
 	reanim.HumanoidRootPart.CFrame = char.HumanoidRootPart.CFrame*CFrame.new(0,5,0)
@@ -1031,6 +1029,9 @@ local function godMode()
 	addfunc(Mouse.KeyDown:Connect(function(k)
 		if k == 'f' and not fighting and reanim.Humanoid.WalkSpeed == 16 then
 			fighting = true
+			for _,v in next, reanim.Humanoid:GetPlayingAnimationTracks() do
+				if v.Animation.Name:match('fight') then v:Stop() end
+			end
 			if fight == 'left' then
 				fightL:Play()
 				fight = 'right'
@@ -1057,9 +1058,9 @@ local function godMode()
 					sound:Play()
 					game.ReplicatedStorage.SoundEvent:FireServer(h.Parent.Head.punchSound, h.Parent.Head)
 					func:Disconnect()
-				end
+				else func:Disconnect() end
 			end)
-			wait(.5)
+			wait(.65)
 			fighting = false
 		end
 		if k == 'c' and not crouchCD then
@@ -1068,7 +1069,7 @@ local function godMode()
 				game:GetService("TweenService"):Create(reanim.Humanoid,TweenInfo.new(),{CameraOffset=Vector3.new(0,-4,0)}):Play()
 				reanim.Humanoid.WalkSpeed = 5
 				crouch = true
-				crouchCD = true; wait(.5); crouchCD = false
+				crouchCD = true; wait(.2); crouchCD = false
 			else 
 				for _,v in next, reanim.Humanoid:GetPlayingAnimationTracks() do
 					if v.Animation.Name:match('crouch') then v:Stop() end
@@ -1076,7 +1077,7 @@ local function godMode()
 				game:GetService("TweenService"):Create(reanim.Humanoid,TweenInfo.new(),{CameraOffset=Vector3.new(0,0,0)}):Play()
 				reanim.Humanoid.WalkSpeed = 16
 				crouch = false
-				crouchCD = true; wait(.5); crouchCD = false
+				crouchCD = true; wait(.2); crouchCD = false
 			end
 		end
 	end))
