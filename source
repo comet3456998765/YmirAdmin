@@ -2241,7 +2241,7 @@ local function executeCmd(cmd, args)
 					if not Whitelisted[plr.Name] and workspace:FindFirstChild(plr.Name) or workspace[plr.Name]:FindFirstChild('Head') then
 						local h = plr.Character.Head
 						local s = workspace['Prison_guardspawn'].spawn.Sound
-						createSound(s, h, tonumber(args[1]))
+						createSound(s, h, tonumber(intensity))
 					end
 				end
 			until not Toggles.Earbang
@@ -2251,7 +2251,7 @@ local function executeCmd(cmd, args)
 			Toggles.Earbang = false
 			log('[ ✅ ]: Disabled earbang')
 		else log('[ ❌ ]: Already disabled earbang') end
-	elseif cmd == 'reset' or cmd == 'oof ' then
+	elseif cmd == 'reset' or cmd == 'oof' then
 		fag.Character:BreakJoints()
 		log('[ ✅ ]: Successfully reset')
 	elseif cmd == 'respawn' or cmd == 'res' then
