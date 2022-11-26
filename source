@@ -1643,7 +1643,7 @@ local function executeCmd(cmd, args)
 						killPlr(plr)
 					else continue end
 				end
-				log('[ ❌ ]: Killed all '..teamToKill[1]:lower())
+				log('[ ✅ ]: Killed all '..teamToKill[1]:lower())
 				if fag.TeamColor.Name ~= team then
 					if team ~= 'Really red' then
 						workspace.Remote.TeamEvent:FireServer(team)
