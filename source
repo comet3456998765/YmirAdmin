@@ -43,10 +43,10 @@ CmdMain.AnchorPoint = Vector2.new(0.5, 0.5)
 local CmdBox = Instance.new('Frame')
 CmdBox.Name = 'YmirAdmin_Box'
 CmdBox.Parent = CmdMain
-CmdBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+CmdBox.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 CmdBox.BorderColor3 = Color3.fromRGB(140, 140, 140)
 CmdBox.BorderSizePixel = 0
-CmdBox.Position = UDim2.new(0, 0, 0.632000029, 0)
+CmdBox.Position = UDim2.new(1, 0, 0.632000029, 0)
 CmdBox.Size = UDim2.new(0.996109784, 0, 0.36981371, 0)
 CmdBox.Visible = false
 
@@ -130,7 +130,7 @@ CmdBar.Parent = CmdMain
 CmdBar.BackgroundColor3 = Color3.fromRGB(53, 53, 53)
 CmdBar.BorderSizePixel = 0
 CmdBar.Position = UDim2.new(0.0299999993, 0, 0.0876345932, 0)
-CmdBar.Size = UDim2.new(0, 181, 0, 22)
+CmdBar.Size = UDim2.new(0, 187, 0, 22)
 CmdBar.Font = Enum.Font.SourceSans
 CmdBar.PlaceholderText = 'Command Bar'
 CmdBar.Text = ''
@@ -279,7 +279,6 @@ else --//vvv INTRO vvv\\---
 	CmdBox.Visible = true
 end
 ---//vvv VARIABLES vvv\\---
-local canvasPos = CmdHandler.CanvasPosition
 local notified = false
 ---//vvv COMMAND LOGGING vvv\\---
 local function notif(txt, notimer)
@@ -326,7 +325,7 @@ local function log(txt)
 	spawn(function()
 		local clone = CmdLogExample:Clone()
 		clone.Text = txt
-		clone.Name = 'YmirAdmin_Log_'..tostring(#CmdLogHandler:GetChildren()+1)
+		clone.Name = 'Log'
 		clone.TextTransparency = 1
 		clone.Parent = CmdLogHandler
 		CmdLogHandler.CanvasPosition = Vector2.new(0, CmdLogHandler.AbsoluteCanvasSize.Y)
@@ -379,7 +378,7 @@ local function Update(dt)
 	CmdMain.Position = UDim2.new(startPos.X.Scale, Lerp(CmdMain.Position.X.Offset, xGoal, dt * 8), startPos.Y.Scale, Lerp(CmdMain.Position.Y.Offset, yGoal, dt * 8))
 end;
 
-CmdMain.InputBegan:Connect(function(input)
+addFunction(CmdMain.InputBegan:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 		dragging = true
 		dragStart = input.Position
@@ -392,15 +391,15 @@ CmdMain.InputBegan:Connect(function(input)
 			end
 		end)
 	end
-end)
+end))
 
-CmdMain.InputChanged:Connect(function(input)
+addFunction(CmdMain.InputChanged:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
 		dragInput = input
 	end
-end)
+end))
 
-dragging = RunService.Heartbeat:Connect(Update)
+addFunction(RunService.Heartbeat:Connect(Update))
 ---//vvv COMMANDS vvv\\---
 local Cmd = {}
 Cmd[#Cmd + 1] = {Name='whitelist / wl <plr>',Desc='Whitelist the player from getting tased/killed/arrested and etc.'}
@@ -574,7 +573,7 @@ for i = 1, #Cmd do
 	end
 end
 local Mouse = fag:GetMouse()
-Mouse.Move:Connect(function()
+addFunction(Mouse.Move:Connect(function()
 	local Guis = CoreGui:GetGuiObjectsAtPosition(Mouse.X, Mouse.Y)
 	local Gui
 	for _, v in pairs(Guis) do
@@ -604,7 +603,7 @@ Mouse.Move:Connect(function()
 	else
 		CmdDescBox.Visible = false
 	end
-end)
+end))
 
 CmdBar:ReleaseFocus()
 CmdBar.Text = ''
@@ -1532,14 +1531,12 @@ local function executeCmd(cmd, args)
 			Toggles.ArrestAura = true
 			repeat wait(.1)
 				for i, v in pairs(game.Players:GetPlayers()) do
-					pcall(function()
-						if not Whitelisted[v.Name] and v ~= fag and workspace:FindFirstChild(v.Name) and workspace[v.Name]:FindFirstChild('Head') and not v.Character:FindFirstChild('handcuffedGui') then
-							local Distance = (v.Character:FindFirstChildOfClass('Part').Position - fag.Character:FindFirstChildOfClass('Part').Position).magnitude
-							if Distance <= 10 and Toggles.ArrestAura then
-								workspace.Remote.arrest:InvokeServer(workspace[v.Name].Head)
-							end
-						else continue end
-					end
+					if not Whitelisted[v.Name] and v ~= fag and workspace:FindFirstChild(v.Name) and workspace[v.Name]:FindFirstChild('Head') and not v.Character:FindFirstChild('handcuffedGui') then
+						local Distance = (v.Character:FindFirstChildOfClass('Part').Position - fag.Character:FindFirstChildOfClass('Part').Position).magnitude
+						if Distance <= 10 and Toggles.ArrestAura then
+							workspace.Remote.arrest:InvokeServer(workspace[v.Name].Head)
+						end
+					else continue end
 				end
 			until not Toggles.ArrestAura
 		else log('[ ❌ ]: Already enabled arrest aura') end
@@ -2243,7 +2240,7 @@ local function executeCmd(cmd, args)
 					if not Whitelisted[plr.Name] and workspace:FindFirstChild(plr.Name) or workspace[plr.Name]:FindFirstChild('Head') then
 						local h = plr.Character.Head
 						local s = workspace['Prison_guardspawn'].spawn.Sound
-						createSound(s, h, intensity)
+						createSound(s, h, tonumber(args[1]))
 					end
 				end
 			until not Toggles.Earbang
@@ -2253,7 +2250,7 @@ local function executeCmd(cmd, args)
 			Toggles.Earbang = false
 			log('[ ✅ ]: Disabled earbang')
 		else log('[ ❌ ]: Already disabled earbang') end
-	elseif cmd == 'reset' or cmd == 'oof' then
+	elseif cmd == 'reset' or cmd == 'oof ' then
 		fag.Character:BreakJoints()
 		log('[ ✅ ]: Successfully reset')
 	elseif cmd == 'respawn' or cmd == 'res' then
@@ -2591,25 +2588,27 @@ local function executeCmd(cmd, args)
 			local team = getTeam()
 			log('[ ✅ ]: Enabled anti shields')
 			Toggles.AntiShield = true
-			repeat 
+			repeat wait(.1)
 				for _, plr in pairs(game.Players:GetChildren()) do
 					if workspace:FindFirstChild(plr.Name) and workspace[plr.Name].Torso:FindFirstChild('ShieldFolder') and workspace[plr.Name].Torso.ShieldFolder:FindFirstChild('shield') then
-						local val = Instance.new('ObjectValue', plr.Character.Torso.ShieldFolder.shield)
-						val.Name = 'origin'
-						val.Value = plr.Character.Torso.ShieldFolder.shield.Parent
-						plr.Character.Torso.ShieldFolder.shield.Parent = par
+						plr.Character.Torso.ShieldFolder.shield.Transparency = 1
+						plr.Character.Torso.ShieldFolder.shield.Mesh.MeshId = ''
+						plr.Character.Torso.ShieldFolder.shield.CanCollide = false
+						plr.Character.Torso.ShieldFolder.shield.Size = Vector3.new(0,0,0)
 					else continue end
 				end
-				wait(.1)
 			until not Toggles.AntiShield
 		else log('[ ❌ ]: Already enabled anti sheilds') end
 	elseif cmd == 'unantishield' or cmd == 'unantishields' or cmd == 'shields' then
 		if Toggles.AntiShield then
 			log('[ ✅ ]: Disabled anti sheilds')
 			Toggles.AntiShield = false
-			for _, v in next, par:GetChildren() do
-				if v.Name == 'shield' then
-					v.Parent = v.origin.Value
+			for _, plr in pairs(game.Players:GetChildren()) do
+				if workspace:FindFirstChild(plr.Name) and workspace[plr.Name].Torso:FindFirstChild('ShieldFolder') and workspace[plr.Name].Torso.ShieldFolder:FindFirstChild('shield') then
+					workspace[plr.Name].Torso.ShieldFolder.shield.Transparency = 0
+					workspace[plr.Name].Torso.ShieldFolder.shield.Mesh.MeshId = 'rbxassetid://82265009'
+					workspace[plr.Name].Torso.ShieldFolder.shield.CanCollide = true
+					plr.Character.Torso.ShieldFolder.shield.Size = Vector3.new(2.6, 4.2, 0.4)
 				end
 			end
 		else log('[ ❌ ]: Already disabled anti sheilds') end
@@ -3530,9 +3529,9 @@ local function executeCmd(cmd, args)
 			log('[ ✅ ]: Disabled chat commands')
 			notif('Disabled chat commands')
 		else log('[ ❌ ]: Already disabled chat commands') end
-	elseif cmd == 'logs' or cmd == 'notifications' or cmd == 'notifs' then
+	elseif cmd == 'logs' or cmd == 'openlogs' then
 		toggleLogs(true)
-	elseif cmd == 'nologs' or cmd == 'nonotifications' or cmd == 'nonotifs' then
+	elseif cmd == 'nologs' or cmd == 'closelogs' then
 		toggleLogs(false)
 	elseif cmd == 'version' or cmd == 'ver' then
 		if pcall(function() ls('https://raw.githubusercontent.com/senorkal/YmirAdmin/main/version') end) then
@@ -3552,34 +3551,32 @@ local function executeCmd(cmd, args)
 end
 --//vvv GUI FUNCTIONS vvv\\--
 CmdBar.Changed:Connect(function()
-	if CmdGUI.Parent ~= nil then
-		if CmdBar.Text ~= '' then
-			local args = string.split(CmdBar.Text, ' ')
-			local cmd
-			if args[2] then cmd = args[1] else cmd = CmdBar.Text end
-			CmdHandler.CanvasPosition = canvasPos
-			for _, v in pairs(CmdHandler:GetChildren()) do
-				if v:IsA('TextButton') then
-					if not string.find(string.lower(v.Text),string.lower(cmd)) then
-						v.Visible = false
-					else 
-						if v.Visible == false then v.Visible = true end
-					end
+	if CmdBar.Text ~= '' then
+		local args = string.split(CmdBar.Text, ' ')
+		local cmd
+		if args[2] then cmd = args[1] else cmd = CmdBar.Text end
+		CmdHandler.CanvasPosition = Vector2.new(0,0)
+		for _, v in pairs(CmdHandler:GetChildren()) do
+			if v:IsA('TextButton') then
+				if not string.find(string.lower(v.Text),string.lower(cmd)) then
+					v.Visible = false
+				else 
+					if v.Visible == false then v.Visible = true end
 				end
 			end
-		else
-			for _, v in pairs(CmdHandler:GetChildren()) do
-				if v:IsA('TextButton') then
-					if not v.Visible then
-						v.Visible = true
-					end
+		end
+	else
+		for _, v in pairs(CmdHandler:GetChildren()) do
+			if v:IsA('TextButton') then
+				if not v.Visible then
+					v.Visible = true
 				end
 			end
 		end
 	end
 end)
 
-CmdBar.FocusLost:Connect(function(_, __)
+CmdBar.FocusLost:Connect(function(_)
 	if _ then 
 		local args = string.split(CmdBar.Text, ' ')
 		local cmd = args[1]:lower()
@@ -3596,7 +3593,7 @@ addFunction(chatbox:GetPropertyChangedSignal('Text'):Connect(function()
 		if p == prefix then
 			local txt = chatbox.Text:gsub('%'..prefix, ''):split(' ')[1]:lower()
 			if txt ~= '' then
-				CmdHandler.CanvasPosition = canvasPos
+				CmdHandler.CanvasPosition = Vector2.new(0, 0)
 				for _, v in pairs(CmdHandler:GetChildren()) do
 					if v:IsA('TextButton') then
 						if not string.find(string.lower(v.Text),string.lower(txt)) then
