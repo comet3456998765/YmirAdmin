@@ -1532,12 +1532,14 @@ local function executeCmd(cmd, args)
 			Toggles.ArrestAura = true
 			repeat wait(.1)
 				for i, v in pairs(game.Players:GetPlayers()) do
-					if not Whitelisted[v.Name] and v ~= fag and workspace:FindFirstChild(v.Name) and workspace[v.Name]:FindFirstChild('Head') and not v.Character:FindFirstChild('handcuffedGui') then
-						local Distance = (v.Character:FindFirstChildOfClass('Part').Position - fag.Character:FindFirstChildOfClass('Part').Position).magnitude
-						if Distance <= 10 and Toggles.ArrestAura then
-							workspace.Remote.arrest:InvokeServer(workspace[v.Name].Head)
-						end
-					else continue end
+					pcall(function()
+						if not Whitelisted[v.Name] and v ~= fag and workspace:FindFirstChild(v.Name) and workspace[v.Name]:FindFirstChild('Head') and not v.Character:FindFirstChild('handcuffedGui') then
+							local Distance = (v.Character:FindFirstChildOfClass('Part').Position - fag.Character:FindFirstChildOfClass('Part').Position).magnitude
+							if Distance <= 10 and Toggles.ArrestAura then
+								workspace.Remote.arrest:InvokeServer(workspace[v.Name].Head)
+							end
+						else continue end
+					end
 				end
 			until not Toggles.ArrestAura
 		else log('[ ❌ ]: Already enabled arrest aura') end
