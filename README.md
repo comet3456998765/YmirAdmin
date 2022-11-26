@@ -20,7 +20,7 @@ loadstring(game:HttpGet(('https://raw.githubusercontent.com/senorkal/YmirAdmin/m
 ### Newer versions
 > Currently fixing bugs and tweaking commands to reduce lag
 
-> Removed/added new commands, some commands removed to integrate them on previous commands
+> Currently removing/adding commands, some commands removed to integrate them on previous commands
 
 ### Script or certain commands doesn't execute?
 > This could be due to an error in the source, it will be fixed as soon as possible. Note that raw files will take 5 minutes to update due to Github stuff.
