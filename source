@@ -537,8 +537,8 @@ Cmd[#Cmd + 1] = {Name='serverhop / shop',Desc='Join a different server'}
 Cmd[#Cmd + 1] = {Name='prefix / setprefix [text]',Desc='View or set prefix for commands'}
 Cmd[#Cmd + 1] = {Name='chatcmd / enablechatcmd',Desc='Enable commands in chat'}
 Cmd[#Cmd + 1] = {Name='nochatcmd / disablechatcmd',Desc='Disable commands in chat'}
-Cmd[#Cmd + 1] = {Name='notifs / notifications',Desc='Enable notifications you when you use a command'}
-Cmd[#Cmd + 1] = {Name='unnotif / unnotify',Desc='Disable notifications'}
+Cmd[#Cmd + 1] = {Name='notifs / notifications',Desc='Enable notifications you whenever you use a command'}
+Cmd[#Cmd + 1] = {Name='nonotifs / nonotifications',Desc='Disable notifications'}
 Cmd[#Cmd + 1] = {Name='logs / openlogs',Desc='Open command logs'}
 Cmd[#Cmd + 1] = {Name='nologs / closelogs',Desc='Minimize command logs'}
 Cmd[#Cmd + 1] = {Name='version / ver',Desc='Checks for current version and updated version'}
@@ -3495,7 +3495,7 @@ local function executeCmd(cmd, args)
 			log('[ 📄 ]: Prefix is '..prefix)
 			notif('Prefix is '..prefix)
 		end
-	elseif cmd == 'notify' or cmd == 'notif' then
+	elseif cmd == 'notifs' or cmd == 'notifications' then
 		if not notifs then
 			notifs = true
 			_G.settings.notifs = true
@@ -3503,7 +3503,7 @@ local function executeCmd(cmd, args)
 			log('[ ✅ ]: Enabled notifications')
 			notif('Enabled notifications')
 		else log('[ ❌ ]: Already enabled notifications') end
-	elseif cmd == 'unnotify' or cmd == 'unnotif' then
+	elseif cmd == 'nonotifs' or cmd == 'nonotifications' then
 		if not notifs then
 			notif('Disabled notifications')
 			notifs = false
