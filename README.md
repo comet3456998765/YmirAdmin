@@ -25,7 +25,7 @@ loadstring(game:HttpGet(('https://raw.githubusercontent.com/senorkal/YmirAdmin/m
 ### Script or certain commands doesn't execute?
 > This could be due to an error in the source, it will be fixed as soon as possible. Note that raw files will take 5 minutes to update due to Github stuff.
 
-> The workspace file dedicated to this is outdated, go to YourExecutorFolder/workspace, look for a file named YmirAdminSettings.pl, and delete that file. Reload the script again to see if it works. Note that deleting this file will revert to default settings and remove your whitelist, etc.
+> The workspace file dedicated to this is outdated, go to `YourExecutorFolder/workspace`, look for a file named `YmirAdminSettings.pl`, and delete that file. Reload the script again to see if it works. Note that deleting this file will revert to default settings and remove your whitelist, etc.
 
 
 ## Credits
