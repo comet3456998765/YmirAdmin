@@ -1066,7 +1066,7 @@ local function godMode()
 					sound:Play()
 					game.ReplicatedStorage.SoundEvent:FireServer(h.Parent.Head.punchSound, h.Parent.Head)
 					func:Disconnect()
-				else func:Disconnect() end
+				else func:Disconnect() return end
 			end)
 			wait(.65)
 			fighting = false
@@ -1510,7 +1510,7 @@ local function executeCmd(cmd, args)
 			notif('Enabled click arrest')
 			local func
 			func = Mouse.Button1Down:Connect(function()
-				if not Toggles.ClickArrest then func:Disconnect() end
+				if not Toggles.ClickArrest then func:Disconnect() return end
 				local hit = Mouse.Target
 				if hit:IsA('BasePart') and hit.Parent and getPlr(hit.Parent.Name) then
 					local plr = getPlr(hit.Parent.Name) 
@@ -1832,7 +1832,7 @@ local function executeCmd(cmd, args)
 			Toggles.ClickKill = true
 			local func
 			func = Mouse.Button1Down:Connect(function()
-				if not Toggles.ClickKill then func:Disconnect() end
+				if not Toggles.ClickKill then func:Disconnect() return end
 				local hit = Mouse.Target
 				if hit:IsA('BasePart') and hit.Parent and getPlr(hit.Parent.Name) then
 					local plr = getPlr(hit.Parent.Name) 
@@ -2397,7 +2397,7 @@ local function executeCmd(cmd, args)
 			Toggles.AlwaysDay = true
 			local func
 			func = RunService.RenderStepped:Connect(function()
-				if not Toggles.AlwaysDay then func:Disconnect() end
+				if not Toggles.AlwaysDay then func:Disconnect() return end
 				game.Lighting.Brightness = 2
 				game.Lighting.ClockTime = 14
 				game.Lighting.FogEnd = 100000
@@ -2544,18 +2544,31 @@ local function executeCmd(cmd, args)
 		if not Toggles.AntiFling then
 			log('[ ✅ ]: Enabled antifling')
 			Toggles.AntiFling = true
-			repeat
+			local func
+			func = RunService.Heartbeat:Connect(function()
+				if not Toggles.AntiFling then func:Disconnect() return end
+				local hrp = fag.Character.HumanoidRootPart
+				local fixedPos
+				if hrp.AssemblyLinearVelocity.Magnitude > 250 or hrp.AssemblyAngularVelocity.Magnitude > 250 then
+					hrp.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+					hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+					hrp.CFrame = fixedPos
+				elseif hrp.AssemblyLinearVelocity.Magnitude < 50 or hrp.AssemblyAngularVelocity.Magnitude > 50 then
+					fixedPos = hrp.CFrame
+				end
 				for _, plr in pairs(game.Players:GetChildren()) do
 					if plr ~= fag then
 						for _, v in pairs(plr.Character:GetDescendants()) do
 							if v:IsA('BasePart') and v.CanCollide and (v:FindFirstChildOfClass('BodyThrust') or v:FindFirstChildOfClass('BodyPosition') or v:FindFirstChildOfClass('BodyForce') or v:FindFirstChildOfClass('BodyVelocity') or v:FindFirstChildOfClass('BodyAngularVelocity') or v:FindFirstChildOfClass('BodyGyro')) then
 								v.CanCollide = false
+								v.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+								v.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+								v.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0)
 							else continue end
 						end
 					else continue end
 				end
-				wait(1)
-			until not Toggles.AntiFling
+			end)
 		else log('[ ❌ ]: Already enabled antifling') end
 	elseif cmd == 'unantifling' or cmd == 'noantifling' then
 		if Toggles.AntiFling then
@@ -2636,7 +2649,7 @@ local function executeCmd(cmd, args)
 			Toggles.OnePunch = true
 			local func
 			func = Mouse.KeyDown:connect(function(k)
-				if not Toggles.OnePunch then func:Disconnect() end
+				if not Toggles.OnePunch then func:Disconnect() return end
 				if k:lower() == 'f' and not punchCooldown then
 					onePunch()
 				end	
@@ -2653,7 +2666,7 @@ local function executeCmd(cmd, args)
 			Toggles.FreePunch = true
 			local func
 			func = Mouse.KeyDown:connect(function(k)
-				if not Toggles.FreePunch then func:Disconnect() end
+				if not Toggles.FreePunch then func:Disconnect() return end
 				if k:lower() == 'f' then
 					if getsenv(fag.Character.ClientInputHandler).cs.isRunning ~= false then
 						getsenv(fag.Character.ClientInputHandler).cs.isRunning = false
@@ -2682,7 +2695,7 @@ local function executeCmd(cmd, args)
 			Toggles.SuperPunch = true
 			local func
 			func = Mouse.KeyDown:connect(function(k)
-				if not Toggles.SuperPunch then func:Disconnect() end
+				if not Toggles.SuperPunch then func:Disconnect() return end
 				if k:lower() == 'f' and not punchCooldown then
 					onePunch()
 					if getsenv(fag.Character.ClientInputHandler).cs.isFighting ~= false then
@@ -3447,7 +3460,7 @@ local function executeCmd(cmd, args)
 			local VirtualUser = game:GetService("VirtualUser")
 			local func
 			func = fag.Idled:connect(function()
-				if not Toggles.AntiAfk then func:Disconnect() end
+				if not Toggles.AntiAfk then func:Disconnect() return end
 				VirtualUser:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
 				wait(1)
 				VirtualUser:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
