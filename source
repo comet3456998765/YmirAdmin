@@ -147,6 +147,7 @@ CmdTitle.Name = 'YmirAdmin_Title'
 CmdTitle.Parent = CmdMain
 CmdTitle.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 CmdTitle.BackgroundTransparency = 1
+CmdTitle.BorderSizePixel = 0
 CmdTitle.Size = UDim2.new(0, 200, 0, 23)
 CmdTitle.Font = Enum.Font.SourceSansBold
 CmdTitle.Text = 'Ymir Admin '..ver
