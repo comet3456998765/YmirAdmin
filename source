@@ -146,6 +146,7 @@ local CmdTitle = Instance.new('TextLabel')
 CmdTitle.Name = 'YmirAdmin_Title'
 CmdTitle.Parent = CmdMain
 CmdTitle.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+CmdTitle.BackgroundTransparency = 1
 CmdTitle.Size = UDim2.new(0, 200, 0, 23)
 CmdTitle.Font = Enum.Font.SourceSansBold
 CmdTitle.Text = 'Ymir Admin '..ver
@@ -254,6 +255,7 @@ if par:FindFirstChild('YmirAdmin_GUI') then
 	CmdHandler.Visible = true
 	CmdBox.Visible = true
 	CmdBar.Visible = true
+	CmdTitle.BackgroundTransparency = 0
 	CmdTitle.TextTransparency = 0
 	CmdBar.TextTransparency = 0
 	CmdBar.BackgroundTransparency = 0
@@ -262,6 +264,7 @@ else --//vvv INTRO vvv\\---
 	local f1 = TweenService:Create(CmdMain, TweenInfo.new(), {Size = UDim2.new(0, 200, 0, 269)})
 	f1:Play()
 	f1.Completed:Wait()
+	CmdTitle.BackgroundTransparency = 0
 	wait(.1)
 	local f2 = TweenService:Create(CmdTitle, TweenInfo.new(introSpeed), {TextTransparency = 0})
 	f2:Play()
