@@ -17,7 +17,7 @@ local function ls(s)
 end
 ---//vvv INSTANCES vvv\\---
 local CmdGUI = Instance.new('ScreenGui')
-CmdGUI.ZIndexBehavior = Enum.ZIndexBehavior.Global
+CmdGUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 CmdGUI.Name = 'YmirAdmin_GUI'
 local par
 if get_hidden_gui or gethui then
