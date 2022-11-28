@@ -681,6 +681,7 @@ end
 local function goTo(plr, dis)
 	pcall(function()
 		local Distance = dis or CFrame.new(0,0,0)
+		if fag.Character:FindFirstChild('reanimFolder') then fag.Character.reanimFolder.reanim.HumanoidRootPart.CFrame = plr.Character.HumanoidRootPart.CFrame*Distance end
 		fag.Character.HumanoidRootPart.CFrame = plr.Character.HumanoidRootPart.CFrame*Distance
 	end)
 end
@@ -2492,7 +2493,7 @@ local function executeCmd(cmd, args)
 							pcall(function()
 								local char = fag.Character
 								char.ClientInputHandler.Disabled = true
-								if char.Humanoid.Health <= 0 or not char.HumanoidRootPart then
+								if (not char:FindFirstChild('reanimFolder') and char.Humanoid.Health) <= 0 or not char.HumanoidRootPart then
 									workspace.Remote.loadchar:InvokeServer()
 								end
 								goTo(plr, CFrame.new(0,0,0)*CFrame.Angles(math.rad(-90),0,0))
