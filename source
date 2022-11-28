@@ -1,4 +1,5 @@
----//vvv SERVICES vvv\\---
+--//vvv SERVICES vvv\\--
+if not game:IsLoaded() then game.Loaded:Wait() end
 local ver = '2.4.0'
 local fag = game.Players.LocalPlayer
 local UserInputService = game:GetService('UserInputService')
@@ -15,21 +16,21 @@ local function addFunction(func) table.insert(Functions, func) end
 local function ls(s)
 	loadstring(game:HttpGet((s), true))()
 end
----//vvv INSTANCES vvv\\---
+--//vvv INSTANCES vvv\\--
 local CmdGUI = Instance.new('ScreenGui')
 CmdGUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 CmdGUI.Name = 'YmirAdmin_GUI'
+CmdGUI:SetAttribute('IntroDone', false)
 local par
 if get_hidden_gui or gethui then
 	local hiddenui = get_hidden_gui or gethui
 	par = hiddenui()
-elseif CoreGui:FindFirstChild('RobloxGui')then
-	par = CoreGui.RobloxGui
-else
+elseif pcall(function() CoreGui:FindFirstChild('RobloxGui') end) then
 	if (not is_sirhurt_closure) and (syn and syn.protect_gui) then syn.protect_gui(CmdGUI) end
-	par = CoreGui
+	par = CoreGui.RobloxGui or CoreGui
+else
+	par = fag.PlayerGui
 end
-
 local CmdMain = Instance.new('Frame')
 CmdMain.Name = 'YmirAdmin_Main'
 CmdMain.Parent = CmdGUI
@@ -228,15 +229,16 @@ CmdMain.Position =  UDim2.new(mainPos.x1, mainPos.x2, mainPos.x3, mainPos.x4)
 if ChatCmd then
 	CmdBar.PlaceholderText = 'Command Bar ('..prefix..')'
 end
----//vvv DESTROY CLONES vvv\\---
+--//vvv DESTROY CLONES vvv\\--
 local introSpeed = 0.2
 local reload = false
 if par:FindFirstChild('YmirAdmin_GUI') then
+	if CmdGUI:GetAttribute('IntroDone') == false then 
+		CmdGUI:GetAttributeChangedSignal('IntroDone'):Wait()
+		wait(.5)
+	end
 	reload = true 
 	local oldGUI = par['YmirAdmin_GUI']
-	if not oldGUI[CmdMain.Name][CmdBox.Name].Visible then 
-		oldGUI[CmdMain.Name][CmdBox.Name]:GetPropertyChangedSignal('Visible'):Wait()
-	end
 	local oldMain = oldGUI[CmdMain.Name]
 	CmdMain.Position = oldMain.Position
 	CmdMain.Size = oldMain.Size
@@ -260,7 +262,7 @@ if par:FindFirstChild('YmirAdmin_GUI') then
 	CmdTitle.TextTransparency = 0
 	CmdBar.TextTransparency = 0
 	CmdBar.BackgroundTransparency = 0
-else --//vvv INTRO vvv\\---
+else --//vvv INTRO vvv\\--
 	CmdGUI.Parent = par
 	local f1 = TweenService:Create(CmdMain, TweenInfo.new(), {Size = UDim2.new(0, 200, 0, 269)})
 	f1:Play()
@@ -281,9 +283,9 @@ else --//vvv INTRO vvv\\---
 	CmdHandler.Visible = true
 	CmdBox.Visible = true
 end
----//vvv VARIABLES vvv\\---
+--//vvv VARIABLES vvv\\--
 local notified = false
----//vvv COMMAND LOGGING vvv\\---
+--//vvv COMMAND LOGGING vvv\\--
 local function notif(txt, notimer)
 	if notifs and not logsOpen then
 		local counter = 0
@@ -353,7 +355,7 @@ local function toggleLogs(tog)
 	end
 	CmdNotif.Visible = false
 end
----//vvv GUI DRAGGING vvv\\---
+--//vvv GUI DRAGGING vvv\\--
 local dragging
 local dragInput
 local dragStart
@@ -403,7 +405,7 @@ addFunction(CmdMain.InputChanged:Connect(function(input)
 end))
 
 addFunction(RunService.Heartbeat:Connect(Update))
----//vvv COMMANDS vvv\\---
+--//vvv COMMANDS vvv\\--
 local Cmd = {}
 Cmd[#Cmd + 1] = {Name='whitelist / wl <plr>',Desc='Whitelist the player from getting tased/killed/arrested and etc.'}
 Cmd[#Cmd + 1] = {Name='unwhitelist / unwl <plr>',Desc='Unwhitelists the player'}
@@ -616,6 +618,7 @@ if logsOpen then
 	tween:Play()
 	tween.Completed:Wait()
 end
+CmdGUI:SetAttribute('IntroDone', true)
 if reload then
 	notif('Reloaded admin commands', true)
 	log('[ ✅ ]: Reloaded admin commands')
