@@ -663,19 +663,21 @@ end
 local function goTo(plr, dis)
 	pcall(function()
 		local Distance = dis or CFrame.new(0,0,0)
-		if fag.Character:FindFirstChild('reanimFolder') then
-			fag.Character.reanimFolder.reanim.HumanoidRootPart.CFrame =plr.Character.HumanoidRootPart.CFrame*Distance
+		for _, v in next, workspace[fag.Name]:GetDescendants() do
+			if v.Name == 'HumanoidRootPart' or v:FindFirstChild('RootJoint') then
+				v.CFrame = plr.Character.HumanoidRootPart.CFrame*Distance
+			else continue end
 		end
-		fag.Character.HumanoidRootPart.CFrame = plr.Character.HumanoidRootPart.CFrame*Distance
 	end)
 end
 
 local function goToCF(CF)
 	pcall(function()
-		if fag.Character:FindFirstChild('reanimFolder') then
-			fag.Character.reanimFolder.reanim.HumanoidRootPart.CFrame = CF
+		for _, v in next, workspace[fag.Name]:GetDescendants() do
+			if v.Name == 'HumanoidRootPart' or v:FindFirstChild('RootJoint') then
+				v.CFrame = CF
+			else continue end
 		end
-		fag.Character.HumanoidRootPart.CFrame = CF
 	end)
 end
 
@@ -1170,7 +1172,7 @@ local function infStamina()
 end
 
 local function executeCmd(cmd, args)
-	local plrCF = getPos() or game.Players.Character.HumanoidRootPart.CFrame
+	local plrCF = getPos() or fag.Character.HumanoidRootPart.CFrame
 	local camCF = getCam()
 	local team = getTeam()
 	if cmd == 'whitelist' or cmd == 'wl' then
@@ -2190,8 +2192,8 @@ local function executeCmd(cmd, args)
 			Toggles.CrashServer = true
 			repeat
 				spawn(function()
-					for i= 1, 100 do
-						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+					for _,v in next, workspace.Prison_ITEMS:GetDescendants() do
+						workspace.Remote.ItemHandler:InvokeServer(v)
 					end
 				end)
 				RunService.Heartbeat:Wait()
@@ -3357,7 +3359,7 @@ local function executeCmd(cmd, args)
 		local dest = CFrame.new(492.763, 98.039917, 2216.74878)
 		if plrCF ~= dest.Position then
 			pcall(function() 
-				fag.Character.HumanoidRootPart.CFrame = dest
+				goToCF(dest)
 			end)
 			if fag.Character.Head.CFrame.X == fag.Character.HumanoidRootPart.CFrame.X then
 				log('[ ✅ ]: Teleported to the gate')
@@ -3377,7 +3379,7 @@ local function executeCmd(cmd, args)
 		local dest = CFrame.new(504.324646, 102.039917, 2246.05103)
 		if plrCF ~= dest.Position then
 			pcall(function() 
-				fag.Character.HumanoidRootPart.CFrame = dest
+				goToCF(dest)
 			end)
 			if fag.Character.Head.CFrame.X == fag.Character.HumanoidRootPart.CFrame.X then
 				log('[ ✅ ]: Teleported to gate room')
@@ -3387,7 +3389,7 @@ local function executeCmd(cmd, args)
 		local dest =  CFrame.new(502.72168, 125.039917, 2321.00098)
 		if plrCF ~= dest.Position then
 			pcall(function() 
-				fag.Character.HumanoidRootPart.CFrame = dest
+				goToCF(dest)
 			end)
 			if fag.Character.Head.CFrame.X == fag.Character.HumanoidRootPart.CFrame.X then
 				log('[ ✅ ]: Teleported to gate tower')
@@ -3397,7 +3399,7 @@ local function executeCmd(cmd, args)
 		local dest = CFrame.new(823.014832, 130.039886, 2589.46802)
 		if plrCF ~= dest.Position then
 			pcall(function() 
-				fag.Character.HumanoidRootPart.CFrame = dest
+				goToCF(dest)
 			end)
 			if fag.Character.Head.CFrame.X == fag.Character.HumanoidRootPart.CFrame.X then
 				log('[ ✅ ]: Teleported to the tower')
@@ -3407,7 +3409,7 @@ local function executeCmd(cmd, args)
 		local dest = CFrame.new(780.596985, 97.9999237, 2468.43457)
 		if plrCF ~= dest.Position then
 			pcall(function() 
-				fag.Character.HumanoidRootPart.CFrame = dest
+				goToCF(dest)
 			end)
 			if fag.Character.Head.CFrame.X == fag.Character.HumanoidRootPart.CFrame.X then
 				log('[ ✅ ]: Teleported to the yard')
@@ -3417,7 +3419,7 @@ local function executeCmd(cmd, args)
 		local dest = CFrame.new(836.632568, 99.9899826, 2260.18994)
 		if plrCF ~= dest.Position then
 			pcall(function() 
-				fag.Character.HumanoidRootPart.CFrame = dest
+				goToCF(dest)
 			end)
 			if fag.Character.Head.CFrame.X == fag.Character.HumanoidRootPart.CFrame.X then
 				log('[ ✅ ]: Teleported to the armory')
@@ -3427,7 +3429,7 @@ local function executeCmd(cmd, args)
 		local dest = CFrame.new(915.108398, 99.9899826, 2378.2648)
 		if plrCF ~= dest.Position then
 			pcall(function() 
-				fag.Character.HumanoidRootPart.CFrame = dest
+				goToCF(dest)
 			end)
 			if fag.Character.Head.CFrame.X == fag.Character.HumanoidRootPart.CFrame.X then
 				log('[ ✅ ]: Teleported to the nexus')
@@ -3437,7 +3439,7 @@ local function executeCmd(cmd, args)
 		local dest = CFrame.new(980.860535, 99.9899826, 2316.87769)
 		if plrCF ~= dest.Position then
 			pcall(function() 
-				fag.Character.HumanoidRootPart.CFrame = dest
+				goToCF(dest)
 			end)
 			if fag.Character.Head.CFrame.X == fag.Character.HumanoidRootPart.CFrame.X then
 				log('[ ✅ ]: Teleported to the back of the nexus')
@@ -3447,7 +3449,7 @@ local function executeCmd(cmd, args)
 		local dest = CFrame.new(916.570679, 78.7003937, 2323.39136)
 		if plrCF ~= dest.Position then
 			pcall(function() 
-				fag.Character.HumanoidRootPart.CFrame = dest
+				goToCF(dest)
 			end)
 			if fag.Character.Head.CFrame.X == fag.Character.HumanoidRootPart.CFrame.X then
 				log('[ ✅ ]: Teleported to the sewers')
@@ -3457,7 +3459,7 @@ local function executeCmd(cmd, args)
 		local dest = CFrame.new(919.365601, 99.9899368, 2285.1748)
 		if plrCF ~= dest.Position then
 			pcall(function() 
-				fag.Character.HumanoidRootPart.CFrame = dest
+				goToCF(dest)
 			end)
 			if fag.Character.Head.CFrame.X == fag.Character.HumanoidRootPart.CFrame.X then
 				log('[ ✅ ]: Teleported to the cafeteria')
@@ -3467,7 +3469,7 @@ local function executeCmd(cmd, args)
 		local dest = CFrame.new(917.232056, 139.926025, 2314.79761)
 		if plrCF ~= dest.Position then
 			pcall(function() 
-				fag.Character.HumanoidRootPart.CFrame = dest
+				goToCF(dest)
 			end)
 			if fag.Character.Head.CFrame.X == fag.Character.HumanoidRootPart.CFrame.X then
 				log('[ ✅ ]: Teleported to the roof')
@@ -3477,7 +3479,7 @@ local function executeCmd(cmd, args)
 		local dest = CFrame.new(-943.724854, 94.1287613, 2064.69312)
 		if plrCF ~= dest.Position then
 			pcall(function() 
-				fag.Character.HumanoidRootPart.CFrame = dest
+				goToCF(dest)
 			end)
 			if fag.Character.Head.CFrame.X == fag.Character.HumanoidRootPart.CFrame.X then
 				log('[ ✅ ]: Teleported to the criminal base')
@@ -3487,7 +3489,7 @@ local function executeCmd(cmd, args)
 		local dest = CFrame.new(880.4111328125, 27.78998565673828, 2349.805419921875)
 		if plrCF ~= dest.Position then
 			pcall(function() 
-				fag.Character.HumanoidRootPart.CFrame = dest
+				goToCF(dest)
 			end)
 			if fag.Character.Head.CFrame.X == fag.Character.HumanoidRootPart.CFrame.X then
 				log('[ ✅ ]: Teleported to the neutral spawn')
