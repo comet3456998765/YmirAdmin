@@ -1,6 +1,6 @@
 --//vvv SERVICES vvv\\--
 if not game:IsLoaded() then game.Loaded:Wait() end
-local ver = '2.4.0'
+local ver = '2.4.1'
 local fag = game.Players.LocalPlayer
 local UserInputService = game:GetService('UserInputService')
 local RunService = (game:GetService('RunService'));
@@ -246,7 +246,7 @@ local function notif(txt, notimer)
 			tween:Play()
 			notified = true
 			tween.Completed:Wait()
-			wait(3)
+			wait(1)
 			if not logsOpen then
 				tween = TweenService:Create(CmdMain, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Position = UDim2.new(0, 0, 0.632000029, 0)})
 				tween:Play()
@@ -262,7 +262,7 @@ local function notif(txt, notimer)
 			tween:Play()
 			notified = true
 			tween.Completed:Wait()
-			wait(3)
+			wait(1)
 			if not logsOpen then
 				tween = TweenService:Create(CmdBox, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Position = UDim2.new(0, 0, 0.632000029, 0)})
 				tween:Play()
@@ -649,7 +649,10 @@ local function getPlr(str)
 end
 
 local function getPos()
-	return fag.Character.HumanoidRootPart.CFrame
+	local pos
+	if fag.Character:FindFirstChild('reanimFolder') then pos = fag.Character.reanimFolder.reanim.HumanoidRootPart.CFrame
+	else pos = fag.Character.HumanoidRootPart.CFrame end
+	return pos
 end
 
 local function getCam()
@@ -658,6 +661,15 @@ end
 
 local function getTeam()
 	return fag.TeamColor.Name
+end
+
+local function isDead()
+	local dead
+	if not fag.Character:FindFirstChild('reanimFolder') then
+		if fag.Character:FindFirstChild('Humanoid') and fag.Character.Humanoid.Health > 0 then dead = false
+		else dead = true end
+	else dead = false end
+	return dead
 end
 
 local function goTo(plr, dis)
@@ -745,6 +757,81 @@ local function killPlr(plr)
 			tool.Parent = fag.Character
 			tool:Destroy()
 		else return end
+	end)
+end
+
+local function killPlrs(plrs)
+	if not plrs then return end
+	pcall(function()
+		workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[KillTool].ITEMPICKUP)
+		local tool = fag.Character:FindFirstChild(KillTool) or fag.Backpack:FindFirstChild(KillTool)
+		local event = {}
+		for _,v in pairs(plrs) do
+			event[#event+1] = {
+				["RayObject"] = Ray.new(),
+				["Distance"] = 0,
+				["Cframe"] = CFrame.new(),
+				["Hit"] = v.Character.Head
+			}
+			event[#event+1] = {
+				["RayObject"] = Ray.new(),
+				["Distance"] = 0,
+				["Cframe"] = CFrame.new(),
+				["Hit"] = v.Character.Head
+			}
+			event[#event+1] = {
+				["RayObject"] = Ray.new(),
+				["Distance"] = 0,
+				["Cframe"] = CFrame.new(),
+				["Hit"] = v.Character.Head
+			}
+			event[#event+1] = {
+				["RayObject"] = Ray.new(),
+				["Distance"] = 0,
+				["Cframe"] = CFrame.new(),
+				["Hit"] = v.Character.Head
+			}
+			event[#event+1] = {
+				["RayObject"] = Ray.new(),
+				["Distance"] = 0,
+				["Cframe"] = CFrame.new(),
+				["Hit"] = v.Character.Head
+			}
+			event[#event+1] = {
+				["RayObject"] = Ray.new(),
+				["Distance"] = 0,
+				["Cframe"] = CFrame.new(),
+				["Hit"] = v.Character.Head
+			}
+			event[#event+1] = {
+				["RayObject"] = Ray.new(),
+				["Distance"] = 0,
+				["Cframe"] = CFrame.new(),
+				["Hit"] = v.Character.Head
+			}
+			event[#event+1] = {
+				["RayObject"] = Ray.new(),
+				["Distance"] = 0,
+				["Cframe"] = CFrame.new(),
+				["Hit"] = v.Character.Head
+			}
+			event[#event+1] = {
+				["RayObject"] = Ray.new(),
+				["Distance"] = 0,
+				["Cframe"] = CFrame.new(),
+				["Hit"] = v.Character.Head
+			}
+			event[#event+1] = {
+				["RayObject"] = Ray.new(),
+				["Distance"] = 0,
+				["Cframe"] = CFrame.new(),
+				["Hit"] = v.Character.Head
+			}
+		end
+		ReplicatedStorage.ShootEvent:FireServer(event, tool)
+		tool.Handle:Destroy()
+		tool.Parent = fag.Character
+		tool:Destroy()
 	end)
 end
 
@@ -1172,7 +1259,7 @@ local function infStamina()
 end
 
 local function executeCmd(cmd, args)
-	local plrCF = getPos() or fag.Character.HumanoidRootPart.CFrame
+	local plrCF = getPos()
 	local camCF = getCam()
 	local team = getTeam()
 	if cmd == 'whitelist' or cmd == 'wl' then
@@ -1375,7 +1462,7 @@ local function executeCmd(cmd, args)
 							else continue end
 						end
 						tasePlrs(plrTable)
-						wait(5)
+						wait(1)
 					until not Toggles.LoopTaseInmates 
 				elseif Toggles.LoopTaseCrims then
 					repeat
@@ -1390,7 +1477,7 @@ local function executeCmd(cmd, args)
 							else continue end
 						end
 						tasePlrs(plrTable)
-						wait(5)
+						wait(1)
 					until not Toggles.LoopTaseCrims
 				elseif Toggles.LoopTaseAll then
 					repeat
@@ -1409,7 +1496,7 @@ local function executeCmd(cmd, args)
 							else continue end
 						end
 						tasePlrs(plrTable)
-						wait(5)
+						wait(1)
 					until not Toggles.LoopTaseAll
 				end
 			end
@@ -1586,7 +1673,7 @@ local function executeCmd(cmd, args)
 					log('[ ❌ ]: Already set'..KillTool..'as kill tool')
 					already = true
 				end
-			elseif args[1] == 'remington' or args[1] == 'shotgun' or cmd == 'remington870' then
+			elseif args[1] == 'remington' or args[1] == 'reming' or args[1] == 'shotgun' or cmd == 'remington870' then
 				if KillTool ~= 'Remington 870' then KillTool = 'Remington 870' 
 				else 
 					log('[ ❌ ]: Already set'..KillTool..'as kill tool')
@@ -1611,11 +1698,13 @@ local function executeCmd(cmd, args)
 				teamToKill = {'Criminals', 'Really red'} 
 			elseif args[1] == 'all' or args[1] == 'others' then
 				workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+				local plrTable = {}
 				for _, plr in pairs(game.Players:GetChildren()) do
 					if not Whitelisted[plr.Name] and plr ~= fag and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
-						killPlr(plr)
+						table.insert(plrTable, plr)
 					else continue end
 				end
+				killPlrs(plrTable)
 				log('[ ✅ ]: Killed all players')
 				if fag.TeamColor.Name ~= team then
 					if team ~= 'Really red' then
@@ -1627,11 +1716,13 @@ local function executeCmd(cmd, args)
 					end
 				end
 			elseif args[1] == 'enemies' or args[1] == 'enemy' then
+				local plrTable = {}
 				for _, plr in pairs(game.Players:GetChildren()) do
 					if not Whitelisted[plr.Name] and plr ~= fag and plr.TeamColor.Name ~= team and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
-						killPlr(plr)
+						table.insert(plrTable, plr)
 					else continue end
 				end
+				killPlrs(plrTable)
 				log('[ ✅ ]: Killed all enemies')
 			else
 				local plr = getPlr(args[1])
@@ -1657,11 +1748,13 @@ local function executeCmd(cmd, args)
 				if team == teamToKill[2] then
 					workspace.Remote.TeamEvent:FireServer('Medium stone grey')
 				end
+				local plrTable = {}
 				for _, plr in pairs(game.Players:GetChildren()) do
 					if not Whitelisted[plr.Name] and plr ~= fag and plr.TeamColor.Name == teamToKill[2] and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
-						killPlr(plr)
+						table.insert(plrTable, plr)
 					else continue end
 				end
+				killPlrs(plrTable)
 				log('[ ✅ ]: Killed all '..teamToKill[1]:lower())
 				if fag.TeamColor.Name ~= team then
 					if team ~= 'Really red' then
@@ -1744,12 +1837,14 @@ local function executeCmd(cmd, args)
 						if team == 'Bright blue' then
 							workspace.Remote.TeamEvent:FireServer('Medium stone grey')
 						end
+						local plrTable = {}
 						for _, plr in pairs(game.Players:GetChildren()) do
 							if not Whitelisted[plr.Name] and plr ~= fag and plr.TeamColor.Name == 'Bright blue' and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
-								killPlr(plr)
+								table.insert(plrTable, plr)
 							end
 						end
-						RunService.Heartbeat:Wait()
+						killPlrs(plrTable)
+						wait(1)
 					until not Toggles.LoopKillGuards
 				elseif Toggles.LoopKillInmates then
 					repeat
@@ -1757,12 +1852,14 @@ local function executeCmd(cmd, args)
 						if team == 'Bright orange' then
 							workspace.Remote.TeamEvent:FireServer('Medium stone grey')
 						end
+						local plrTable = {}
 						for _, plr in pairs(game.Players:GetChildren()) do
 							if not Whitelisted[plr.Name] and plr ~= fag and plr.TeamColor.Name == 'Bright orange' and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
-								killPlr(plr)
+								table.insert(plrTable, plr)
 							end
 						end
-						RunService.Heartbeat:Wait()
+						killPlrs(plrTable)
+						wait(1)
 					until not Toggles.LoopKillInmates 
 				elseif Toggles.LoopKillCrims then
 					repeat
@@ -1770,12 +1867,14 @@ local function executeCmd(cmd, args)
 						if team == 'Really red' then
 							workspace.Remote.TeamEvent:FireServer('Medium stone grey')
 						end
+						local plrTable = {}
 						for _, plr in pairs(game.Players:GetChildren()) do
 							if not Whitelisted[plr.Name] and plr ~= fag and plr.TeamColor.Name == 'Really red' and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
-								killPlr(plr)
+								table.insert(plrTable, plr)
 							end
 						end
-						RunService.Heartbeat:Wait()
+						killPlrs(plrTable)
+						wait(1)
 					until not Toggles.LoopKillCrims
 				elseif Toggles.LoopKillAll then
 					repeat
@@ -1783,22 +1882,26 @@ local function executeCmd(cmd, args)
 						if team ~= 'Medium stone grey' then
 							workspace.Remote.TeamEvent:FireServer('Medium stone grey')
 						end
+						local plrTable = {}
 						for _, plr in pairs(game.Players:GetChildren()) do
 							if not Whitelisted[plr.Name] and plr ~= fag and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
-								killPlr(plr)
+								table.insert(plrTable, plr)
 							end
 						end
-						RunService.Heartbeat:Wait()
+						killPlrs(plrTable)
+						wait(1)
 					until not Toggles.LoopKillAll
 				elseif Toggles.LoopKillEnemies then
-					local team = getTeam()
 					repeat
+						local team = getTeam()
+						local plrTable = {}
 						for _, plr in pairs(game.Players:GetChildren()) do
 							if not Whitelisted[plr.Name] and plr ~= fag and plr.TeamColor.Name ~= team and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
-								killPlr(plr)
+								table.insert(plrTable, plr)
 							end
 						end
-						RunService.Heartbeat:Wait()
+						killPlrs(plrTable)
+						wait(1)
 					until not Toggles.LoopKillEnemies
 				end
 			end
@@ -3015,7 +3118,7 @@ local function executeCmd(cmd, args)
 			workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['M9'].ITEMPICKUP)
 			log('[ ✅ ]: Obtained M9')
 		else log('[ ❌ ]: You already obtained M9') end
-	elseif cmd == 'remington870' or cmd == 'remington' or cmd == 'shotgun' then
+	elseif cmd == 'remington870' or cmd == 'remington' or cmd == 'reming' or cmd == 'shotgun' then
 		if not fag.Character:FindFirstChild('Remington 870') and not fag.Backpack:FindFirstChild('Remington 870') then
 			workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
 			log('[ ✅ ]: Obtained Remington 870')
@@ -3357,12 +3460,11 @@ local function executeCmd(cmd, args)
 		else log('[ ❌ ]: Already disabled auto mod guns') end
 	elseif cmd == 'gate' or cmd == 'frontgate' then
 		local dest = CFrame.new(492.763, 98.039917, 2216.74878)
-		if plrCF ~= dest.Position then
-			pcall(function() 
-				goToCF(dest)
-			end)
-			if fag.Character.Head.CFrame.X == fag.Character.HumanoidRootPart.CFrame.X then
-				log('[ ✅ ]: Teleported to the gate')
+		if (dest.Position - plrCF.Position).magnitude > 5 then
+			goToCF(dest)
+			local newPos = getPos()
+			if not isDead() and (dest.Position - newPos.Position).magnitude <= 5 then
+				log('[ ✅ ]: Teleported to the gate') 
 			else log('[ ❌ ]: Failed to teleport to the gate') end
 		else log('[ ❌ ]: Already teleported to the gate') end
 	elseif cmd == 'opengate' or cmd == 'openfrontgate' then
@@ -3377,122 +3479,110 @@ local function executeCmd(cmd, args)
 		else log('[ ❌ ]: Already opened gate') end
 	elseif cmd == 'gateroom' then
 		local dest = CFrame.new(504.324646, 102.039917, 2246.05103)
-		if plrCF ~= dest.Position then
-			pcall(function() 
-				goToCF(dest)
-			end)
-			if fag.Character.Head.CFrame.X == fag.Character.HumanoidRootPart.CFrame.X then
-				log('[ ✅ ]: Teleported to gate room')
+		if (dest.Position - plrCF.Position).magnitude > 5 then
+			goToCF(dest)
+			local newPos = getPos()
+			if not isDead() and (dest.Position - newPos.Position).magnitude <= 5 then
+				log('[ ✅ ]: Teleported to the gate room')  
 			else log('[ ❌ ]: Failed to teleport to the gate room') end
 		else log('[ ❌ ]: Already teleported to the gate room') end
 	elseif cmd == 'gatetower' then
 		local dest =  CFrame.new(502.72168, 125.039917, 2321.00098)
-		if plrCF ~= dest.Position then
-			pcall(function() 
-				goToCF(dest)
-			end)
-			if fag.Character.Head.CFrame.X == fag.Character.HumanoidRootPart.CFrame.X then
-				log('[ ✅ ]: Teleported to gate tower')
+		if (dest.Position - plrCF.Position).magnitude > 5 then
+			goToCF(dest)
+			local newPos = getPos()
+			if not isDead() and (dest.Position - newPos.Position).magnitude <= 5 then
+				log('[ ✅ ]: Teleported to the gate tower') 
 			else log('[ ❌ ]: Failed to teleport to the gate tower') end
 		else log('[ ❌ ]: Already teleported to the gate tower') end
 	elseif cmd == 'tower' then
 		local dest = CFrame.new(823.014832, 130.039886, 2589.46802)
-		if plrCF ~= dest.Position then
-			pcall(function() 
-				goToCF(dest)
-			end)
-			if fag.Character.Head.CFrame.X == fag.Character.HumanoidRootPart.CFrame.X then
-				log('[ ✅ ]: Teleported to the tower')
+		if (dest.Position - plrCF.Position).magnitude > 5 then
+			goToCF(dest)
+			local newPos = getPos()
+			if not isDead() and (dest.Position - newPos.Position).magnitude <= 5 then
+				log('[ ✅ ]: Teleported to the tower') 
 			else log('[ ❌ ]: Failed to teleport to the tower') end
 		else log('[ ❌ ]: Already teleported to the tower') end
 	elseif cmd == 'yard' then
 		local dest = CFrame.new(780.596985, 97.9999237, 2468.43457)
-		if plrCF ~= dest.Position then
-			pcall(function() 
-				goToCF(dest)
-			end)
-			if fag.Character.Head.CFrame.X == fag.Character.HumanoidRootPart.CFrame.X then
-				log('[ ✅ ]: Teleported to the yard')
+		if (dest.Position - plrCF.Position).magnitude > 5 then
+			goToCF(dest)
+			local newPos = getPos()
+			if not isDead() and (dest.Position - newPos.Position).magnitude <= 5 then
+				log('[ ✅ ]: Teleported to the gate tower') 
 			else log('[ ❌ ]: Failed to teleport to the yard') end
 		else log('[ ❌ ]: Already teleported to the yard') end
 	elseif cmd == 'armory' or cmd == 'guardroom' then
 		local dest = CFrame.new(836.632568, 99.9899826, 2260.18994)
-		if plrCF ~= dest.Position then
-			pcall(function() 
-				goToCF(dest)
-			end)
-			if fag.Character.Head.CFrame.X == fag.Character.HumanoidRootPart.CFrame.X then
-				log('[ ✅ ]: Teleported to the armory')
+		if (dest.Position - plrCF.Position).magnitude > 5 then
+			goToCF(dest)
+			local newPos = getPos()
+			if not isDead() and (dest.Position - newPos.Position).magnitude <= 5 then
+				log('[ ✅ ]: Teleported to the armory') 
 			else log('[ ❌ ]: Failed to teleport to the armory') end
 		else log('[ ❌ ]: Already teleported to the armory') end
-	elseif cmd == 'nexus' or cmd == 'prison' then
+	elseif cmd == 'nexus' or cmd == 'nex' or cmd == 'prison' then
 		local dest = CFrame.new(915.108398, 99.9899826, 2378.2648)
-		if plrCF ~= dest.Position then
-			pcall(function() 
-				goToCF(dest)
-			end)
-			if fag.Character.Head.CFrame.X == fag.Character.HumanoidRootPart.CFrame.X then
-				log('[ ✅ ]: Teleported to the nexus')
+		if (dest.Position - plrCF.Position).magnitude > 5 then
+			goToCF(dest)
+			local newPos = getPos()
+			if not isDead() and (dest.Position - newPos.Position).magnitude <= 5 then
+				log('[ ✅ ]: Teleported to the nexus') 
 			else log('[ ❌ ]: Failed to teleport to the nexus') end
 		else log('[ ❌ ]: Already teleported to the nexus') end
 	elseif cmd == 'backnexus' then
 		local dest = CFrame.new(980.860535, 99.9899826, 2316.87769)
-		if plrCF ~= dest.Position then
-			pcall(function() 
-				goToCF(dest)
-			end)
-			if fag.Character.Head.CFrame.X == fag.Character.HumanoidRootPart.CFrame.X then
-				log('[ ✅ ]: Teleported to the back of the nexus')
+		if (dest.Position - plrCF.Position).magnitude > 5 then
+			goToCF(dest)
+			local newPos = getPos()
+			if not isDead() and (dest.Position - newPos.Position).magnitude <= 5 then
+				log('[ ✅ ]: Teleported to the back of the nexus') 
 			else log('[ ❌ ]: Failed to teleport to the back of the nexus') end
 		else log('[ ❌ ]: Already teleported to the back of the nexus') end
 	elseif cmd == 'sewer' or cmd == 'sewers' then
 		local dest = CFrame.new(916.570679, 78.7003937, 2323.39136)
-		if plrCF ~= dest.Position then
-			pcall(function() 
-				goToCF(dest)
-			end)
-			if fag.Character.Head.CFrame.X == fag.Character.HumanoidRootPart.CFrame.X then
-				log('[ ✅ ]: Teleported to the sewers')
+		if (dest.Position - plrCF.Position).magnitude > 5 then
+			goToCF(dest)
+			local newPos = getPos()
+			if not isDead() and (dest.Position - newPos.Position).magnitude <= 5 then
+				log('[ ✅ ]: Teleported to the sewers') 
 			else log('[ ❌ ]: Failed to teleport to the sewers') end
 		else log('[ ❌ ]: Already teleported to the back of the sewers') end
 	elseif cmd == 'cafeteria' or cmd == 'cafe' then
 		local dest = CFrame.new(919.365601, 99.9899368, 2285.1748)
-		if plrCF ~= dest.Position then
-			pcall(function() 
-				goToCF(dest)
-			end)
-			if fag.Character.Head.CFrame.X == fag.Character.HumanoidRootPart.CFrame.X then
-				log('[ ✅ ]: Teleported to the cafeteria')
+		if (dest.Position - plrCF.Position).magnitude > 5 then
+			goToCF(dest)
+			local newPos = getPos()
+			if not isDead() and (dest.Position - newPos.Position).magnitude <= 5 then
+				log('[ ✅ ]: Teleported to the cafeteria') 
 			else log('[ ❌ ]: Failed to teleport to the cafeteria') end
 		else log('[ ❌ ]: Already teleported to the cafeteria') end
 	elseif cmd == 'roof' then
 		local dest = CFrame.new(917.232056, 139.926025, 2314.79761)
-		if plrCF ~= dest.Position then
-			pcall(function() 
-				goToCF(dest)
-			end)
-			if fag.Character.Head.CFrame.X == fag.Character.HumanoidRootPart.CFrame.X then
-				log('[ ✅ ]: Teleported to the roof')
+		if (dest.Position - plrCF.Position).magnitude > 5 then
+			goToCF(dest)
+			local newPos = getPos()
+			if not isDead() and (dest.Position - newPos.Position).magnitude <= 5 then
+				log('[ ✅ ]: Teleported to the roof') 
 			else log('[ ❌ ]: Failed to teleport to the roof') end
 		else log('[ ❌ ]: Already teleported to the roof') end
 	elseif cmd == 'crimbase' or cmd == 'criminalbase' or cmd == 'base' then
 		local dest = CFrame.new(-943.724854, 94.1287613, 2064.69312)
-		if plrCF ~= dest.Position then
-			pcall(function() 
-				goToCF(dest)
-			end)
-			if fag.Character.Head.CFrame.X == fag.Character.HumanoidRootPart.CFrame.X then
-				log('[ ✅ ]: Teleported to the criminal base')
+		if (dest.Position - plrCF.Position).magnitude > 5 then
+			goToCF(dest)
+			local newPos = getPos()
+			if not isDead() and (dest.Position - newPos.Position).magnitude <= 5 then
+				log('[ ✅ ]: Teleported to the criminal base') 
 			else log('[ ❌ ]: Failed to teleport to the criminal base') end
 		else log('[ ❌ ]: Already teleported to the criminal base') end
 	elseif cmd == 'neutralspawn' then
 		local dest = CFrame.new(880.4111328125, 27.78998565673828, 2349.805419921875)
-		if plrCF ~= dest.Position then
-			pcall(function() 
-				goToCF(dest)
-			end)
-			if fag.Character.Head.CFrame.X == fag.Character.HumanoidRootPart.CFrame.X then
-				log('[ ✅ ]: Teleported to the neutral spawn')
+		if (dest.Position - plrCF.Position).magnitude > 5 then
+			goToCF(dest)
+			local newPos = getPos()
+			if not isDead() and (dest.Position - newPos.Position).magnitude <= 5 then
+				log('[ ✅ ]: Teleported to the neutral spawn') 
 			else log('[ ❌ ]: Failed to teleport to the neutral spawn') end
 		else log('[ ❌ ]: Already teleported to the neutral spawn') end
 	elseif cmd == 'antivoid' or cmd == 'antifall' then
