@@ -302,55 +302,39 @@ local function toggleLogs(tog)
 	CmdNotif.Visible = false
 end
 --//vvv GUI DRAGGING vvv\\--
-local dragging
-local dragInput
-local dragStart
-local startPos
-local lastMousePos
-local lastGoalPos
+local dragToggle, dragInpu, dragStart, dragPos
+local dragSpeed = .25 
 
-local function Lerp(a, b, m)
-	return a + (b - a) * m
-end;
+function Update(input)
+	local delta = input.Position - dragStart
+	local pos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+	TweenService:Create(CmdMain, TweenInfo.new(.25), {Position = pos}):Play()
+end
 
-local function Update(dt)
-	if not (startPos) then return end;
-	if not (dragging) and (lastGoalPos) then
-		CmdMain.Position = UDim2.new(startPos.X.Scale, Lerp(CmdMain.Position.X.Offset, lastGoalPos.X.Offset, dt * 8), startPos.Y.Scale, Lerp(CmdMain.Position.Y.Offset, lastGoalPos.Y.Offset, dt * 8))
-		_G.settings.mainPos = {x1 = CmdMain.Position.X.Scale, x2 = CmdMain.Position.X.Offset, x3 = CmdMain.Position.Y.Scale, x4 = CmdMain.Position.Y.Offset}
-		save()
-		return 
-	end;
-
-	local delta = (lastMousePos - UserInputService:GetMouseLocation())
-	local xGoal = (startPos.X.Offset - delta.X);
-	local yGoal = (startPos.Y.Offset - delta.Y);
-	lastGoalPos = UDim2.new(startPos.X.Scale, xGoal, startPos.Y.Scale, yGoal)
-	CmdMain.Position = UDim2.new(startPos.X.Scale, Lerp(CmdMain.Position.X.Offset, xGoal, dt * 8), startPos.Y.Scale, Lerp(CmdMain.Position.Y.Offset, yGoal, dt * 8))
-end;
-
-addFunction(CmdMain.InputBegan:Connect(function(input)
+CmdMain.InputBegan:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-		dragging = true
+		dragToggle = true
 		dragStart = input.Position
 		startPos = CmdMain.Position
-		lastMousePos = UserInputService:GetMouseLocation()
-
 		input.Changed:Connect(function()
-			if input.UserInputState == Enum.UserInputState.End then
-				dragging = false
+			if (input.UserInputState == Enum.UserInputState.End) then
+				dragToggle = false
 			end
 		end)
 	end
-end))
+end)
 
-addFunction(CmdMain.InputChanged:Connect(function(input)
+CmdMain.InputChanged:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
 		dragInput = input
 	end
-end))
+end)
 
-addFunction(RunService.Heartbeat:Connect(Update))
+UserInputService.InputChanged:Connect(function(input)
+	if input == dragInput and dragToggle then
+		Update(input)
+	end
+end)
 --//vvv COMMANDS vvv\\--
 local Cmd = {}
 Cmd[#Cmd + 1] = {Name='whitelist / wl <plr>',Desc='Whitelist the player from getting tased/killed/arrested and etc.'}
@@ -3633,7 +3617,7 @@ local function executeCmd(cmd, args)
 		end
 	elseif cmd == 'reload' or cmd == 'reloadgui' or cmd == 'reloadscript' then
 		ls('https://raw.githubusercontent.com/senorkal/YmirAdmin/main/source')
-	elseif cmd == 'detroy' or cmd == 'destroygui' or cmd == 'destroyscript' then
+	elseif cmd == 'destroy' or cmd == 'destroygui' or cmd == 'destroyscript' then
 		CmdGUI:Remove()
 	end
 end
