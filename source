@@ -302,7 +302,7 @@ local function toggleLogs(tog)
 	CmdNotif.Visible = false
 end
 --//vvv GUI DRAGGING vvv\\--
-local dragToggle, dragInpu, dragStart, dragPos
+local dragToggle, dragInput, dragStart, dragPos
 local dragSpeed = .25 
 
 function Update(input)
