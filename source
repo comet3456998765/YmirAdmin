@@ -229,63 +229,10 @@ CmdMain.Position =  UDim2.new(mainPos.x1, mainPos.x2, mainPos.x3, mainPos.x4)
 if ChatCmd then
 	CmdBar.PlaceholderText = 'Command Bar ('..prefix..')'
 end
---//vvv DESTROY CLONES vvv\\--
-local introSpeed = 0.2
-local reload = false
-if par:FindFirstChild('YmirAdmin_GUI') then
-	if CmdGUI:GetAttribute('IntroDone') == false then 
-		CmdGUI:GetAttributeChangedSignal('IntroDone'):Wait()
-		wait(.5)
-	end
-	reload = true 
-	local oldGUI = par['YmirAdmin_GUI']
-	local oldMain = oldGUI[CmdMain.Name]
-	CmdMain.Position = oldMain.Position
-	CmdMain.Size = oldMain.Size
-	local oldHandler = oldMain[CmdHandler.Name]
-	CmdHandler.CanvasPosition = oldHandler.CanvasPosition
-	local oldBox = oldMain[CmdBox.Name]
-	CmdBox.Position = oldBox.Position
-	local oldNotif = oldBox[CmdNotif.Name]
-	CmdNotif.Visible = oldNotif.Visible
-	local oldNotifHandler = oldBox[CmdLogHandler.Name]:Clone()
-	CmdLogHandler:Destroy()
-	oldNotifHandler.Parent = CmdBox
-	CmdLogHandler = oldNotifHandler
-	CmdLogHandler.CanvasPosition = Vector2.new(0, CmdLogHandler.AbsoluteCanvasSize.Y)
-	oldGUI:Destroy()
-	CmdGUI.Parent = par
-	CmdHandler.Visible = true
-	CmdBox.Visible = true
-	CmdBar.Visible = true
-	CmdTitle.BackgroundTransparency = 0
-	CmdTitle.TextTransparency = 0
-	CmdBar.TextTransparency = 0
-	CmdBar.BackgroundTransparency = 0
-else --//vvv INTRO vvv\\--
-	CmdGUI.Parent = par
-	local f1 = TweenService:Create(CmdMain, TweenInfo.new(), {Size = UDim2.new(0, 200, 0, 269)})
-	f1:Play()
-	f1.Completed:Wait()
-	CmdTitle.BackgroundTransparency = 0
-	wait(.1)
-	local f2 = TweenService:Create(CmdTitle, TweenInfo.new(introSpeed), {TextTransparency = 0})
-	f2:Play()
-	f2.Completed:Wait()
-	wait(.1)
-	CmdBar.Visible = true
-	local f3 = TweenService:Create(CmdBar, TweenInfo.new(introSpeed), {BackgroundTransparency = 0})
-	local f4 = TweenService:Create(CmdBar, TweenInfo.new(introSpeed), {TextTransparency = 0})
-	f3:Play()
-	f4:Play()
-	f4.Completed:Wait()
-	wait(.1)
-	CmdHandler.Visible = true
-	CmdBox.Visible = true
-end
 --//vvv VARIABLES vvv\\--
 local notified = false
 --//vvv COMMAND LOGGING vvv\\--
+local introSpeed = .2
 local function notif(txt, notimer)
 	if notifs and not logsOpen then
 		local counter = 0
@@ -349,8 +296,7 @@ local function toggleLogs(tog)
 	else
 		logsOpen = false
 		local tween = TweenService:Create(CmdBox, TweenInfo.new(0.5, Enum.EasingDirection.In, Enum.EasingStyle.Quart, 0.5), {Position = UDim2.new(0, 0, 0.632000029, 0)})
-		tween:Play()
-		tween.Completed:Wait()
+		tween:Play(); tween.Completed:Wait()
 		CmdLogHandler.Visible = false
 	end
 	CmdNotif.Visible = false
@@ -548,7 +494,67 @@ Cmd[#Cmd + 1] = {Name='nologs / closelogs',Desc='Minimize command logs'}
 Cmd[#Cmd + 1] = {Name='version / ver',Desc='Checks for current version and updated version'}
 Cmd[#Cmd + 1] = {Name='reload / reloadscript',Desc='Reloads script'}
 Cmd[#Cmd + 1] = {Name='destroy / destroyscript',Desc='Destroys script'}
-
+--//vvv INTRO vvv\\--
+local reload = false
+if par:FindFirstChild('YmirAdmin_GUI') then
+	if par['YmirAdmin_GUI']:GetAttribute('IntroDone') == false then 
+		par['YmirAdmin_GUI']:GetAttributeChangedSignal('IntroDone'):Wait()
+		wait(.5)
+	end
+	reload = true 
+	local oldGUI = par['YmirAdmin_GUI']
+	local oldMain = oldGUI[CmdMain.Name]
+	CmdMain.Position = oldMain.Position
+	CmdMain.Size = oldMain.Size
+	local oldHandler = oldMain[CmdHandler.Name]
+	CmdHandler.CanvasPosition = oldHandler.CanvasPosition
+	local oldBox = oldMain[CmdBox.Name]
+	CmdBox.Position = oldBox.Position
+	local oldNotif = oldBox[CmdNotif.Name]
+	CmdNotif.Visible = oldNotif.Visible
+	local oldNotifHandler = oldBox[CmdLogHandler.Name]:Clone()
+	CmdLogHandler:Destroy()
+	oldNotifHandler.Parent = CmdBox
+	CmdLogHandler = oldNotifHandler
+	CmdLogHandler.CanvasPosition = Vector2.new(0, CmdLogHandler.AbsoluteCanvasSize.Y)
+	oldGUI:Destroy()
+	CmdGUI.Parent = par
+	CmdHandler.Visible = true
+	CmdBox.Visible = true
+	CmdBar.Visible = true
+	CmdTitle.BackgroundTransparency = 0
+	CmdTitle.TextTransparency = 0
+	CmdBar.TextTransparency = 0
+	CmdBar.BackgroundTransparency = 0
+else --//vvv INTRO vvv\\--
+	CmdGUI.Parent = par
+	local f1 = TweenService:Create(CmdMain, TweenInfo.new(), {Size = UDim2.new(0, 200, 0, 269)})
+	f1:Play()
+	f1.Completed:Wait()
+	CmdTitle.BackgroundTransparency = 0
+	wait(.1)
+	local f2 = TweenService:Create(CmdTitle, TweenInfo.new(introSpeed), {TextTransparency = 0})
+	f2:Play()
+	f2.Completed:Wait()
+	wait(.1)
+	CmdBar.Visible = true
+	local f3 = TweenService:Create(CmdBar, TweenInfo.new(introSpeed), {BackgroundTransparency = 0})
+	local f4 = TweenService:Create(CmdBar, TweenInfo.new(introSpeed), {TextTransparency = 0})
+	f3:Play()
+	f4:Play()
+	f4.Completed:Wait()
+	wait(.1)
+	CmdHandler.Visible = true
+	CmdBox.Visible = true
+	CmdBar:ReleaseFocus()
+	CmdBar.Text = ''
+	if logsOpen then
+		CmdLogHandler.Visible = true
+		local tween = TweenService:Create(CmdBox, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Position = UDim2.new(1, 0, 0.632000029, 0)})
+		tween:Play()
+		tween.Completed:Wait()
+	end
+end
 for i = 1, #Cmd do
 	local clone = CmdExample:Clone()	
 	clone.Text = Cmd[i].Name
@@ -577,6 +583,14 @@ for i = 1, #Cmd do
 		f.Completed:Wait()
 	end
 end
+CmdGUI:SetAttribute('IntroDone', true)
+if not reload then 
+	log('[ ✅ ]: Loaded admin commands')
+else 
+	notif('Reloaded admin commands', true)
+	log('[ ✅ ]: Reloaded admin commands')
+end
+
 local Mouse = fag:GetMouse()
 addFunction(Mouse.Move:Connect(function()
 	local Guis = CoreGui:GetGuiObjectsAtPosition(Mouse.X, Mouse.Y)
@@ -609,22 +623,6 @@ addFunction(Mouse.Move:Connect(function()
 		CmdDescBox.Visible = false
 	end
 end))
-
-CmdBar:ReleaseFocus()
-CmdBar.Text = ''
-if logsOpen then
-	CmdLogHandler.Visible = true
-	local tween = TweenService:Create(CmdBox, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Position = UDim2.new(1, 0, 0.632000029, 0)})
-	tween:Play()
-	tween.Completed:Wait()
-end
-CmdGUI:SetAttribute('IntroDone', true)
-if reload then
-	notif('Reloaded admin commands', true)
-	log('[ ✅ ]: Reloaded admin commands')
-else
-	log('[ ✅ ]: Loaded admin commands')
-end
 --//vvv COMMAND FUNCTIONS vvv\\--
 -- variables --
 local LoopKilled = {}
@@ -681,6 +679,9 @@ end
 local function goTo(plr, dis)
 	pcall(function()
 		local Distance = dis or CFrame.new(0,0,0)
+		if fag.Character:FindFirstChild('reanimFolder') then
+			fag.Character.reanimFolder.reanim.HumanoidRootPart.CFrame =plr.Character.HumanoidRootPart.CFrame*Distance
+		end
 		fag.Character.HumanoidRootPart.CFrame = plr.Character.HumanoidRootPart.CFrame*Distance
 	end)
 end
@@ -2290,8 +2291,12 @@ local function executeCmd(cmd, args)
 		else log('[ ❌ ]: Already disabled auto refresh') end
 	elseif cmd == 'god' or cmd == 'godmode' then
 		if not fag.Character:FindFirstChild('reanimFolder') then
-			log('[ 🔄 ]: Enabling god mode, please wait...')
-			godMode()
+			if sethiddenproperty and typeof(sethiddenproperty) == 'function' then
+				log('[ 🔄 ]: Enabling god mode, please wait...')
+				godMode()
+			else 
+				log("[ ❌ ]: Your executor doesn't support this command")
+			end
 		else log('[ ❌ ]: Already enabled god mode') end
 	elseif cmd == 'ungod' or cmd == 'ungodmode' then
 		if fag.Character:FindFirstChild('reanimFolder') then
@@ -2488,40 +2493,18 @@ local function executeCmd(cmd, args)
 					if Flinging ~= plr then
 						Flinging = plr
 						log('[ ✅ ]: Loop flinging '..plrName(plr))
-						repeat
-							pcall(function()
-								local char = fag.Character
-								char.ClientInputHandler.Disabled = true
-								if char.Humanoid.Health <= 0 or not char.HumanoidRootPart then
-									workspace.Remote.loadchar:InvokeServer()
+						local func; func = RunService.Heartbeat:Connect(function()
+							if Flinging ~= plr then func:Disconnect() return end
+							pcall(function() 
+								local flingPrt = fag.Character.HumanoidRootPart
+								if not flingPrt:FindFirstChild('BodyAngularVelocity') then
+									local bAV = Instance.new('BodyAngularVelocity', flingPrt)
+									bAV.AngularVelocity = Vector3.new(9e9,9e9,9e9)
+									bAV.MaxTorque=Vector3.new(9e9,9e9,9e9)
 								end
-								goTo(plr, CFrame.new(0,0,0)*CFrame.Angles(math.rad(-90),0,0))
-								if not char.HumanoidRootPart:FindFirstChildOfClass('BodyAngularVelocity') then
-									local fling = Instance.new('BodyAngularVelocity',char.HumanoidRootPart)
-									fling.AngularVelocity = Vector3.new(0, 99999, 0)
-									fling.MaxTorque = Vector3.new(0,math.huge,0)
-									fling.P = math.huge
-									for _,v in next, char:GetDescendants() do
-										if v:IsA('BasePart') then 
-											v.CanCollide = false 
-											v.Massless = true
-											v.Velocity = Vector3.new(0, 0, 0)
-										end
-									end
-									spawn(function()
-										repeat
-											fling.AngularVelocity = Vector3.new(0, 99999, 0)
-											wait(.2)
-											fling.AngularVelocity = Vector3.new(0, 0, 0)
-											wait(.1)
-										until not fling or not plr or Flinging ~= plr
-									end)
-								end
-								char.Humanoid.Sit = false
+								flingPrt.Position = plr.Character.HumanoidRootPart.Position 
 							end)
-							RunService.Heartbeat:Wait()
-						until not plr or Flinging ~= plr
-						workspace.Remote.loadchar:InvokeServer()
+						end)
 					else log('[ ❌ ]: Already loop flinging '..plrName(plr)) end
 				else log("[ ❌ ]: You can't loop fling yourself") end
 			else log('[ ❌ ]: No player found') end
@@ -2533,6 +2516,8 @@ local function executeCmd(cmd, args)
 				if Flinging then
 					if Flinging == plr then
 						Flinging = nil
+						local flingPrt = fag.Character.HumanoidRootPart
+						if flingPrt:FindFirstChild('BodyAngularVelocity') then flingPrt.BodyAngularVelocity:Destroy() end
 						log('[ ✅ ]: Disabled loop flinging '..plrName(plr))
 					else log('[ ❌ ]: You are not loop flinging '..plrName(plr)) end
 				else log('[ ❌ ]: You are not loop flinging '..plrName(plr)) end
