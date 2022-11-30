@@ -488,6 +488,16 @@ if par:FindFirstChild('YmirAdmin_GUI') then
 	reload = true 
 	local oldGUI = par['YmirAdmin_GUI']
 	local oldMain = oldGUI[CmdMain.Name]
+	local Addons = {}
+	for _, v in next, oldMain:GetChildren() do
+		table.insert(Addons, v)
+	end
+	for _, v in pairs(Addons)
+		if not CmdMain:FindFirstChild(v) or not CmdMain:FindFirstChild(v.Name) then
+			local clone = v:Clone()
+			clone.Parent = CmdMain
+		else continue end
+	end
 	CmdMain.Position = oldMain.Position
 	CmdMain.Size = oldMain.Size
 	local oldHandler = oldMain[CmdHandler.Name]
