@@ -1,6 +1,6 @@
 --//vvv SERVICES vvv\\--
 if not game:IsLoaded() then game.Loaded:Wait() end
-local ver = '2.4.1'
+local ver = '2.4.2'
 local fag = game.Players.LocalPlayer
 local UserInputService = game:GetService('UserInputService')
 local RunService = (game:GetService('RunService'));
@@ -380,7 +380,6 @@ Cmd[#Cmd + 1] = {Name='lag <duration>',Desc='Lags for an amount of time'}
 Cmd[#Cmd + 1] = {Name='unlag',Desc='Stops lag'}
 Cmd[#Cmd + 1] = {Name='crash / crashserver',Desc='Lags and crashes the server'}
 Cmd[#Cmd + 1] = {Name='uncrash / uncrashserver',Desc="Stops crashing the server"}
-Cmd[#Cmd + 1] = {Name='instacrash / instantcrash',Desc='Crashes the server as fast as possible (This command is irreversible)'}
 Cmd[#Cmd + 1] = {Name='fpslag / lagspike',Desc="Makes all players' FPS decrease (Requires SWAT gamepass)"}
 Cmd[#Cmd + 1] = {Name='unfpslag / unlagspike',Desc='Stops FPS spiking'}
 Cmd[#Cmd + 1] = {Name='infstamina',Desc="Enables infinite stamina"}
@@ -651,7 +650,7 @@ end
 
 local function getPos()
 	local pos
-	if fag.Character:FindFirstChild('reanimFolder') then pos = fag.Character.reanimFolder.reanim.HumanoidRootPart.CFrame
+	if fag.Character:FindFirstChild('reanimFolder') then pos = fag.Character.reanimFolder:WaitForChild('reanim').HumanoidRootPart.CFrame
 	else pos = fag.Character.HumanoidRootPart.CFrame end
 	return pos
 end
@@ -936,30 +935,39 @@ end
 local function flingPlr(plr)
 	if not plr then return end
 	local plrCF = getPos()
-	local char = fag.Character
-	char.ClientInputHandler.Disabled = true
-	local fling =Instance.new('BodyAngularVelocity',char.HumanoidRootPart)
-	fling.AngularVelocity = Vector3.new(0, 99999, 0)
-	fling.MaxTorque = Vector3.new(0,math.huge,0)
-	fling.P = math.huge
-	for _,v in next, char:GetDescendants() do
-		if v:IsA('BasePart') then 
-			v.CanCollide = false 
-			v.Massless = true
-			v.Velocity = Vector3.new(0, 0, 0)
-		end
-	end
-	spawn(function()
-		repeat
-			fling.AngularVelocity = Vector3.new(0, 99999, 0)
-			wait(.2)
-			fling.AngularVelocity = Vector3.new(0, 0, 0)
-			wait(.1)
-		until not plr or not workspace[plr.Name] or not workspace[plr.Name]:FindFirstChild('Humanoid') or workspace[plr.Name].Humanoid.Health <= 0
-	end)
 	repeat
-		char.Humanoid.Sit = false
-		goTo(plr)
+		pcall(function() 
+			local char = fag.Character
+			local flingPrt = char.HumanoidRootPart
+			char.ClientInputHandler.Disabled = true
+			if flingPrt:FindFirstChildOfClass('AlignPosition') then flingPrt:FindFirstChildOfClass('AlignPosition'):Destroy() end
+			if flingPrt:FindFirstChildOfClass('AlignOrientation') then flingPrt:FindFirstChildOfClass('AlignOrientation'):Destroy() end
+			if isDead() then workspace.Remote.loadchar:InvokeServer() end
+			if not flingPrt:FindFirstChildOfClass('BodyAngularVelocity') then
+				local bAV = Instance.new('BodyAngularVelocity', flingPrt)
+				bAV.AngularVelocity = Vector3.new(9e9,9e9,9e9)
+				bAV.MaxTorque=Vector3.new(9e9,9e9,9e9)
+			end
+			if char:FindFirstChild('reanimFolder') then
+				local bP 
+				if not flingPrt:FindFirstChildOfClass('BodyPosition') then
+					local bP = Instance.new('BodyPosition', flingPrt)
+					bp.P = 9e9
+					bp.D = 9e9
+					bp.MaxForce=Vector3.new(99999,99999,99999)
+				else bP = flingPrt:FindFirstChildOfClass('BodyPosition') end
+				if plr.Character.Humanoid.Health > 0 or plr.Character.Humanoid.FloorMaterial ~= Enum.Material.Air then
+					bP.Position = plr.Character.HumanoidRootPart.Position 
+				else 
+					bP.Position = char.Torso.Position
+				end
+			end
+			if plr.Character.Humanoid.Health > 0 or plr.Character.Humanoid.FloorMaterial ~= Enum.Material.Air then
+				flingPrt.Position = plr.Character.HumanoidRootPart.Position 
+			else 
+				flingPrt.Position = char.Torso.Position
+			end
+		end)
 		RunService.Heartbeat:Wait()
 	until not plr or not workspace[plr.Name] or not workspace[plr.Name]:FindFirstChild('Humanoid') or workspace[plr.Name].Humanoid.Health <= 0
 	workspace.Remote.loadchar:InvokeServer()
@@ -2022,7 +2030,7 @@ local function executeCmd(cmd, args)
 		local team = getTeam()
 		if team  ~= 'Bright blue' then
 			workspace.Remote.TeamEvent:FireServer('Bright blue')
-			wait(.1)
+			wait(.2)
 			if team ~= 'Bright blue' then
 				log('[ ❌ ]: Cannot join guards team')
 			else log('[ ✅ ]: Joined guards team') end
@@ -2302,10 +2310,22 @@ local function executeCmd(cmd, args)
 					['Hit'] = workspace[fag.Name].Head
 				}
 			}
-			repeat
+			repeat 
 				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
 				local tool = fag.Character:FindFirstChild('Remington 870') or fag.Backpack:FindFirstChild('Remington 870')
-				ReplicatedStorage.ShootEvent:FireServer(event, tool)
+				for i = 1, 100 do
+					spawn(function()
+						event[#event+1] = {
+							['RayObject'] = Ray.new(Vector3.new(), Vector3.new()), 
+							['Distance'] = 0, 
+							['Cframe'] = CFrame.new(), 
+							['Hit'] = workspace[fag.Name].Head
+						}
+						RunService.Heartbeat:Wait()
+						ReplicatedStorage.ShootEvent:FireServer(event, tool)
+					end)
+				end
+				RunService.Heartbeat:Wait()
 				RunService.Heartbeat:Wait()
 			until not Toggles.CrashServer
 		else log('[ ❌ ]: Already crashing server') end
@@ -2318,28 +2338,6 @@ local function executeCmd(cmd, args)
 			tool.Parent = fag.Character
 			tool:Destroy()
 		else log('[ ❌ ]: Already uncrashing server') end
-	elseif cmd == 'instacrash' or cmd == 'instantcrash' then
-		if not Toggles.InstaCrash then
-			log('[ ✅ ]: Insta-crashing server (This command is irreversible)')
-			Toggles.InstaCrash = true
-			local event = {}
-			repeat
-				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
-				local tool = fag.Character:FindFirstChild('Remington 870') or fag.Backpack:FindFirstChild('Remington 870')
-				spawn(function()
-					repeat
-						event[#event+1] = {
-							['RayObject'] = Ray.new(Vector3.new(), Vector3.new()), 
-							['Distance'] = 0, 
-							['Cframe'] = CFrame.new(), 
-							['Hit'] = workspace[fag.Name].Head
-						}
-						RunService.Heartbeat:Wait()
-					until not Toggles.CrashServer
-				end)
-				RunService.Heartbeat:Wait()
-			until not Toggles.CrashServer
-		else log('[ ❌ ]: Already insta-crashing server') end
 	elseif cmd == 'fpslag' or cmd == 'lagspike' then
 		if not Toggles.FPSLag then
 			if SWAT then
@@ -2615,13 +2613,14 @@ local function executeCmd(cmd, args)
 				if plr ~= fag then
 					if Spectating ~= plr then
 						Spectating = plr
-						log('[ ✅ ]: Spectating '..plrName(plr))local func
+						log('[ ✅ ]: Spectating '..plrName(plr))
+						local func
 						func = RunService.RenderStepped:Connect(function()
 							if Spectating ~= plr then 
 								func:Disconnect() 
 								workspace.CurrentCamera.CameraSubject = fag.Character
 							else 
-								if workspace.CurrentCamera.CameraSubject ~= plr.Character then
+								if workspace.CurrentCamera.CameraSubject ~= plr.Character or plr.Character.Humanoid.Health <= 0 then
 									workspace.CurrentCamera.CameraSubject = plr.Character
 								end
 							end
@@ -2667,18 +2666,40 @@ local function executeCmd(cmd, args)
 					if Flinging ~= plr then
 						Flinging = plr
 						log('[ ✅ ]: Loop flinging '..plrName(plr))
-						local func; func = RunService.Heartbeat:Connect(function()
-							if Flinging ~= plr then func:Disconnect() return end
+						repeat
 							pcall(function() 
-								local flingPrt = fag.Character.HumanoidRootPart
-								if not flingPrt:FindFirstChild('BodyAngularVelocity') then
+								local char = fag.Character
+								local flingPrt = char.HumanoidRootPart
+								if flingPrt:FindFirstChildOfClass('AlignPosition') then flingPrt:FindFirstChildOfClass('AlignPosition'):Destroy() end
+								if flingPrt:FindFirstChildOfClass('AlignOrientation') then flingPrt:FindFirstChildOfClass('AlignOrientation'):Destroy() end
+								if isDead() then workspace.Remote.loadchar:InvokeServer() end
+								if not flingPrt:FindFirstChildOfClass('BodyAngularVelocity') then
 									local bAV = Instance.new('BodyAngularVelocity', flingPrt)
 									bAV.AngularVelocity = Vector3.new(9e9,9e9,9e9)
 									bAV.MaxTorque=Vector3.new(9e9,9e9,9e9)
 								end
-								flingPrt.Position = plr.Character.HumanoidRootPart.Position 
+								if char:FindFirstChild('reanimFolder') then
+									local bP 
+									if not flingPrt:FindFirstChildOfClass('BodyPosition') then
+										local bP = Instance.new('BodyPosition', flingPrt)
+										bp.P = 9e9
+										bp.D = 9e9
+										bp.MaxForce=Vector3.new(99999,99999,99999)
+									else bP = flingPrt:FindFirstChildOfClass('BodyPosition') end
+									if plr.Character.Humanoid.Health > 0 or plr.Character.Humanoid.FloorMaterial ~= Enum.Material.Air then
+										bP.Position = plr.Character.HumanoidRootPart.Position 
+									else 
+										bP.Position = char.Torso.Position
+									end
+								end
+								if plr.Character.Humanoid.Health > 0 or plr.Character.Humanoid.FloorMaterial ~= Enum.Material.Air then
+									flingPrt.Position = plr.Character.HumanoidRootPart.Position 
+								else 
+									flingPrt.Position = char.Torso.Position
+								end
 							end)
-						end)
+							RunService.Heartbeat:Wait()
+						until Flinging ~= plr
 					else log('[ ❌ ]: Already loop flinging '..plrName(plr)) end
 				else log("[ ❌ ]: You can't loop fling yourself") end
 			else log('[ ❌ ]: No player found') end
@@ -2691,7 +2712,8 @@ local function executeCmd(cmd, args)
 					if Flinging == plr then
 						Flinging = nil
 						local flingPrt = fag.Character.HumanoidRootPart
-						if flingPrt:FindFirstChild('BodyAngularVelocity') then flingPrt.BodyAngularVelocity:Destroy() end
+						if flingPrt:FindFirstChildOfClass('BodyAngularVelocity') then flingPrt:FindFirstChildOfClass('BodyAngularVelocity'):Destroy() end
+						if flingPrt:FindFirstChildOfClass('BodyPosition') then flingPrt:FindFirstChildOfClass('BodyPosition'):Destroy() end
 						log('[ ✅ ]: Disabled loop flinging '..plrName(plr))
 					else log('[ ❌ ]: You are not loop flinging '..plrName(plr)) end
 				else log('[ ❌ ]: You are not loop flinging '..plrName(plr)) end
