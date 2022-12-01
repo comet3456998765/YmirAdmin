@@ -929,7 +929,7 @@ local function bringPlr(plr, cf)
 		counter = counter + 1
 		goToCF(cf)
 		RunService.Heartbeat:Wait()
-	until counter > 11
+	until counter > 15
 	workspace.Remote.loadchar:InvokeServer()
 	goToCF(plrCF)
 end
