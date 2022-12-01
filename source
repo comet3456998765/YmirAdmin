@@ -1,6 +1,6 @@
 --//vvv SERVICES vvv\\--
 if not game:IsLoaded() then game.Loaded:Wait() end
-local ver = '2.4.2'
+local ver = '2.4.3'
 local fag = game.Players.LocalPlayer
 local UserInputService = game:GetService('UserInputService')
 local RunService = (game:GetService('RunService'));
@@ -437,6 +437,8 @@ Cmd[#Cmd + 1] = {Name='m9 / pistol',Desc='Adds M9 to your backpack'}
 Cmd[#Cmd + 1] = {Name='remington / shotgun',Desc='Adds Remington 870 to your backpack'}
 Cmd[#Cmd + 1] = {Name='ak / ak47',Desc='Adds AK-47 to your backpack'}
 Cmd[#Cmd + 1] = {Name='m4 / m4a1',Desc='Adds M4A1 to your backpack (Requires SWAT Gamepass)'}
+Cmd[#Cmd + 1] = {Name='pp / willy',Desc='Equips all guns and turns them into a penis'}
+Cmd[#Cmd + 1] = {Name='nopp / nowilly',Desc='Removes penis (ouch)'}
 Cmd[#Cmd + 1] = {Name='shield',Desc='Adds shield to your backpack (Requires SWAT Gamepass)'}
 Cmd[#Cmd + 1] = {Name='gun / guns',Desc='Adds all possible guns to your backpack'}
 Cmd[#Cmd + 1] = {Name='autogun / autoguns',Desc='Automatically adds all possible guns to your backpack'}
@@ -488,9 +490,6 @@ if par:FindFirstChild('YmirAdmin_GUI') then
 	reload = true 
 	local oldGUI = par['YmirAdmin_GUI']
 	local oldMain = oldGUI[CmdMain.Name]
-	if oldMain:FindFirstChild('Addons') then
-		oldMain.Addons.Parent = CmdMain
-	end
 	CmdMain.Position = oldMain.Position
 	CmdMain.Size = oldMain.Size
 	local oldHandler = oldMain[CmdHandler.Name]
@@ -930,7 +929,7 @@ local function bringPlr(plr, cf)
 		counter = counter + 1
 		goToCF(cf)
 		RunService.Heartbeat:Wait()
-	until counter > 10
+	until counter > 11
 	workspace.Remote.loadchar:InvokeServer()
 	goToCF(plrCF)
 end
@@ -2924,7 +2923,7 @@ local function executeCmd(cmd, args)
 				fag.Character:BreakJoints()
 				workspace.Remote.loadchar:InvokeServer()
 				goToCF(plrCF)
-				wait(.1)
+				wait(.15)
 			until not Toggles.DropItems
 		else log('[ ❌ ]: Already enabled item dropping') end
 	elseif cmd == 'undropitems' then
@@ -3192,6 +3191,68 @@ local function executeCmd(cmd, args)
 				log('[ ❌ ]: You need the SWAT gamepass to use this command')  
 			end
 		else log('[ ❌ ]: You already obtained M4A1') end
+	elseif cmd == 'pp' or cmd == 'willy' then
+		if not Toggles.Penis then
+			Toggles.Penis = true
+			log('[ ✅ ]: Enabled penis')
+			repeat
+				pcall(function()
+					local char = fag.Character
+					local function findTool(n)
+						return char:FindFirstChild(n) or fag.Backpack:FindFirstChild(n)
+					end
+
+					if not findTool('M9') then workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['M9'].ITEMPICKUP) end
+					if not findTool('Remington 870') then workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP) end
+					if not findTool('AK-47') then workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['AK-47'].ITEMPICKUP) end
+					if SWAT and not findTool('M4A1') then workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['M4A1'].ITEMPICKUP) end
+					local team = getTeam()
+					if not findTool('Hammer') or not findTool('Crude Knife') then
+						if team == 'Bright blue' then workspace.Remote.TeamEvent:FireServer('Medium stone grey') end
+						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Hammer'].ITEMPICKUP) 
+						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Crude Knife'].ITEMPICKUP) 
+						if team == 'Bright blue' then workspace.Remote.TeamEvent:FireServer(team) end
+					end
+
+					local reming = findTool('Remington 870')
+					local ak = findTool('AK-47')
+					local m9 = findTool('M9')
+					local ham = findTool('Hammer')
+					local knife = findTool('Crude Knife')
+
+					if reming.Parent ~= char then reming.Parent = char end
+					if ham.Parent ~= char then ham.Parent = char end
+					if m9.Parent ~= char then m9.Parent = char end
+					if knife.Parent ~= char then knife.Parent = char end
+					if ak.Parent ~= char then ak.Parent = char end
+					if SWAT then 
+						local m4 = findTool('M4A1')
+						if m4.Parent ~= char then m4.Parent = char end
+						reming.Grip = CFrame.new(.9,2,0)
+						ak.Grip = CFrame.new(.9,2,6)
+						m9.Grip = CFrame.new(.9,2,3.55)
+						m4.Grip = CFrame.new(.9,2,10.3) 
+						ham.Grip = CFrame.new(.9,-15.5,1.5) * CFrame.Angles(math.rad(90), 0, 0)
+						knife.Grip = CFrame.new(.84,-18.75,1.5) * CFrame.Angles(math.rad(90), 0, 0)
+					else
+						reming.Grip = CFrame.new(.9,2,0)
+						ak.Grip = CFrame.new(.9,2,6)
+						m9.Grip = CFrame.new(.9,2,3.55)
+						ham.Grip = CFrame.new(.9,-11,1.5) * CFrame.Angles(math.rad(90), 0, 0)
+						knife.Grip = CFrame.new(.84,-14,1.5) * CFrame.Angles(math.rad(90), 0, 0)
+					end
+				end)
+			RunService.Heartbeat:Wait()
+			until not Toggles.Penis
+		else log('[ ❌ ]: Already enabled penis') end
+	elseif cmd == 'nopp' or cmd == 'unpp' or cmd == 'nowilly' or cmd == 'unwilly' then
+		if Toggles.Penis then
+			Toggles.Penis = false
+			log('[ ✅ ]: Disabled penis')
+			for _,v in next, fag.Character:GetChildren() do
+				if v:IsA('Tool') then v.Parent = fag.Backpack; v.Grip = CFrame.new(0,0,0) * CFrame.Angles(0,0,0) end
+			end
+		else log('[ ❌ ]: Already disabled penis') end
 	elseif cmd == 'shield' then
 		if not fag.Character:FindFirstChild('Riot Shield') and not fag.Backpack:FindFirstChild('Riot Shield') then
 			if SWAT then
