@@ -9,9 +9,9 @@ loadstring(game:HttpGet(('https://raw.githubusercontent.com/senorkal/YmirAdmin/m
 ```
 
 ## Current information
-> **Version 2.4.2** (30 November 2022)
+> **Version 2.4.4** (1 December 2022)
 
-> 141 commands 
+> 143 commands 
 
 > May contain bugs
 
