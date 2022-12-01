@@ -1,6 +1,6 @@
 --//vvv SERVICES vvv\\--
 if not game:IsLoaded() then game.Loaded:Wait() end
-local ver = '2.4.3'
+local ver = '2.4.4'
 local fag = game.Players.LocalPlayer
 local UserInputService = game:GetService('UserInputService')
 local RunService = (game:GetService('RunService'));
@@ -9,6 +9,7 @@ local HttpService = game:GetService('HttpService')
 local TweenService = game:GetService('TweenService')
 local ReplicatedStorage = game:GetService('ReplicatedStorage')
 local TeleportService = game:GetService('TeleportService')
+local Lighting = game:GetService('Lighting')
 
 local Functions = {}
 local function addFunction(func) table.insert(Functions, func) end
@@ -358,8 +359,8 @@ Cmd[#Cmd + 1] = {Name='unloopkill / unlk <plr / team / enemies / all>',Desc='Dis
 Cmd[#Cmd + 1] = {Name='clearloopkill / clearloopkills',Desc='Removes all loop kills'}
 Cmd[#Cmd + 1] = {Name='clickkill',Desc='Kills the player you click'}
 Cmd[#Cmd + 1] = {Name='noclickkill / unclickkill',Desc='Disables click kill'}
-Cmd[#Cmd + 1] = {Name='killaura / aura',Desc='Kills everyone who is near you'}
-Cmd[#Cmd + 1] = {Name='nokillaura / noaura',Desc='Disables kill aura'}
+Cmd[#Cmd + 1] = {Name='killaura / aura [range] [plr]',Desc='Kills everyone who is near you or the player or sets kill aura range'}
+Cmd[#Cmd + 1] = {Name='nokillaura / noaura [plr]',Desc='Disables kill aura for you or the player'}
 Cmd[#Cmd + 1] = {Name='inmate / inmates',Desc='Join the inmate team'}
 Cmd[#Cmd + 1] = {Name='guard / guards',Desc='Join the guard team'}
 Cmd[#Cmd + 1] = {Name='criminal / crim [plr / all]',Desc='Join the criminal team, make player a criminal or all players if you choose all'}
@@ -613,6 +614,8 @@ end))
 -- variables --
 local LoopKilled = {}
 local LoopTased = {}
+local Aura = {}
+local Ranked = {}
 local Whitelisted = _G.settings.Whitelisted 
 local ModdedGuns = {}
 local Toggles = {}
@@ -621,10 +624,13 @@ local Bringing = nil
 local Flinging = nil
 local SpamArresting = nil
 local KillTool = _G.settings.KillTool
+local AuraRange = 10
 local punchCooldown
 local knifeCooldown 
 local batCooldown
+
 local SWAT = game:GetService('MarketplaceService'):UserOwnsGamePassAsync(fag.UserId, 96651)
+local Remotes = workspace.Remote
 
 local function plrName(plr)
 	local name = plr.Name
@@ -699,7 +705,7 @@ local function killPlr(plr)
 	if not plr then return end
 	pcall(function()
 		if workspace:FindFirstChild(plr.Name) then
-			workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[KillTool].ITEMPICKUP)
+			Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[KillTool].ITEMPICKUP)
 			local tool = fag.Character:FindFirstChild(KillTool) or fag.Backpack:FindFirstChild(KillTool)
 			local event = {
 				[1] = {
@@ -765,7 +771,7 @@ end
 local function killPlrs(plrs)
 	if not plrs then return end
 	pcall(function()
-		workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[KillTool].ITEMPICKUP)
+		Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[KillTool].ITEMPICKUP)
 		local tool = fag.Character:FindFirstChild(KillTool) or fag.Backpack:FindFirstChild(KillTool)
 		local event = {}
 		for _,v in pairs(plrs) do
@@ -848,7 +854,7 @@ local function tasePlr(plr)
 			local tool = fag.Character:FindFirstChild('Taser') or fag.Backpack:FindFirstChild('Taser')
 			if team ~= 'Bright blue' or not tool then
 				repeat 
-					workspace.Remote.loadchar:InvokeServer(nil, 'Bright blue') 
+					Remotes.loadchar:InvokeServer(nil, 'Bright blue') 
 					RunService.Heartbeat:Wait()
 				until getTeam() == 'Bright blue'
 				goToCF(plrCF)
@@ -879,7 +885,7 @@ local function tasePlrs(plrs)
 		local tool = fag.Character:FindFirstChild('Taser') or fag.Backpack:FindFirstChild('Taser')
 		if team ~= 'Bright blue' or not tool then
 			repeat 
-				workspace.Remote.loadchar:InvokeServer(nil, 'Bright blue') 
+				Remotes.loadchar:InvokeServer(nil, 'Bright blue') 
 				RunService.Heartbeat:Wait()
 			until getTeam() == 'Bright blue'
 			goToCF(plrCF)
@@ -903,35 +909,35 @@ end
 
 local function bringPlr(plr, cf)
 	if not plr then return end
-	local plrCF = getPos()
-	workspace.Remote.loadchar:InvokeServer()
-	goToCF(plrCF)
-	workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['M9'].ITEMPICKUP)
-	local char = fag.Character
-	char.Humanoid.Name = 'fuck'
-	local c = char.fuck:Clone()
-	c.Name = 'Humanoid'
-	c.Parent = char
-	char.fuck:Destroy()
-	workspace.CurrentCamera.CameraSubject = char
-	char.Animate.Disabled = true
-	wait()
-	char.Animate.Disabled = false
-	char.Humanoid.DisplayDistanceType = 'None'
-	local tool = fag.Backpack:FindFirstChild('M9') or fag.Character:FindFirstChild('M9')
-	tool.Parent = char
-	repeat
-		goTo(plr)
-		RunService.Heartbeat:Wait()
-	until not plr or tool.Parent ~= fag.Character
-	local counter = 0
-	repeat
-		counter = counter + 1
-		goToCF(cf)
-		RunService.Heartbeat:Wait()
-	until counter > 15
-	workspace.Remote.loadchar:InvokeServer()
-	goToCF(plrCF)
+	pcall(function()
+		local plrCF = getPos()
+		Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['M9'].ITEMPICKUP)
+		local char = fag.Character
+		char.Humanoid.Name = 'fuck'
+		local c = char.fuck:Clone()
+		c.Name = 'Humanoid'
+		c.Parent = char
+		char.fuck:Destroy()
+		workspace.CurrentCamera.CameraSubject = char
+		char.Animate.Disabled = true
+		wait()
+		char.Animate.Disabled = false
+		char.Humanoid.DisplayDistanceType = 'None'
+		local tool = fag.Backpack:FindFirstChild('M9') or fag.Character:FindFirstChild('M9')
+		tool.Parent = char
+		repeat
+			goTo(plr)
+			RunService.Heartbeat:Wait()
+		until not plr or tool.Parent ~= fag.Character
+		local counter = 0
+		repeat
+			counter = counter + 1
+			goToCF(cf)
+			RunService.Heartbeat:Wait()
+		until counter > 15
+		Remotes.loadchar:InvokeServer()
+		goToCF(plrCF)
+	end)
 end
 
 local function flingPlr(plr)
@@ -940,23 +946,24 @@ local function flingPlr(plr)
 	repeat
 		pcall(function() 
 			local char = fag.Character
+			local tool = fag.Backpack:FindFirstChild('M9') or fag.Character:FindFirstChild('M9')
 			local flingPrt = char.HumanoidRootPart
 			char.ClientInputHandler.Disabled = true
 			if flingPrt:FindFirstChildOfClass('AlignPosition') then flingPrt:FindFirstChildOfClass('AlignPosition'):Destroy() end
 			if flingPrt:FindFirstChildOfClass('AlignOrientation') then flingPrt:FindFirstChildOfClass('AlignOrientation'):Destroy() end
-			if isDead() then workspace.Remote.loadchar:InvokeServer() end
+			if isDead() then Remotes.loadchar:InvokeServer() end
 			if not flingPrt:FindFirstChildOfClass('BodyAngularVelocity') then
 				local bAV = Instance.new('BodyAngularVelocity', flingPrt)
-				bAV.AngularVelocity = Vector3.new(9e9,9e9,9e9)
+				bAV.AngularVelocity = Vector3.new(0,9e9,0)
 				bAV.MaxTorque=Vector3.new(9e9,9e9,9e9)
 			end
 			if char:FindFirstChild('reanimFolder') then
 				local bP 
 				if not flingPrt:FindFirstChildOfClass('BodyPosition') then
 					local bP = Instance.new('BodyPosition', flingPrt)
-					bp.P = 9e9
-					bp.D = 9e9
-					bp.MaxForce=Vector3.new(99999,99999,99999)
+					bP.P = 9e9
+					bP.D = 9e9
+					bP.MaxForce=Vector3.new(99999,99999,99999)
 				else bP = flingPrt:FindFirstChildOfClass('BodyPosition') end
 				if plr.Character.Humanoid.Health > 0 or plr.Character.Humanoid.FloorMaterial ~= Enum.Material.Air then
 					bP.Position = plr.Character.HumanoidRootPart.Position 
@@ -972,7 +979,7 @@ local function flingPlr(plr)
 		end)
 		RunService.Heartbeat:Wait()
 	until not plr or not workspace[plr.Name] or not workspace[plr.Name]:FindFirstChild('Humanoid') or workspace[plr.Name].Humanoid.Health <= 0
-	workspace.Remote.loadchar:InvokeServer()
+	Remotes.loadchar:InvokeServer()
 	goToCF(plrCF)
 end
 
@@ -986,11 +993,11 @@ local function arrestPlr(plr)
 			local team = getTeam()
 			repeat
 				goTo(plr, CFrame.new(0, 0, 1))
-				workspace.Remote.arrest:InvokeServer(workspace[plr.Name].Head)
+				Remotes.arrest:InvokeServer(workspace[plr.Name].Head)
 				RunService.Heartbeat:Wait()
 			until workspace[plr.Name].Head:FindFirstChild('handcuffedGui')
 			wait()
-			workspace.Remote.loadchar:InvokeServer(nil, team)
+			Remotes.loadchar:InvokeServer(nil, team)
 			fag.Character.Humanoid.Sit = false
 			goToCF(plrCF)
 			workspace.CurrentCamera.CFrame = camCF
@@ -1000,7 +1007,7 @@ end
 
 local function spamArrest(plr, t)
 	for i = 1,t do
-		workspace.Remote.arrest:InvokeServer(workspace[plr.Name].Head)
+		Remotes.arrest:InvokeServer(workspace[plr.Name].Head)
 	end
 end
 
@@ -1348,7 +1355,7 @@ local function executeCmd(cmd, args)
 				for _, plr in pairs(game.Players:GetChildren()) do
 					local currentTeam = getTeam()
 					if currentTeam ~= 'Bright blue' then
-						workspace.Remote.loadchar:InvokeServer(nil, 'Bright blue')
+						Remotes.loadchar:InvokeServer(nil, 'Bright blue')
 						goToCF(plrCF)
 						workspace.CurrentCamera.CFrame = camCF
 					end
@@ -1360,9 +1367,9 @@ local function executeCmd(cmd, args)
 				log('[ ✅ ]: Tased all players')
 				if fag.TeamColor.Name ~= team then
 					if team ~= 'Really red' then
-						workspace.Remote.TeamEvent:FireServer(team)
+						Remotes.TeamEvent:FireServer(team)
 					else 
-						workspace.Remote.loadchar:InvokeServer(nil, team)
+						Remotes.loadchar:InvokeServer(nil, team)
 						goToCF(plrCF)
 						workspace.CurrentCamera.CFrame = camCF 
 					end
@@ -1375,9 +1382,9 @@ local function executeCmd(cmd, args)
 						log('[ ✅ ]: Tased '..plrName(plr))
 						if fag.TeamColor.Name ~= team then
 							if team ~= 'Really red' then
-								workspace.Remote.TeamEvent:FireServer(team)
+								Remotes.TeamEvent:FireServer(team)
 							else
-								workspace.Remote.loadchar:InvokeServer(nil, team)
+								Remotes.loadchar:InvokeServer(nil, team)
 								goToCF(plrCF)
 								workspace.CurrentCamera.CFrame = camCF 
 							end
@@ -1390,7 +1397,7 @@ local function executeCmd(cmd, args)
 				for _, plr in pairs(game.Players:GetChildren()) do
 					local currentTeam = getTeam()
 					if currentTeam ~= 'Bright blue' then
-						workspace.Remote.loadchar:InvokeServer(nil, 'Bright blue')
+						Remotes.loadchar:InvokeServer(nil, 'Bright blue')
 					end
 					if not Whitelisted[plr.Name] and plr ~= fag and plr.TeamColor.Name == teamToTase[2] and workspace:FindFirstChild(plr.Name) then
 						table.insert(plrTable, plr)
@@ -1400,9 +1407,9 @@ local function executeCmd(cmd, args)
 				log('[ ✅ ]: Tased all '..teamToTase[1]:lower())
 				if fag.TeamColor.Name ~= team then
 					if team ~= 'Really red' then
-						workspace.Remote.TeamEvent:FireServer(team)
+						Remotes.TeamEvent:FireServer(team)
 					else
-						workspace.Remote.loadchar:InvokeServer(nil, team)
+						Remotes.loadchar:InvokeServer(nil, team)
 						goToCF(plrCF)
 						workspace.CurrentCamera.CFrame = camCF 
 					end
@@ -1444,14 +1451,13 @@ local function executeCmd(cmd, args)
 						if not LoopTased[plr.UserId] then
 							LoopTased[plr.UserId] = plr
 							log('[ ✅ ]: Loop tasing '..plrName(plr))
-							local _plr = LoopTased[plr.UserId]
 							repeat
 								local team = getTeam()
 								if team ~= 'Bright blue' then
-									workspace.Remote.loadchar:InvokeServer(nil, 'Bright blue')
+									Remotes.loadchar:InvokeServer(nil, 'Bright blue')
 								end
 								if not Whitelisted[plr.Name] and plr ~= fag and workspace:FindFirstChild(plr.Name) then
-									tasePlr(_plr)
+									tasePlr(plr)
 								end
 								RunService.Heartbeat:Wait()
 							until LoopTased[plr.UserId] == nil
@@ -1464,7 +1470,7 @@ local function executeCmd(cmd, args)
 					repeat
 						local team = getTeam()
 						if team ~= 'Bright blue' then
-							workspace.Remote.loadchar:InvokeServer(nil, 'Bright blue')
+							Remotes.loadchar:InvokeServer(nil, 'Bright blue')
 						end
 						local plrTable = {}
 						for _, plr in pairs(game.Players:GetChildren()) do
@@ -1473,13 +1479,13 @@ local function executeCmd(cmd, args)
 							else continue end
 						end
 						tasePlrs(plrTable)
-						wait(1)
+						wait(.5)
 					until not Toggles.LoopTaseInmates 
 				elseif Toggles.LoopTaseCrims then
 					repeat
 						local team = getTeam()
 						if team ~= 'Bright blue' then
-							workspace.Remote.loadchar:InvokeServer(nil, 'Bright blue')
+							Remotes.loadchar:InvokeServer(nil, 'Bright blue')
 						end
 						local plrTable = {}
 						for _, plr in pairs(game.Players:GetChildren()) do
@@ -1488,7 +1494,7 @@ local function executeCmd(cmd, args)
 							else continue end
 						end
 						tasePlrs(plrTable)
-						wait(1)
+						wait(.5)
 					until not Toggles.LoopTaseCrims
 				elseif Toggles.LoopTaseAll then
 					repeat
@@ -1496,7 +1502,7 @@ local function executeCmd(cmd, args)
 						if team ~= 'Bright blue' then
 							local newPos = getPos()
 							local newCam = getCam()
-							workspace.Remote.loadchar:InvokeServer(nil, 'Bright blue')
+							Remotes.loadchar:InvokeServer(nil, 'Bright blue')
 							goToCF(newPos)
 							workspace.CurrentCamera.CFrame = newCam
 						end
@@ -1507,7 +1513,7 @@ local function executeCmd(cmd, args)
 							else continue end
 						end
 						tasePlrs(plrTable)
-						wait(1)
+						wait(.5)
 					until not Toggles.LoopTaseAll
 				end
 			end
@@ -1593,7 +1599,7 @@ local function executeCmd(cmd, args)
 							end
 							RunService.Heartbeat:Wait()
 						until not game.Players:FindFirstChild(plr.Name) or not workspace[plr.Name] or plr.TeamColor.Name ~= 'Really red' or SpamArresting ~= plr
-						workspace.Remote.loadchar:InvokeServer()
+						Remotes.loadchar:InvokeServer()
 						goToCF(plrCF)
 						workspace.CurrentCamera.CFrame = camCF
 					else log('[ ❌ ]: Already spam arresting '..plrName(plr)) end
@@ -1629,7 +1635,7 @@ local function executeCmd(cmd, args)
 				if hit:IsA('BasePart') and hit.Parent and getPlr(hit.Parent.Name) then
 					local plr = getPlr(hit.Parent.Name) 
 					if not Whitelisted[plr.Name] and plr ~= fag and not hit.Parent:FindFirstChild('handcuffedGui') then
-						workspace.Remote.arrest:InvokeServer(hit.Parent.Head)
+						Remotes.arrest:InvokeServer(hit.Parent.Head)
 					end
 				else return end
 			end)
@@ -1651,7 +1657,7 @@ local function executeCmd(cmd, args)
 					if not Whitelisted[v.Name] and v ~= fag and workspace:FindFirstChild(v.Name) and workspace[v.Name]:FindFirstChild('Head') and not v.Character:FindFirstChild('handcuffedGui') then
 						local Distance = (v.Character:FindFirstChildOfClass('Part').Position - fag.Character:FindFirstChildOfClass('Part').Position).magnitude
 						if Distance <= 10 and Toggles.ArrestAura then
-							workspace.Remote.arrest:InvokeServer(workspace[v.Name].Head)
+							Remotes.arrest:InvokeServer(workspace[v.Name].Head)
 						end
 					else continue end
 				end
@@ -1708,7 +1714,7 @@ local function executeCmd(cmd, args)
 			elseif args[1] == 'criminals' or args[1] == 'criminal' or args[1] == 'crims' or args[1] == 'crim' then
 				teamToKill = {'Criminals', 'Really red'} 
 			elseif args[1] == 'all' or args[1] == 'others' then
-				workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+				Remotes.TeamEvent:FireServer('Medium stone grey')
 				local plrTable = {}
 				for _, plr in pairs(game.Players:GetChildren()) do
 					if not Whitelisted[plr.Name] and plr ~= fag and workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
@@ -1719,9 +1725,9 @@ local function executeCmd(cmd, args)
 				log('[ ✅ ]: Killed all players')
 				if fag.TeamColor.Name ~= team then
 					if team ~= 'Really red' then
-						workspace.Remote.TeamEvent:FireServer(team)
+						Remotes.TeamEvent:FireServer(team)
 					else
-						workspace.Remote.loadchar:InvokeServer(nil, team)
+						Remotes.loadchar:InvokeServer(nil, team)
 						goToCF(plrCF)
 						workspace.CurrentCamera.CFrame = camCF 
 					end
@@ -1739,16 +1745,16 @@ local function executeCmd(cmd, args)
 				local plr = getPlr(args[1])
 				if plr then
 					if team == plr.TeamColor.Name then
-						workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+						Remotes.TeamEvent:FireServer('Medium stone grey')
 					end
 					killPlr(plr)
 					log('[ ✅ ]: Killed '..plrName(plr))
 					notif('Killed '..plrName(plr))
 					if fag.TeamColor.Name ~= team then
 						if team ~= 'Really red' then
-							workspace.Remote.TeamEvent:FireServer(team)
+							Remotes.TeamEvent:FireServer(team)
 						else
-							workspace.Remote.loadchar:InvokeServer(nil, team)
+							Remotes.loadchar:InvokeServer(nil, team)
 							goToCF(plrCF)
 							workspace.CurrentCamera.CFrame = camCF 
 						end
@@ -1757,7 +1763,7 @@ local function executeCmd(cmd, args)
 			end
 			if teamToKill and teamToKill ~= nil then
 				if team == teamToKill[2] then
-					workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+					Remotes.TeamEvent:FireServer('Medium stone grey')
 				end
 				local plrTable = {}
 				for _, plr in pairs(game.Players:GetChildren()) do
@@ -1769,9 +1775,9 @@ local function executeCmd(cmd, args)
 				log('[ ✅ ]: Killed all '..teamToKill[1]:lower())
 				if fag.TeamColor.Name ~= team then
 					if team ~= 'Really red' then
-						workspace.Remote.TeamEvent:FireServer(team)
+						Remotes.TeamEvent:FireServer(team)
 					else
-						workspace.Remote.loadchar:InvokeServer(nil, team)
+						Remotes.loadchar:InvokeServer(nil, team)
 						goToCF(plrCF)
 						workspace.CurrentCamera.CFrame = camCF 
 					end
@@ -1827,14 +1833,13 @@ local function executeCmd(cmd, args)
 					if not LoopKilled[plr.UserId] then
 						LoopKilled[plr.UserId] = plr
 						log('[ ✅ ]: Loop killing '..plrName(plr))
-						local _plr = LoopKilled[plr.UserId]
 						repeat
-							if workspace:FindFirstChild(_plr.Name) and workspace[_plr.Name]:FindFirstChild('Humanoid') and workspace[_plr.Name].Humanoid.Health > 0 and not workspace[_plr.Name]:FindFirstChild('ForceField') then
+							if workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
 								local team = getTeam()
-								if team == _plr.TeamColor.Name then
-									workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+								if team == plr.TeamColor.Name then
+									Remotes.TeamEvent:FireServer('Medium stone grey')
 								end
-								killPlr(_plr)
+								killPlr(plr)
 							end
 							RunService.Heartbeat:Wait()
 						until LoopKilled[plr.UserId] == nil
@@ -1846,7 +1851,7 @@ local function executeCmd(cmd, args)
 					repeat
 						local team = getTeam()
 						if team == 'Bright blue' then
-							workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+							Remotes.TeamEvent:FireServer('Medium stone grey')
 						end
 						local plrTable = {}
 						for _, plr in pairs(game.Players:GetChildren()) do
@@ -1855,13 +1860,13 @@ local function executeCmd(cmd, args)
 							end
 						end
 						killPlrs(plrTable)
-						wait(1)
+						wait(.5)
 					until not Toggles.LoopKillGuards
 				elseif Toggles.LoopKillInmates then
 					repeat
 						local team = getTeam()
 						if team == 'Bright orange' then
-							workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+							Remotes.TeamEvent:FireServer('Medium stone grey')
 						end
 						local plrTable = {}
 						for _, plr in pairs(game.Players:GetChildren()) do
@@ -1870,13 +1875,13 @@ local function executeCmd(cmd, args)
 							end
 						end
 						killPlrs(plrTable)
-						wait(1)
+						wait(.5)
 					until not Toggles.LoopKillInmates 
 				elseif Toggles.LoopKillCrims then
 					repeat
 						local team = getTeam()
 						if team == 'Really red' then
-							workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+							Remotes.TeamEvent:FireServer('Medium stone grey')
 						end
 						local plrTable = {}
 						for _, plr in pairs(game.Players:GetChildren()) do
@@ -1885,13 +1890,13 @@ local function executeCmd(cmd, args)
 							end
 						end
 						killPlrs(plrTable)
-						wait(1)
+						wait(.5)
 					until not Toggles.LoopKillCrims
 				elseif Toggles.LoopKillAll then
 					repeat
 						local team = getTeam()
 						if team ~= 'Medium stone grey' then
-							workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+							Remotes.TeamEvent:FireServer('Medium stone grey')
 						end
 						local plrTable = {}
 						for _, plr in pairs(game.Players:GetChildren()) do
@@ -1900,7 +1905,7 @@ local function executeCmd(cmd, args)
 							end
 						end
 						killPlrs(plrTable)
-						wait(1)
+						wait(.5)
 					until not Toggles.LoopKillAll
 				elseif Toggles.LoopKillEnemies then
 					repeat
@@ -1912,7 +1917,7 @@ local function executeCmd(cmd, args)
 							end
 						end
 						killPlrs(plrTable)
-						wait(1)
+						wait(.5)
 					until not Toggles.LoopKillEnemies
 				end
 			end
@@ -1976,14 +1981,14 @@ local function executeCmd(cmd, args)
 					if not Whitelisted[plr.Name] and hit.Parent:FindFirstChild('Humanoid') and hit.Parent.Humanoid.Health > 0 then
 						local team = getTeam()
 						if team == plr.TeamColor.Name then
-							workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+							Remotes.TeamEvent:FireServer('Medium stone grey')
 						end
 						killPlr(plr)
 						if fag.TeamColor.Name ~= team then
 							if team ~= 'Really red' then
-								workspace.Remote.TeamEvent:FireServer(team)
+								Remotes.TeamEvent:FireServer(team)
 							else
-								workspace.Remote.loadchar:InvokeServer(nil, team)
+								Remotes.loadchar:InvokeServer(nil, team)
 								goToCF(plrCF)
 								workspace.CurrentCamera.CFrame = camCF 
 							end
@@ -1998,41 +2003,113 @@ local function executeCmd(cmd, args)
 			Toggles.ClickKill = false
 		else log('[ ❌ ]: Already disabled click kill') end 
 	elseif cmd == 'killaura' or cmd == 'aura' then
-		if not Toggles.KillAura then
-			log('[ ✅ ]: Enabled kill aura')
-			Toggles.KillAura = true
-			repeat
-				for _, v in pairs(game.Players:GetPlayers()) do
-					pcall(function()
-						if not Whitelisted[v.Name] and v ~= fag and workspace:FindFirstChild(v.Name) and workspace[v.Name]:FindFirstChild('Humanoid') and workspace[v.Name].Humanoid.Health > 0 then
-							local Distance = (v.Character:FindFirstChildOfClass('Part').Position - fag.Character:FindFirstChildOfClass('Part').Position).magnitude
-							if Distance <= 10 and Toggles.KillAura then
-								for i = 1,25 do
-									ReplicatedStorage.meleeEvent:FireServer(v)
+		local function killAura(plr, range)
+			if not plr then
+				if not Toggles.KillAura then
+					Toggles.KillAura = true
+					repeat
+						for _, v in pairs(game.Players:GetPlayers()) do
+							pcall(function()
+								if not Whitelisted[v.Name] and v ~= fag and workspace:FindFirstChild(v.Name) and workspace[v.Name]:FindFirstChild('Humanoid') and workspace[v.Name].Humanoid.Health > 0 then
+									local Distance = (v.Character:FindFirstChildOfClass('Part').Position - fag.Character:FindFirstChildOfClass('Part').Position).magnitude
+									if Distance <= range and Toggles.KillAura then
+										for i = 1,25 do
+											ReplicatedStorage.meleeEvent:FireServer(v)
+										end
+									end
 								end
-							end
+							end)
 						end
-					end)
-				end
-				RunService.Heartbeat:Wait()
-			until not Toggles.KillAura
-		else log('[ ❌ ]: Already enabled kill aura') end
+						RunService.Heartbeat:Wait()
+					until not Toggles.KillAura
+				else log('[ ❌ ]: Already enabled kill aura') end
+			else
+				if not Aura[plr.UserId] then
+					Aura[plr.UserId] = {['Player'] = plr, ['Range'] = range}
+					repeat
+						for _, v in pairs(game.Players:GetPlayers()) do
+							pcall(function()
+								if not Whitelisted[v.Name] and v ~= fag and v ~= plr and workspace:FindFirstChild(v.Name) and workspace[v.Name]:FindFirstChild('Humanoid') and workspace[v.Name].Humanoid.Health > 0 then
+									local Distance = (v.Character:FindFirstChildOfClass('Part').Position - plr.Character:FindFirstChildOfClass('Part').Position).magnitude
+									if Distance <= Aura[plr.UserId].Range and Aura[plr.UserId] then
+										if team == plr.TeamColor.Name then
+											Remotes.TeamEvent:FireServer('Medium stone grey')
+										end
+										killPlr(v)
+										if fag.TeamColor.Name ~= team then
+											if team ~= 'Really red' then
+												Remotes.TeamEvent:FireServer(team)
+											else
+												Remotes.loadchar:InvokeServer(nil, team)
+												goToCF(plrCF)
+												workspace.CurrentCamera.CFrame = camCF 
+											end
+										end
+									end
+								end
+							end)
+						end
+						RunService.Heartbeat:Wait()
+					until Aura[plr.UserId] == nil
+				else log('[ ❌ ]: Already gave aura to '..plrName(plr)) end
+			end
+		end
+		local range = 10
+		local Return
+		if args[1] then
+			local plr 
+			if tonumber(args[1]) then
+				range = tonumber(args[1])
+				if range < 0 or range >= 20 then
+					log('[ ❌ ]: Range must be between 1-20')
+					Return = true
+				return end
+				if Return then return end
+				if args[2] then
+					plr = getPlr(args[1])
+				else 
+					log('[ ✅ ]: Enabled kill aura (Range: '..range..')')
+					killAura(nil, range) 
+					Return = true
+				return end
+			else 
+				plr = getPlr(args[1])
+			end
+			if Return then return end
+			if plr then
+				log('[ ✅ ]: Gave kill aura to '..plrName(plr)..'(Range: '..range..')')
+				killAura(plr, range)
+			else log('[ ❌ ]: No player found') end
+		else
+			log('[ ✅ ]: Enabled kill aura (Range: '..range..')')
+			killAura(nil, range)
+		end
 	elseif cmd == 'unkillaura' or cmd == 'unaura' or cmd == 'nokillaura' or cmd == 'noaura' then
-		if Toggles.KillAura then
-			log('[ ✅ ]: Disabled kill aura')
-			Toggles.KillAura = false
-		else log('[ ❌ ]: Already disabled kill aura') end
+		if args[1] then
+			local plr = getPlr(args[1])
+			if plr then
+				if Aura[plr.UserId] then
+					Aura[plr.UserId] = nil
+					log('[ ✅ ]: Disabled kill aura from '..plrName(plr))
+				else log('[ ❌ ]: Already disabled kill aura from '..plrName(plr)) end
+			else log('[ ❌ ]: No player found') end
+		else
+			if Toggles.KillAura then
+				log('[ ✅ ]: Disabled kill aura')
+				Toggles.KillAura = false
+			else log('[ ❌ ]: Already disabled kill aura') end
+		end
 	elseif cmd == 'inmate' or cmd == 'inmates' or cmd == 'prisoner' or cmd == 'prisoners' then
 		local team = getTeam()
 		if team  ~= 'Bright orange' then
-			workspace.Remote.TeamEvent:FireServer('Bright orange')
+			Remotes.TeamEvent:FireServer('Bright orange')
 			log('[ ✅ ]: Joined inmates team')
 		else log('[ ❌ ]: Already joined inmates team') end
 	elseif cmd == 'guard' or cmd == 'guards' or cmd == 'police' or cmd == 'cop' or cmd == 'cops' then
 		local team = getTeam()
 		if team  ~= 'Bright blue' then
-			workspace.Remote.TeamEvent:FireServer('Bright blue')
-			wait(.2)
+			Remotes.TeamEvent:FireServer('Bright blue')
+			Remotes.TeamEvent.OnServerEvent:Wait()
 			if team ~= 'Bright blue' then
 				log('[ ❌ ]: Cannot join guards team')
 			else log('[ ✅ ]: Joined guards team') end
@@ -2078,7 +2155,7 @@ local function executeCmd(cmd, args)
 								until fag.TeamColor.Name == 'Really red'
 								goToCF(plrCF)
 							else
-								workspace.Remote.loadchar:InvokeServer(nil, 'Really red')
+								Remotes.loadchar:InvokeServer(nil, 'Really red')
 								goToCF(plrCF)
 								workspace.CurrentCamera.CFrame = camCF
 							end
@@ -2099,7 +2176,7 @@ local function executeCmd(cmd, args)
 					until fag.TeamColor.Name == 'Really red'
 					goToCF(plrCF)
 				else
-					workspace.Remote.loadchar:InvokeServer(nil, 'Really red')
+					Remotes.loadchar:InvokeServer(nil, 'Really red')
 					goToCF(plrCF)
 					workspace.CurrentCamera.CFrame = camCF
 				end
@@ -2119,7 +2196,7 @@ local function executeCmd(cmd, args)
 				until fag.TeamColor.Name == 'Really red'
 				goToCF(plrCF)
 			else
-				workspace.Remote.loadchar:InvokeServer(nil, 'Really red')
+				Remotes.loadchar:InvokeServer(nil, 'Really red')
 				goToCF(plrCF)
 				workspace.CurrentCamera.CFrame = camCF
 			end
@@ -2128,13 +2205,13 @@ local function executeCmd(cmd, args)
 	elseif cmd == 'neutral' or cmd == 'neutrals' then
 		local team = getTeam()
 		if team  ~= 'Medium stone grey' then
-			workspace.Remote.TeamEvent:FireServer('Medium stone grey')
+			Remotes.TeamEvent:FireServer('Medium stone grey')
 			log('[ ✅ ]: Joined neutral team')
 		else log('[ ❌ ]: Already joined neutral team') end
 	elseif cmd == 'red' then
 		local team = getTeam()
 		if team ~= 'Bright red' then
-			workspace.Remote.loadchar:InvokeServer(nil, 'Bright red')
+			Remotes.loadchar:InvokeServer(nil, 'Bright red')
 			goToCF(plrCF)
 			workspace.CurrentCamera.CFrame = camCF
 			log('[ ✅ ]: Joined custom red team')
@@ -2142,7 +2219,7 @@ local function executeCmd(cmd, args)
 	elseif cmd == 'orange' then
 		local team = getTeam()
 		if team ~= 'Neon orange' then
-			workspace.Remote.loadchar:InvokeServer(nil, 'Neon orange')
+			Remotes.loadchar:InvokeServer(nil, 'Neon orange')
 			goToCF(plrCF)
 			workspace.CurrentCamera.CFrame = camCF
 			log('[ ✅ ]: Joined custom orange team')
@@ -2150,7 +2227,7 @@ local function executeCmd(cmd, args)
 	elseif cmd == 'yellow' then
 		local team = getTeam()
 		if team ~= 'Bright yellow' then
-			workspace.Remote.loadchar:InvokeServer(nil, 'Bright yellow')
+			Remotes.loadchar:InvokeServer(nil, 'Bright yellow')
 			goToCF(plrCF)
 			workspace.CurrentCamera.CFrame = camCF
 			log('[ ✅ ]: Joined custom yellow team')
@@ -2158,7 +2235,7 @@ local function executeCmd(cmd, args)
 	elseif cmd == 'green' then
 		local team = getTeam()
 		if team ~= 'Bright green' then
-			workspace.Remote.loadchar:InvokeServer(nil, 'Bright green')
+			Remotes.loadchar:InvokeServer(nil, 'Bright green')
 			goToCF(plrCF)
 			workspace.CurrentCamera.CFrame = camCF
 			log('[ ✅ ]: Joined custom green team')
@@ -2166,7 +2243,7 @@ local function executeCmd(cmd, args)
 	elseif cmd == 'blue' then
 		local team = getTeam()
 		if team ~= 'Deep blue' then
-			workspace.Remote.loadchar:InvokeServer(nil, 'Deep blue')
+			Remotes.loadchar:InvokeServer(nil, 'Deep blue')
 			goToCF(plrCF)
 			workspace.CurrentCamera.CFrame = camCF
 			log('[ ✅ ]: Joined custom blue team')
@@ -2174,7 +2251,7 @@ local function executeCmd(cmd, args)
 	elseif cmd == 'purple' then
 		local team = getTeam()
 		if team ~= 'Royal purple' then
-			workspace.Remote.loadchar:InvokeServer(nil, 'Royal purple')
+			Remotes.loadchar:InvokeServer(nil, 'Royal purple')
 			goToCF(plrCF)
 			workspace.CurrentCamera.CFrame = camCF
 			log('[ ✅ ]: Joined custom purple team')
@@ -2182,7 +2259,7 @@ local function executeCmd(cmd, args)
 	elseif cmd == 'pink' then
 		local team = getTeam()
 		if team ~= 'Hot pink' then
-			workspace.Remote.loadchar:InvokeServer(nil, 'Hot pink')
+			Remotes.loadchar:InvokeServer(nil, 'Hot pink')
 			goToCF(plrCF)
 			workspace.CurrentCamera.CFrame = camCF
 			log('[ ✅ ]: Joined custom pink team')
@@ -2190,7 +2267,7 @@ local function executeCmd(cmd, args)
 	elseif cmd == 'white' then
 		local team = getTeam()
 		if team ~= 'White' then
-			workspace.Remote.loadchar:InvokeServer(nil, 'White')
+			Remotes.loadchar:InvokeServer(nil, 'White')
 			goToCF(plrCF)
 			workspace.CurrentCamera.CFrame = camCF
 			log('[ ✅ ]: Joined custom white team')
@@ -2198,7 +2275,7 @@ local function executeCmd(cmd, args)
 	elseif cmd == 'grey' or cmd == 'gray' then
 		local team = getTeam()
 		if team ~= 'Ghost grey' then
-			workspace.Remote.loadchar:InvokeServer(nil, 'Ghost grey')
+			Remotes.loadchar:InvokeServer(nil, 'Ghost grey')
 			goToCF(plrCF)
 			workspace.CurrentCamera.CFrame = camCF
 			log('[ ✅ ]: Joined custom grey team')
@@ -2206,7 +2283,7 @@ local function executeCmd(cmd, args)
 	elseif cmd == 'brown' then
 		local team = getTeam()
 		if team ~= 'Brown' then
-			workspace.Remote.loadchar:InvokeServer(nil, 'Brown')
+			Remotes.loadchar:InvokeServer(nil, 'Brown')
 			goToCF(plrCF)
 			workspace.CurrentCamera.CFrame = camCF
 			log('[ ✅ ]: Joined custom brown team')
@@ -2214,7 +2291,7 @@ local function executeCmd(cmd, args)
 	elseif cmd == 'black' then
 		local team = getTeam()
 		if team ~= 'Brown' then
-			workspace.Remote.loadchar:InvokeServer(nil, 'Really black')
+			Remotes.loadchar:InvokeServer(nil, 'Really black')
 			goToCF(plrCF)
 			workspace.CurrentCamera.CFrame = camCF
 			log('[ ✅ ]: Joined custom black team')
@@ -2260,7 +2337,7 @@ local function executeCmd(cmd, args)
 								until fag.TeamColor.Name == 'Really red'
 								goToCF(plrCF)
 							else
-								workspace.Remote.loadchar:InvokeServer(nil, 'Really red')
+								Remotes.loadchar:InvokeServer(nil, 'Really red')
 								goToCF(plrCF)
 								workspace.CurrentCamera.CFrame = camCF
 							end
@@ -2273,7 +2350,7 @@ local function executeCmd(cmd, args)
 	elseif cmd == 'lag' then
 		if args[1] then
 			if typeof(tonumber(args[1])) == 'number' then
-				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+				Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
 				local tool = fag.Character:FindFirstChild('Remington 870') or fag.Backpack:FindFirstChild('Remington 870')
 				Toggles.Lag = true
 				log('Lagging server for '..args[1]..' seconds')
@@ -2313,7 +2390,7 @@ local function executeCmd(cmd, args)
 				}
 			}
 			repeat 
-				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+				Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
 				local tool = fag.Character:FindFirstChild('Remington 870') or fag.Backpack:FindFirstChild('Remington 870')
 				for i = 1, 100 do
 					spawn(function()
@@ -2349,13 +2426,13 @@ local function executeCmd(cmd, args)
 					local team = getTeam()
 					if team ~= 'Bright blue' then
 						repeat
-							workspace.Remote.TeamEvent:FireServer('Bright blue') 
+							Remotes.TeamEvent:FireServer('Bright blue') 
 							RunService.Heartbeat:Wait()
 						until fag.TeamColor.Name  == 'Bright blue'
 					end
 					spawn(function()
 						for i = 1,100 do
-							workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.clothes['Riot Police'].ITEMPICKUP)
+							Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.clothes['Riot Police'].ITEMPICKUP)
 						end
 					end)
 					RunService.Heartbeat:Wait()
@@ -2367,7 +2444,7 @@ local function executeCmd(cmd, args)
 			log('[ ✅ ]: Disabled FPS spiking all players')
 			Toggles.FPSLag = false
 			repeat
-				workspace.Remote.loadchar:InvokeServer()
+				Remotes.loadchar:InvokeServer()
 				RunService.Heartbeat:Wait()
 			until not workspace[fag.Name]:FindFirstChild('vest') 
 			goToCF(plrCF)
@@ -2395,7 +2472,7 @@ local function executeCmd(cmd, args)
 	elseif cmd == 'uninfstamina' or cmd == 'noinfstamina' then
 		if Toggles.InfStamina then
 			Toggles.InfStamina = false
-			workspace.Remote.loadchar:InvokeServer()
+			Remotes.loadchar:InvokeServer()
 			goToCF(plrCF)
 			workspace.CurrentCamera.CFrame = camCF
 			log('[ ✅ ]: Disabled infinite stamina')
@@ -2406,9 +2483,10 @@ local function executeCmd(cmd, args)
 			if not tonumber(args[1]) then
 				intensity = nil
 				log('[ ❌ ]: Input a valid number') 
-			end
+			else intensity = tonumber(args[1]) end
 		end
-		if intensity and not Toggles.Earbang then
+		if not intensity then return end
+		if not Toggles.Earbang then
 			Toggles.Earbang = true
 			log('[ ✅ ]: Enabled earbang (Intensity level: '..intensity..')')
 			repeat
@@ -2417,7 +2495,7 @@ local function executeCmd(cmd, args)
 					if not Whitelisted[plr.Name] and workspace:FindFirstChild(plr.Name) or workspace[plr.Name]:FindFirstChild('Head') then
 						local h = plr.Character.Head
 						local s = workspace['Prison_guardspawn'].spawn.Sound
-						createSound(s, h, tonumber(args[1]))
+						createSound(s, h, intensity)
 					end
 				end
 				RunService.Heartbeat:Wait()
@@ -2432,12 +2510,12 @@ local function executeCmd(cmd, args)
 		fag.Character:BreakJoints()
 		log('[ ✅ ]: Successfully reset')
 	elseif cmd == 'respawn' or cmd == 'res' then
-		workspace.Remote.loadchar:InvokeServer()
+		Remotes.loadchar:InvokeServer()
 		log('[ ✅ ]: Successfully respawned')
 	elseif cmd == 'refresh' or cmd == 're' then
 		local newPos = getPos()
 		local newCam = getCam()
-		workspace.Remote.loadchar:InvokeServer()
+		Remotes.loadchar:InvokeServer()
 		goToCF(newPos)
 		workspace.CurrentCamera.CFrame = newCam
 		log('[ ✅ ]: Successfully refreshed')
@@ -2449,7 +2527,7 @@ local function executeCmd(cmd, args)
 				if fag.Character.Humanoid.Health <= 0 then
 					local newPos = getPos()
 					local newCam = getCam()
-					workspace.Remote.loadchar:InvokeServer()
+					Remotes.loadchar:InvokeServer()
 					goToCF(newPos)
 					workspace.CurrentCamera.CFrame = newCam
 				end
@@ -2473,7 +2551,7 @@ local function executeCmd(cmd, args)
 	elseif cmd == 'ungod' or cmd == 'ungodmode' then
 		if fag.Character:FindFirstChild('reanimFolder') then
 			log('[ ✅ ]: Disabled god mode')
-			workspace.Remote.loadchar:InvokeServer()
+			Remotes.loadchar:InvokeServer()
 			goToCF(plrCF)
 			workspace.CurrentCamera.CFrame = camCF
 		else log('[ ❌ ]: Already disabled god mode') end
@@ -2484,9 +2562,9 @@ local function executeCmd(cmd, args)
 				Toggles.SwatGodMode = true
 				repeat
 					if fag.TeamColor.Name ~= 'Bright blue' then
-						workspace.Remote.TeamEvent:FireServer('Bright blue')
+						Remotes.TeamEvent:FireServer('Bright blue')
 					end
-					workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.clothes['Riot Police'].ITEMPICKUP)
+					Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.clothes['Riot Police'].ITEMPICKUP)
 					if workspace[fag.Name]:FindFirstChild('vest') then workspace[fag.Name].vest:Destroy() end
 					RunService.Heartbeat:Wait()
 				until not Toggles.SwatGodMode
@@ -2579,11 +2657,11 @@ local function executeCmd(cmd, args)
 			local func
 			func = RunService.RenderStepped:Connect(function()
 				if not Toggles.AlwaysDay then func:Disconnect() return end
-				game.Lighting.Brightness = 2
-				game.Lighting.ClockTime = 14
-				game.Lighting.FogEnd = 100000
-				game.Lighting.GlobalShadows = false
-				game.Lighting.OutdoorAmbient = Color3.fromRGB(128, 128, 128)
+				Lighting.Brightness = 2
+				Lighting.ClockTime = 14
+				Lighting.FogEnd = 100000
+				Lighting.GlobalShadows = false
+				Lighting.OutdoorAmbient = Color3.fromRGB(128, 128, 128)
 			end)
 		else log('[ ❌ ]: Already disabled day cycle') end
 	elseif cmd == 'daycycle' or cmd == 'unalwaysday' then
@@ -2657,6 +2735,15 @@ local function executeCmd(cmd, args)
 				if plr ~= fag then
 					flingPlr(plr)
 					log('[ ✅ ]: Flinged '..plrName(plr))
+					if fag.TeamColor.Name ~= team then
+						if team ~= 'Really red' then
+							Remotes.TeamEvent:FireServer(team)
+						else
+							Remotes.loadchar:InvokeServer(nil, team)
+							goToCF(plrCF)
+							workspace.CurrentCamera.CFrame = camCF 
+						end
+					end
 				else log("[ ❌ ]: You can't fling yourself") end
 			else log('[ ❌ ]: No player found') end
 		end
@@ -2674,19 +2761,19 @@ local function executeCmd(cmd, args)
 								local flingPrt = char.HumanoidRootPart
 								if flingPrt:FindFirstChildOfClass('AlignPosition') then flingPrt:FindFirstChildOfClass('AlignPosition'):Destroy() end
 								if flingPrt:FindFirstChildOfClass('AlignOrientation') then flingPrt:FindFirstChildOfClass('AlignOrientation'):Destroy() end
-								if isDead() then workspace.Remote.loadchar:InvokeServer() end
+								if isDead() then Remotes.loadchar:InvokeServer() end
 								if not flingPrt:FindFirstChildOfClass('BodyAngularVelocity') then
 									local bAV = Instance.new('BodyAngularVelocity', flingPrt)
-									bAV.AngularVelocity = Vector3.new(9e9,9e9,9e9)
+									bAV.AngularVelocity = Vector3.new(0,9e9,0)
 									bAV.MaxTorque=Vector3.new(9e9,9e9,9e9)
 								end
 								if char:FindFirstChild('reanimFolder') then
 									local bP 
 									if not flingPrt:FindFirstChildOfClass('BodyPosition') then
 										local bP = Instance.new('BodyPosition', flingPrt)
-										bp.P = 9e9
-										bp.D = 9e9
-										bp.MaxForce=Vector3.new(99999,99999,99999)
+										bP.P = 9e9
+										bP.D = 9e9
+										bP.MaxForce=Vector3.new(99999,99999,99999)
 									else bP = flingPrt:FindFirstChildOfClass('BodyPosition') end
 									if plr.Character.Humanoid.Health > 0 or plr.Character.Humanoid.FloorMaterial ~= Enum.Material.Air then
 										bP.Position = plr.Character.HumanoidRootPart.Position 
@@ -2771,6 +2858,7 @@ local function executeCmd(cmd, args)
 					local animations = fag.Character.Humanoid:GetPlayingAnimationTracks()
 					for _, v in next, animations do
 						if v.Animation.AnimationId == 'rbxassetid://279227693' or v.Animation.AnimationId == 'rbxassetid://279229192' then
+							getsenv(fag.Character.ClientInputHandler).cs.isTazed = false
 							v:Stop()
 							game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, true)
 							fag.Character.Humanoid.WalkSpeed = 16
@@ -2914,14 +3002,14 @@ local function executeCmd(cmd, args)
 			if team ~= 'Bright blue' then
 				log('[ 🔄 ]: Switching to guard team, please wait...')
 				repeat 
-					workspace.Remote.TeamEvent:FireServer('Bright blue') 
+					Remotes.TeamEvent:FireServer('Bright blue') 
 					RunService.Heartbeat:Wait()
 				until fag.TeamColor.Name == 'Bright blue'
 			end
 			log('[ ✅ ]: Enabled item dropping')
 			repeat 
 				fag.Character:BreakJoints()
-				workspace.Remote.loadchar:InvokeServer()
+				Remotes.loadchar:InvokeServer()
 				goToCF(plrCF)
 				wait(.15)
 			until not Toggles.DropItems
@@ -2939,23 +3027,23 @@ local function executeCmd(cmd, args)
 					log('[ 🔄 ]: Attempting to give key to '..plrName(plr))
 					local plrCF = getPos()
 					if workspace.Prison_ITEMS.single:FindFirstChild('Key card') then
-						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
+						Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
 					else 
 						if team ~= 'Bright blue' then
 							repeat 
-								workspace.Remote.TeamEvent:FireServer('Bright blue') 
+								Remotes.TeamEvent:FireServer('Bright blue') 
 								RunService.Heartbeat:Wait()
 							until fag.TeamColor.Name == 'Bright blue' or not Toggles.FindKey
 						end
 						repeat
 							goToCF(CFrame.new(-365.976562, 84.2401199, 1987.99207))
 							fag.Character:BreakJoints()
-							workspace.Remote.loadchar:InvokeServer()
+							Remotes.loadchar:InvokeServer()
 							RunService.Heartbeat:Wait()
 						until not plr or workspace.Prison_ITEMS.single:FindFirstChild('Key card')
 					end
 					if plr then
-						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
+						Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
 						local char = fag.Character
 						char.Humanoid.Name = 'fuck'
 						local c = char.fuck:Clone()
@@ -2973,7 +3061,7 @@ local function executeCmd(cmd, args)
 							goTo(plr)
 							RunService.Heartbeat:Wait()
 						until not plr or tool.Parent ~= fag.Character
-						workspace.Remote.loadchar:InvokeServer()
+						Remotes.loadchar:InvokeServer()
 						goToCF(plrCF)
 						if plr and plr:FindFirstChild('Character') and (plr.Backpack:FindFirstChild(tool.Name) or plr.Character:FindFirstChild(tool.Name)) then
 							log('[ ✅ ]: Gave key card to '..plrName(plr))
@@ -2983,28 +3071,28 @@ local function executeCmd(cmd, args)
 					if not fag.Character:FindFirstChild('Key card') and not fag.Backpack:FindFirstChild('Key card') then
 						Toggles.FindKey = true
 						if workspace.Prison_ITEMS.single:FindFirstChild('Key card') then
-							workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
+							Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
 							log('[ ✅ ]: Obtained key card') 
 							Toggles.FindKey = false
 						else 
 							log('[ 🔄 ]: Switching to guard team, please wait...')
 							if team ~= 'Bright blue' then
 								repeat
-									workspace.Remote.TeamEvent:FireServer('Bright blue') 
+									Remotes.TeamEvent:FireServer('Bright blue') 
 									RunService.Heartbeat:Wait()
 								until fag.TeamColor.Name == 'Bright blue' or not Toggles.FindKey
 							end
 							repeat
 								goToCF(CFrame.new(-365.976562, 84.2401199, 1987.99207))
 								fag.Character:BreakJoints()
-								workspace.Remote.loadchar:InvokeServer()
+								Remotes.loadchar:InvokeServer()
 								RunService.Heartbeat:Wait()
 							until workspace.Prison_ITEMS.single:FindFirstChild('Key card') or not Toggles.FindKey
 							if Toggles.FindKey then
-								workspace.Remote.loadchar:InvokeServer(nil, team)
+								Remotes.loadchar:InvokeServer(nil, team)
 								goToCF(plrCF)
 								workspace.CurrentCamera.CFrame = camCF
-								workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
+								Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
 								log('[ ✅ ]: Obtained key card')
 								Toggles.FindKey = false
 							end
@@ -3018,28 +3106,28 @@ local function executeCmd(cmd, args)
 				if not fag.Character:FindFirstChild('Key card') and not fag.Backpack:FindFirstChild('Key card') then
 					Toggles.FindKey = true
 					if workspace.Prison_ITEMS.single:FindFirstChild('Key card') then
-						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
+						Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
 						log('[ ✅ ]: Obtained key card') 
 						Toggles.FindKey = false
 					else 
 						log('[ 🔄 ]: Switching to guard team, please wait...')
 						if team ~= 'Bright blue' then
 							repeat
-								workspace.Remote.TeamEvent:FireServer('Bright blue') 
+								Remotes.TeamEvent:FireServer('Bright blue') 
 								RunService.Heartbeat:Wait()
 							until fag.TeamColor.Name == 'Bright blue' or not Toggles.FindKey
 						end
 						repeat
 							goToCF(CFrame.new(-365.976562, 84.2401199, 1987.99207))
 							fag.Character:BreakJoints()
-							workspace.Remote.loadchar:InvokeServer()
+							Remotes.loadchar:InvokeServer()
 							RunService.Heartbeat:Wait()
 						until workspace.Prison_ITEMS.single:FindFirstChild('Key card') or not Toggles.FindKey
 						if Toggles.FindKey then
-							workspace.Remote.loadchar:InvokeServer(nil, team)
+							Remotes.loadchar:InvokeServer(nil, team)
 							goToCF(plrCF)
 							workspace.CurrentCamera.CFrame = camCF
-							workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
+							Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
 							log('[ ✅ ]: Obtained key card')
 							Toggles.FindKey = false
 						end
@@ -3051,7 +3139,7 @@ local function executeCmd(cmd, args)
 		if not Toggles.FindKey then
 			if not fag.Character:FindFirstChild('Key card') and not fag.Backpack:FindFirstChild('Key card') then
 				if workspace.Prison_ITEMS.single:FindFirstChild('Key card') then
-					workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
+					Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
 					log('[ ✅ ]: Obtained key card') 
 				else 
 					Toggles.FindKey = true
@@ -3059,7 +3147,7 @@ local function executeCmd(cmd, args)
 					repeat 
 						RunService.Heartbeat:Wait()
 					until workspace.Prison_ITEMS.single:FindFirstChild('Key card')
-					workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
+					Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Key card'].ITEMPICKUP)
 					log('[ ✅ ]: Obtained key card')
 					Toggles.FindKey = false
 				end
@@ -3074,11 +3162,11 @@ local function executeCmd(cmd, args)
 		if not fag.Character:FindFirstChild('Crude Knife') and not fag.Backpack:FindFirstChild('Crude Knife') then
 			local team = getTeam()
 			if team ~= 'Bright blue' then
-				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Crude Knife'].ITEMPICKUP)
+				Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Crude Knife'].ITEMPICKUP)
 			else 
-				workspace.Remote.TeamEvent:FireServer('Medium stone grey')
-				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Crude Knife'].ITEMPICKUP)
-				workspace.Remote.TeamEvent:FireServer('Bright blue')
+				Remotes.TeamEvent:FireServer('Medium stone grey')
+				Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Crude Knife'].ITEMPICKUP)
+				Remotes.TeamEvent:FireServer('Bright blue')
 			end
 			log('[ ✅ ]: Obtained crude knife')
 		else log('[ ❌ ]: You already obtained a knife') end
@@ -3087,11 +3175,11 @@ local function executeCmd(cmd, args)
 		if not fag.Character:FindFirstChild('Crude Knife') and not fag.Backpack:FindFirstChild('Crude Knife') then
 			local team = getTeam()
 			if team ~= 'Bright blue' then
-				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Crude Knife'].ITEMPICKUP)
+				Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Crude Knife'].ITEMPICKUP)
 			else 
-				workspace.Remote.TeamEvent:FireServer('Medium stone grey')
-				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Crude Knife'].ITEMPICKUP)
-				workspace.Remote.TeamEvent:FireServer('Bright blue')
+				Remotes.TeamEvent:FireServer('Medium stone grey')
+				Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Crude Knife'].ITEMPICKUP)
+				Remotes.TeamEvent:FireServer('Bright blue')
 			end
 			obtained = true
 		end
@@ -3128,11 +3216,11 @@ local function executeCmd(cmd, args)
 		if not fag.Character:FindFirstChild('Hammer') and not fag.Backpack:FindFirstChild('Hammer') then
 			local team = getTeam()
 			if team ~= 'Bright blue' then
-				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Hammer'].ITEMPICKUP)
+				Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Hammer'].ITEMPICKUP)
 			else 
-				workspace.Remote.TeamEvent:FireServer('Medium stone grey')
-				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Hammer'].ITEMPICKUP)
-				workspace.Remote.TeamEvent:FireServer('Bright blue')
+				Remotes.TeamEvent:FireServer('Medium stone grey')
+				Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Hammer'].ITEMPICKUP)
+				Remotes.TeamEvent:FireServer('Bright blue')
 			end
 			log('[ ✅ ]: Obtained a hammer')
 		else log('[ ❌ ]: You already obtained a hammer') end
@@ -3168,23 +3256,23 @@ local function executeCmd(cmd, args)
 		else log('[ ❌ ]: You already obtained baseball bat') end
 	elseif cmd == 'm9' or cmd == 'pistol' then
 		if not fag.Character:FindFirstChild('M9') and not fag.Backpack:FindFirstChild('M9') then
-			workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['M9'].ITEMPICKUP)
+			Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['M9'].ITEMPICKUP)
 			log('[ ✅ ]: Obtained M9')
 		else log('[ ❌ ]: You already obtained M9') end
 	elseif cmd == 'remington870' or cmd == 'remington' or cmd == 'reming' or cmd == 'shotgun' then
 		if not fag.Character:FindFirstChild('Remington 870') and not fag.Backpack:FindFirstChild('Remington 870') then
-			workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+			Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
 			log('[ ✅ ]: Obtained Remington 870')
 		else log('[ ❌ ]: You already obtained Remington 870') end
 	elseif cmd == 'ak47' or cmd == 'ak' then
 		if not fag.Character:FindFirstChild('AK-47') and not fag.Backpack:FindFirstChild('AK-47') then
-			workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['AK-47'].ITEMPICKUP)
+			Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['AK-47'].ITEMPICKUP)
 			log('[ ✅ ]: Obtained AK-47')
 		else log('[ ❌ ]: You already obtained AK-47') end
 	elseif cmd == 'm4a1' or cmd == 'm4' or cmd == 'ar' then
 		if not fag.Character:FindFirstChild('M4A1') and not fag.Backpack:FindFirstChild('M4A1') then
 			if SWAT then
-				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['M4A1'].ITEMPICKUP)
+				Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['M4A1'].ITEMPICKUP)
 				log('[ ✅ ]: Obtained M4A1')
 			else 
 				notif('You need the SWAT gamepass to use this command')  
@@ -3202,16 +3290,16 @@ local function executeCmd(cmd, args)
 						return char:FindFirstChild(n) or fag.Backpack:FindFirstChild(n)
 					end
 
-					if not findTool('M9') then workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['M9'].ITEMPICKUP) end
-					if not findTool('Remington 870') then workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP) end
-					if not findTool('AK-47') then workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['AK-47'].ITEMPICKUP) end
-					if SWAT and not findTool('M4A1') then workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['M4A1'].ITEMPICKUP) end
+					if not findTool('M9') then Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['M9'].ITEMPICKUP) end
+					if not findTool('Remington 870') then Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP) end
+					if not findTool('AK-47') then Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['AK-47'].ITEMPICKUP) end
+					if SWAT and not findTool('M4A1') then Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['M4A1'].ITEMPICKUP) end
 					local team = getTeam()
 					if not findTool('Hammer') or not findTool('Crude Knife') then
-						if team == 'Bright blue' then workspace.Remote.TeamEvent:FireServer('Medium stone grey') end
-						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Hammer'].ITEMPICKUP) 
-						workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Crude Knife'].ITEMPICKUP) 
-						if team == 'Bright blue' then workspace.Remote.TeamEvent:FireServer(team) end
+						if team == 'Bright blue' then Remotes.TeamEvent:FireServer('Medium stone grey') end
+						Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Hammer'].ITEMPICKUP) 
+						Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single['Crude Knife'].ITEMPICKUP) 
+						if team == 'Bright blue' then Remotes.TeamEvent:FireServer(team) end
 					end
 
 					local reming = findTool('Remington 870')
@@ -3242,7 +3330,7 @@ local function executeCmd(cmd, args)
 						knife.Grip = CFrame.new(.84,-14,1.5) * CFrame.Angles(math.rad(90), 0, 0)
 					end
 				end)
-			RunService.Heartbeat:Wait()
+				RunService.Heartbeat:Wait()
 			until not Toggles.Penis
 		else log('[ ❌ ]: Already enabled penis') end
 	elseif cmd == 'nopp' or cmd == 'unpp' or cmd == 'nowilly' or cmd == 'unwilly' then
@@ -3258,17 +3346,17 @@ local function executeCmd(cmd, args)
 			if SWAT then
 				local team = getTeam()
 				if team == 'Bright blue' then
-					workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Riot Shield'].ITEMPICKUP)
+					Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Riot Shield'].ITEMPICKUP)
 				else 
 					repeat
-						workspace.Remote.TeamEvent:FireServer('Bright blue') 
+						Remotes.TeamEvent:FireServer('Bright blue') 
 						RunService.Heartbeat:Wait()
 					until getTeam() == 'Bright blue'
-					workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Riot Shield'].ITEMPICKUP)
+					Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Riot Shield'].ITEMPICKUP)
 					if team ~= 'Really red' then
-						workspace.Remote.TeamEvent:FireServer(team)
+						Remotes.TeamEvent:FireServer(team)
 					else
-						workspace.Remote.loadchar:InvokeServer(nil, team)
+						Remotes.loadchar:InvokeServer(nil, team)
 						goToCF(plrCF)
 						workspace.CurrentCamera.CFrame = camCF 
 					end
@@ -3281,11 +3369,11 @@ local function executeCmd(cmd, args)
 		else log('[ ❌ ]: You already obtained Riot Shield') end
 	elseif cmd == 'gun' or cmd == 'guns' then
 		local inv = #fag.Backpack:GetChildren()
-		workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['M9'].ITEMPICKUP)
-		workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
-		workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['AK-47'].ITEMPICKUP)
+		Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['M9'].ITEMPICKUP)
+		Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+		Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['AK-47'].ITEMPICKUP)
 		if SWAT then
-			workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['M4A1'].ITEMPICKUP)
+			Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['M4A1'].ITEMPICKUP)
 		end
 		if #fag.Backpack:GetChildren() ~= inv then
 			log('[ ✅ ]: Obtained all guns')
@@ -3295,11 +3383,11 @@ local function executeCmd(cmd, args)
 			Toggles.AutoGuns = true
 			log('[ ✅ ]: Enabled auto guns')
 			repeat
-				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['M9'].ITEMPICKUP)
-				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
-				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['AK-47'].ITEMPICKUP)
+				Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['M9'].ITEMPICKUP)
+				Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
+				Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['AK-47'].ITEMPICKUP)
 				if SWAT then
-					workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['M4A1'].ITEMPICKUP)
+					Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['M4A1'].ITEMPICKUP)
 				end
 				RunService.Heartbeat:Wait()
 			until not Toggles.AutoGuns
@@ -3380,7 +3468,7 @@ local function executeCmd(cmd, args)
 								repeat RunService.Heartbeat:Wait() until not tool:FindFirstChild('Handle')
 								tool.Parent = fag.Character
 								tool:Destroy()
-								workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[tool.Name].ITEMPICKUP)
+								Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[tool.Name].ITEMPICKUP)
 								tool = fag.Backpack:FindFirstChild(tool.Name)
 								tool.Parent = fag.Character
 								req = require(tool.GunStates)
@@ -3413,7 +3501,7 @@ local function executeCmd(cmd, args)
 					repeat RunService.Heartbeat:Wait()until not tool:FindFirstChild('Handle')
 					tool.Parent = fag.Character
 					tool:Destroy()				
-					workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[tool.Name].ITEMPICKUP)
+					Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[tool.Name].ITEMPICKUP)
 					fag.Backpack[tool.Name].Parent = toolPar
 					log('[ ✅ ]: Disabled gun mods for '..tool.Name)
 				else log('[ ❌ ]: Already disabled gun mods for '..tool.Name) end
@@ -3462,7 +3550,7 @@ local function executeCmd(cmd, args)
 									repeat RunService.Heartbeat:Wait() until not tool:FindFirstChild('Handle')
 									tool.Parent = fag.Character
 									tool:Destroy()
-									workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[tool.Name].ITEMPICKUP)
+									Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[tool.Name].ITEMPICKUP)
 									tool = fag.Backpack:FindFirstChild(tool.Name)
 									tool.Parent = fag.Character
 									req = require(tool.GunStates)
@@ -3522,7 +3610,7 @@ local function executeCmd(cmd, args)
 										repeat RunService.Heartbeat:Wait() until not tool:FindFirstChild('Handle')
 										tool.Parent = fag.Character
 										tool:Destroy()
-										workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[tool.Name].ITEMPICKUP)
+										Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[tool.Name].ITEMPICKUP)
 										tool = fag.Backpack:FindFirstChild(tool.Name)
 										tool.Parent = fag.Character
 										req = require(tool.GunStates)
@@ -3557,7 +3645,7 @@ local function executeCmd(cmd, args)
 				repeat RunService.Heartbeat:Wait()until not tool:FindFirstChild('Handle')
 				tool.Parent = fag.Character
 				tool:Destroy()				
-				workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[tool.Name].ITEMPICKUP)
+				Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[tool.Name].ITEMPICKUP)
 				fag.Backpack[tool.Name].Parent = toolPar
 			end
 			for _, tool in pairs(fag.Backpack:GetChildren()) do
@@ -3567,7 +3655,7 @@ local function executeCmd(cmd, args)
 					repeat  RunService.Heartbeat:Wait() until not tool:FindFirstChild('Handle')
 					tool.Parent = fag.Character
 					tool:Destroy()				
-					workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[tool.Name].ITEMPICKUP)
+					Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[tool.Name].ITEMPICKUP)
 					fag.Backpack[tool.Name].Parent = toolPar
 				end
 			end
@@ -3584,7 +3672,7 @@ local function executeCmd(cmd, args)
 		else log('[ ❌ ]: Already teleported to the gate') end
 	elseif cmd == 'opengate' or cmd == 'openfrontgate' then
 		if not Toggles.GateOpen then
-			workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.buttons['Prison Gate']['Prison Gate'])
+			Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.buttons['Prison Gate']['Prison Gate'])
 			spawn(function()
 				Toggles.GateOpen = true
 				wait(13)
@@ -3935,6 +4023,7 @@ end))
 addFunction(CmdGUI:GetPropertyChangedSignal('Parent'):Connect(function()
 	LoopKilled = {}
 	LoopTased = {}
+	Aura = {}
 	Whitelisted = {}
 	ModdedGuns = {}
 	Toggles = {}
