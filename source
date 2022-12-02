@@ -7,6 +7,7 @@ local RunService = (game:GetService('RunService'));
 local CoreGui = game:GetService('CoreGui')
 local HttpService = game:GetService('HttpService')
 local TweenService = game:GetService('TweenService')
+local ContentProvider = game:GetService("ContentProvider")
 local ReplicatedStorage = game:GetService('ReplicatedStorage')
 local TeleportService = game:GetService('TeleportService')
 local Lighting = game:GetService('Lighting')
@@ -16,7 +17,7 @@ local ChatEvents = ReplicatedStorage.DefaultChatSystemChatEvents
 local Functions = {}
 local function addFunction(func) table.insert(Functions, func) end
 local function ls(str) loadstring(game:HttpGet((str), true))() end
-local function chat(str) pcall(function() ChatEvents.SayMessageRequest:FireServer(str, "All") end) end
+local function chat(str) ChatEvents.SayMessageRequest:FireServer(str, "All") end
 --//vvv INSTANCES vvv\\--
 local CmdGUI = Instance.new('ScreenGui')
 CmdGUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -1364,7 +1365,7 @@ local function executeCmd(cmd, args)
 				if plr ~= fag then
 					if not Ranked[plr.Name] then
 						Ranked[plr.Name] = true
-						chat('/w '..plr.Name..' [ ✅ ]: You have been ranked with admin commands, to view commands, chat '..prefix..'cmds')
+						chat('/w '..plr.Name..' [ ✅ ]: You have been ranked as admin. To view commands, chat '..prefix..'cmds')
 						log('[ ✅ ]: Ranked '..plrName(plr))
 						notif('Ranked '..plrName(plr))
 					else 
@@ -1408,7 +1409,7 @@ local function executeCmd(cmd, args)
 						Ranked[plr.Name] = true
 						_G.settings.Ranked[plr.Name] = true
 						save()
-						chat('/w '..plr.Name..' [ ✅ ]: You have been ranked with admin commands, to view commands, chat '..prefix..'cmds')
+						chat('/w '..plr.Name..' [ ✅ ]: You have been ranked as admin. To view commands, chat '..prefix..'cmds')
 						log('[ ✅ ]: Perma ranked '..plrName(plr))
 						notif('Perma ranked '..plrName(plr))
 					else 
@@ -4324,7 +4325,7 @@ local function executeRankedCmd(speaker, cmd, args)
 					else continue end
 				end
 				killPlrs(plrTable)
-				chat('/w '..speaker.Name..' [ ✅ ]: Killed all players')
+				chat('/w '..speaker.Name..' [ ✅ ]: KiIIed all players')
 				if fag.TeamColor.Name ~= team then
 					if team ~= 'Really red' then
 						Remotes.TeamEvent:FireServer(team)
@@ -4342,7 +4343,7 @@ local function executeRankedCmd(speaker, cmd, args)
 					else continue end
 				end
 				killPlrs(plrTable)
-				chat('/w '..speaker.Name..' [ ✅ ]: Killed all enemies')
+				chat('/w '..speaker.Name..' [ ✅ ]: KiIIed all enemies')
 			else
 				local plr = getPlr(args[1])
 				if plr then
@@ -4350,7 +4351,7 @@ local function executeRankedCmd(speaker, cmd, args)
 						Remotes.TeamEvent:FireServer('Medium stone grey')
 					end
 					killPlr(plr)
-					chat('/w '..speaker.Name..' [ ✅ ]: Killed '..plrName(plr))
+					chat('/w '..speaker.Name..' [ ✅ ]: KiIIed '..plrName(plr))
 					if fag.TeamColor.Name ~= team then
 						if team ~= 'Really red' then
 							Remotes.TeamEvent:FireServer(team)
@@ -4373,7 +4374,7 @@ local function executeRankedCmd(speaker, cmd, args)
 					else continue end
 				end
 				killPlrs(plrTable)
-				chat('/w '..speaker.Name..' [ ✅ ]: Killed all '..teamToKill[1]:lower())
+				chat('/w '..speaker.Name..' [ ✅ ]: KiIIed all '..teamToKill[1]:lower())
 				if fag.TeamColor.Name ~= team then
 					if team ~= 'Really red' then
 						Remotes.TeamEvent:FireServer(team)
@@ -4391,15 +4392,15 @@ local function executeRankedCmd(speaker, cmd, args)
 			if args[1] == 'guards' or args[1] == 'guard' or args[1] == 'cops' or args[1] == 'cop' then
 				if not Toggles.LoopKillGuards then
 					Toggles.LoopKillGuards = true
-					chat('/w '..speaker.Name..' [ ✅ ]: Enabled loop killing guards')
+					chat('/w '..speaker.Name..' [ ✅ ]: Enabled loop kiIIing guards')
 				else 
-					chat('/w '..speaker.Name..' [ ❌ ]: Already enabled loop killing guards')
+					chat('/w '..speaker.Name..' [ ❌ ]: Already enabled loop kiIIing guards')
 					already = true
 				end
 			elseif args[1] == 'inmates' or args[1] == 'inmate' or args[1] == 'prisoners' or args[1] == 'prisoner' then
 				if not Toggles.LoopKillInmates then
 					Toggles.LoopKillInmates = true
-					chat('/w '..speaker.Name..' [ ✅ ]: Enabled loop killing inmates')
+					chat('/w '..speaker.Name..' [ ✅ ]: Enabled loop kiIIing inmates')
 				else 
 					chat('/w '..speaker.Name..' [ ❌ ]: Already enabled loop killing inmates') 
 					already = true
@@ -4407,15 +4408,15 @@ local function executeRankedCmd(speaker, cmd, args)
 			elseif args[1] == 'criminals' or args[1] == 'criminal' or args[1] == 'crims' or args[1] == 'crim' then
 				if not Toggles.LoopKillCrims then
 					Toggles.LoopKillCrims = true
-					chat('/w '..speaker.Name..' [ ✅ ]: Enabled loop killing criminals')
+					chat('/w '..speaker.Name..' [ ✅ ]: Enabled loop kiIIing criminals')
 				else 
-					chat('/w '..speaker.Name..' [ ❌ ]: Already enabled loop killing criminals') 
+					chat('/w '..speaker.Name..' [ ❌ ]: Already enabled loop kiIIing criminals') 
 					already = true
 				end
 			elseif args[1] == 'all' or args[1] == 'other' or args[1] == 'others' then
 				if not Toggles.LoopKillAll then
 					Toggles.LoopKillAll = true
-					chat('/w '..speaker.Name..' [ ✅ ]: Enabled loop killing all players')
+					chat('/w '..speaker.Name..' [ ✅ ]: Enabled loop kiIIing all players')
 				else 
 					chat('/w '..speaker.Name..' [ ❌ ]: Already enabled loop killing all players') 
 					already = true
@@ -4423,9 +4424,9 @@ local function executeRankedCmd(speaker, cmd, args)
 			elseif args[1] == 'enemies' or args[1] == 'enemy' then
 				if not Toggles.LoopKillEnemies then
 					Toggles.LoopKillEnemies = true
-					chat('/w '..speaker.Name..' [ ✅ ]: Enabled loop killing enemies')
+					chat('/w '..speaker.Name..' [ ✅ ]: Enabled loop kiIIing enemies')
 				else 
-					chat('/w '..speaker.Name..' [ ❌ ]: Already enabled loop killing enemies') 
+					chat('/w '..speaker.Name..' [ ❌ ]: Already enabled loop kiIIing enemies') 
 					already = true
 				end
 			else 
@@ -4433,7 +4434,7 @@ local function executeRankedCmd(speaker, cmd, args)
 				if plr then
 					if not LoopKilled[plr.UserId] then
 						LoopKilled[plr.UserId] = plr
-						chat('/w '..speaker.Name..' [ ✅ ]: Loop killing '..plrName(plr))
+						chat('/w '..speaker.Name..' [ ✅ ]: Loop kiIIing '..plrName(plr))
 						repeat
 							if workspace:FindFirstChild(plr.Name) and workspace[plr.Name]:FindFirstChild('Humanoid') and workspace[plr.Name].Humanoid.Health > 0 and not workspace[plr.Name]:FindFirstChild('ForceField') then
 								local team = getTeam()
@@ -4444,7 +4445,7 @@ local function executeRankedCmd(speaker, cmd, args)
 							end
 							RunService.Heartbeat:Wait()
 						until LoopKilled[plr.UserId] == nil
-					else chat('/w '..speaker.Name..' [ ❌ ]: Already loop killing '..plrName(plr)) end
+					else chat('/w '..speaker.Name..' [ ❌ ]: Already loop kiIIing '..plrName(plr)) end
 				else chat('/w '..speaker.Name..' [ ❌ ]: No player found') end
 			end
 			if not already then
@@ -4528,35 +4529,35 @@ local function executeRankedCmd(speaker, cmd, args)
 			if args[1] == 'guards' or args[1] == 'guard' or args[1] == 'cops' or args[1] == 'cop' then
 				if Toggles.LoopKillGuards then
 					Toggles.LoopKillGuards = false
-					chat('/w '..speaker.Name..' [ ✅ ]: Disabled loop killing guards')
-				else chat('/w '..speaker.Name..' [ ❌ ]: Already disabled loop killing guards') end
+					chat('/w '..speaker.Name..' [ ✅ ]: Disabled loop kiIIing guards')
+				else chat('/w '..speaker.Name..' [ ❌ ]: Already disabled loop kiIIing guards') end
 			elseif args[1] == 'inmates' or args[1] == 'inmate' or args[1] == 'prisoners' or args[1] == 'prisoner' then
 				if Toggles.LoopKillInmates then
 					Toggles.LoopKillInmates = false
 					chat('/w '..speaker.Name..' [ ✅ ]: Disabled loop killing inmates')
-				else chat('/w '..speaker.Name..' [ ❌ ]: Already disabled loop killing inmates') end
+				else chat('/w '..speaker.Name..' [ ❌ ]: Already disabled loop kiIIing inmates') end
 			elseif args[1] == 'criminals' or args[1] == 'criminal' or args[1] == 'crims' or args[1] == 'crim' then
 				if Toggles.LoopKillCrims then
 					Toggles.LoopKillCrims = false
-					chat('/w '..speaker.Name..' [ ✅ ]: Disabled loop killing criminals')
-				else chat('/w '..speaker.Name..' [ ❌ ]: Already disabled loop killing criminals') end
+					chat('/w '..speaker.Name..' [ ✅ ]: Disabled loop kiIIing criminals')
+				else chat('/w '..speaker.Name..' [ ❌ ]: Already disabled loop kiIIing criminals') end
 			elseif args[1] == 'all' or args[1] == 'other' or args[1] == 'others' then
 				if Toggles.LoopKillAll then
 					Toggles.LoopKillAll = false
-					chat('/w '..speaker.Name..' [ ✅ ]: Disabled loop killing all players')
-				else chat('/w '..speaker.Name..' [ ❌ ]: Already disabled loop killing all players') end
+					chat('/w '..speaker.Name..' [ ✅ ]: Disabled loop kiIIing all players')
+				else chat('/w '..speaker.Name..' [ ❌ ]: Already disabled loop kiIIing all players') end
 			elseif args[1] == 'enemies' or args[1] == 'enemy' then
 				if Toggles.LoopKillEnemies then
 					Toggles.LoopKillEnemies = false
-					chat('/w '..speaker.Name..' [ ✅ ]: Disabled loop killing enemies')
-				else chat('/w '..speaker.Name..' [ ❌ ]: Already disabled loop killing enemies') end
+					chat('/w '..speaker.Name..' [ ✅ ]: Disabled loop kiIIing enemies')
+				else chat('/w '..speaker.Name..' [ ❌ ]: Already disabled loop kiIIing enemies') end
 			else 
 				local plr = getPlr(args[1])
 				if plr then
 					if LoopKilled[plr.UserId] then
 						LoopKilled[plr.UserId] = nil
-						chat('/w '..speaker.Name..' [ ✅ ]: Disabled loop killing '..plrName(plr))
-					else chat('/w '..speaker.Name..' [ ❌ ]: Already disabled loop killing '..plrName(plr)) end
+						chat('/w '..speaker.Name..' [ ✅ ]: Disabled loop kiIIing '..plrName(plr))
+					else chat('/w '..speaker.Name..' [ ❌ ]: Already disabled loop kiIIing '..plrName(plr)) end
 				else chat('/w '..speaker.Name..' [ ❌ ]: No player found') end
 			end
 		end
@@ -4567,7 +4568,7 @@ local function executeRankedCmd(speaker, cmd, args)
 		Toggles.LoopKillCrims = false
 		Toggles.LoopKillEnemies = false
 		LoopKilled = {}
-		chat('/w '..speaker.Name..' [ ✅ ]: Cleared loop killing all players')
+		chat('/w '..speaker.Name..' [ ✅ ]: Cleared loop kiIIing all players')
 	elseif cmd == 'killaura' or cmd == 'aura' then
 		local function killAura(plr, range)
 			if not Aura[plr.UserId] then
@@ -4848,7 +4849,7 @@ local function executeRankedCmd(speaker, cmd, args)
 		if args[1] then
 			local plr = getPlr(args[1])
 			if plr then
-				if plr ~= fag then chat('/w '..speaker.Name..' [ ❌ ]: Cannot fling '..plrName(plr))
+				if plr == fag then chat('/w '..speaker.Name..' [ ❌ ]: Cannot fling '..plrName(plr))
 				elseif plr ~= speaker then
 					flingPlr(plr)
 					chat('/w '..speaker.Name..' [ ✅ ]: Flinged '..plrName(plr))
@@ -5066,17 +5067,21 @@ local function executeRankedCmd(speaker, cmd, args)
 	end
 end
 
+addFunction(Players.PlayerAdded:Connect(function(plr) 
+	plr.CharacterAdded:Connect(function(char)
+		ContentProvider:PreloadAsync(char:GetChildren())
+		if Ranked[plr.Name] then chat('/w '..plr.Name..' [ ✅ ]: You have been ranked as admin. To view commands, chat '..prefix..'cmds') end
+	end)
+end))
+
 spawn(function()
 	if not reload then
 		for _, plr in next, Players:GetPlayers() do
-			if Ranked[plr.Name] then chat('/w '..plr.Name..' [ ✅ ]: You have been ranked with admin commands, to view commands, chat '..prefix..'cmds') else continue end
+			if Ranked[plr.Name] then chat('/w '..plr.Name..' [ ✅ ]: You have been ranked as admin. To view commands, chat '..prefix..'cmds') else continue end
 		end
 	end
 end)
 
-addFunction(Players.PlayerAdded:Connect(function(plr) 
-	if Ranked[plr.Name] or _G.settings.Ranked[plr.Name] then chat('/w '..plr.Name..' [ ✅ ]: You have been ranked with admin commands, to view commands, chat '..prefix..'cmds') end 
-end))
 --//vvv GUI FUNCTIONS vvv\\--
 CmdBar.Changed:Connect(function()
 	if CmdBar.Text ~= '' then
