@@ -1,5 +1,5 @@
 # Ymir Admin
-![preview](https://user-images.githubusercontent.com/44597465/202852887-0cae6644-6e70-4bc5-8181-9fe291edbc57.png)
+![preview](https://user-images.githubusercontent.com/44597465/205277020-d9eb92a8-3ff5-4e25-90f0-076405fc4a26.png)
 
 The best admin commands script for Prison Life with over 100 commands.
 
