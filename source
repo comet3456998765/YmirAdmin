@@ -5074,7 +5074,9 @@ spawn(function()
 	end
 end)
 
-addFunction(Players.PlayerAdded:Connect(function(plr) if Ranked[plr.Name] then chat('/w '..plr.Name..' [ ✅ ]: You have been ranked with admin commands, to view commands, chat '..prefix..'cmds') end end))
+addFunction(Players.PlayerAdded:Connect(function(plr) 
+	if Ranked[plr.Name] or _G.settings.Ranked[plr.Name] then chat('/w '..plr.Name..' [ ✅ ]: You have been ranked with admin commands, to view commands, chat '..prefix..'cmds') end 
+end))
 --//vvv GUI FUNCTIONS vvv\\--
 CmdBar.Changed:Connect(function()
 	if CmdBar.Text ~= '' then
