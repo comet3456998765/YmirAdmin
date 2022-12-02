@@ -924,8 +924,8 @@ end
 
 local function bringPlr(plr, cf)
 	if not plr then return end
+	local position = getPos()
 	pcall(function()
-		local position = getPos()
 		Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['M9'].ITEMPICKUP)
 		local char = fag.Character
 		char.Humanoid.Name = 'fuck'
@@ -2185,7 +2185,7 @@ local function executeCmd(cmd, args)
 				if args[2] then
 					if tonumber(args[2]) then
 						range = tonumber(args[2])
-						if range < 0 or range >= 20 then
+						if range < 0 or range > 20 then
 							log('[ ❌ ]: Range must be between 1-20')
 							Return = true
 							return 
@@ -2203,7 +2203,7 @@ local function executeCmd(cmd, args)
 				local plr 
 				if tonumber(args[1]) then
 					range = tonumber(args[1])
-					if range < 0 or range >= 20 then
+					if range < 0 or range > 20 then
 						log('[ ❌ ]: Range must be between 1-20')
 						Return = true
 						return 
@@ -2212,8 +2212,11 @@ local function executeCmd(cmd, args)
 					if args[2] then
 						plr = getPlr(args[2])
 					else 
-						log('[ ✅ ]: Enabled kill aura (Range: '..range..')')
-						killAura(nil, range) 
+						if not Toggles.KillAura then
+							Toggles.KillAura = true
+							log('[ ✅ ]: Enabled kill aura (Range: '..range..')')
+							killAura(nil, range) 
+						else log('[ ❌ ]: Already enabled kill aura') end
 						Return = true
 						return 
 					end
@@ -2222,7 +2225,7 @@ local function executeCmd(cmd, args)
 					if args[2] then
 						if tonumber(args[2]) then
 							range = tonumber(args[2])
-							if range < 0 or range >= 20 then
+							if range < 0 or range > 20 then
 								log('[ ❌ ]: Range must be between 1-20')
 								Return = true
 								return 
@@ -2292,7 +2295,7 @@ local function executeCmd(cmd, args)
 						until not plr or plr.TeamColor.Name == 'Really red'
 					else continue end
 				end
-				log('[ ✅ ]: Made all players criminals...')
+				log('[ ✅ ]: Made all players criminals')
 			else 
 				local plr = getPlr(args[1])
 				if plr then
@@ -2466,7 +2469,7 @@ local function executeCmd(cmd, args)
 		local team = getTeam()
 		if args[1] then
 			if args[1] == 'all' or args[1] == 'other' or args[1] == 'others' then
-				log('[ ✅ ]: Making all players criminals...')
+				log('[ ✅ ]: Making all players criminals')
 				for _, plr in ipairs(Players:GetChildren()) do
 					if not Whitelisted[plr.Name] and plr ~= fag and plr.TeamColor.Name ~= 'Really red' then
 						repeat
@@ -3245,6 +3248,8 @@ local function executeCmd(cmd, args)
 							goTo(plr)
 							RunService.Heartbeat:Wait()
 						until not plr or tool.Parent ~= fag.Character
+						wait(.5)
+						goToCF(position)
 						Remotes.loadchar:InvokeServer()
 						goToCF(position)
 						log('[ ✅ ]: Gave key card to '..plrName(plr))
@@ -4529,35 +4534,35 @@ local function executeRankedCmd(speaker, cmd, args)
 			if args[1] == 'guards' or args[1] == 'guard' or args[1] == 'cops' or args[1] == 'cop' then
 				if Toggles.LoopKillGuards then
 					Toggles.LoopKillGuards = false
-					chat('/w '..speaker.Name..' [ ✅ ]: Disabled loop kiIIing guards')
+					chat('/w '..speaker.Name..' [ ✅ ]: Disabled Ioop kiIIing guards')
 				else chat('/w '..speaker.Name..' [ ❌ ]: Already disabled loop kiIIing guards') end
 			elseif args[1] == 'inmates' or args[1] == 'inmate' or args[1] == 'prisoners' or args[1] == 'prisoner' then
 				if Toggles.LoopKillInmates then
 					Toggles.LoopKillInmates = false
-					chat('/w '..speaker.Name..' [ ✅ ]: Disabled loop killing inmates')
+					chat('/w '..speaker.Name..' [ ✅ ]: Disabled Ioop killing inmates')
 				else chat('/w '..speaker.Name..' [ ❌ ]: Already disabled loop kiIIing inmates') end
 			elseif args[1] == 'criminals' or args[1] == 'criminal' or args[1] == 'crims' or args[1] == 'crim' then
 				if Toggles.LoopKillCrims then
 					Toggles.LoopKillCrims = false
-					chat('/w '..speaker.Name..' [ ✅ ]: Disabled loop kiIIing criminals')
+					chat('/w '..speaker.Name..' [ ✅ ]: Disabled Ioop kiIIing criminals')
 				else chat('/w '..speaker.Name..' [ ❌ ]: Already disabled loop kiIIing criminals') end
 			elseif args[1] == 'all' or args[1] == 'other' or args[1] == 'others' then
 				if Toggles.LoopKillAll then
 					Toggles.LoopKillAll = false
-					chat('/w '..speaker.Name..' [ ✅ ]: Disabled loop kiIIing all players')
+					chat('/w '..speaker.Name..' [ ✅ ]: Disabled Ioop kiIIing all players')
 				else chat('/w '..speaker.Name..' [ ❌ ]: Already disabled loop kiIIing all players') end
 			elseif args[1] == 'enemies' or args[1] == 'enemy' then
 				if Toggles.LoopKillEnemies then
 					Toggles.LoopKillEnemies = false
-					chat('/w '..speaker.Name..' [ ✅ ]: Disabled loop kiIIing enemies')
+					chat('/w '..speaker.Name..' [ ✅ ]: Disabled Ioop kiIIing enemies')
 				else chat('/w '..speaker.Name..' [ ❌ ]: Already disabled loop kiIIing enemies') end
 			else 
 				local plr = getPlr(args[1])
 				if plr then
 					if LoopKilled[plr.UserId] then
 						LoopKilled[plr.UserId] = nil
-						chat('/w '..speaker.Name..' [ ✅ ]: Disabled loop kiIIing '..plrName(plr))
-					else chat('/w '..speaker.Name..' [ ❌ ]: Already disabled loop kiIIing '..plrName(plr)) end
+						chat('/w '..speaker.Name..' [ ✅ ]: Disabled Ioop kiIIing '..plrName(plr))
+					else chat('/w '..speaker.Name..' [ ❌ ]: Already disabled Ioop kiIIing '..plrName(plr)) end
 				else chat('/w '..speaker.Name..' [ ❌ ]: No player found') end
 			end
 		end
@@ -4607,7 +4612,7 @@ local function executeRankedCmd(speaker, cmd, args)
 				if args[2] then
 					if tonumber(args[2]) then
 						range = tonumber(args[2])
-						if range < 0 or range >= 20 then
+						if range < 0 or range > 20 then
 							chat('/w '..speaker.Name..' [ ❌ ]: Range must be between 1-20')
 							Return = true
 							return 
@@ -4625,7 +4630,7 @@ local function executeRankedCmd(speaker, cmd, args)
 				local plr 
 				if tonumber(args[1]) then
 					range = tonumber(args[1])
-					if range < 0 or range >= 20 then
+					if range < 0 or range > 20 then
 						chat('/w '..speaker.Name..' [ ❌ ]: Range must be between 1-20')
 						Return = true
 						return 
@@ -4634,8 +4639,10 @@ local function executeRankedCmd(speaker, cmd, args)
 					if args[2] then
 						plr = getPlr(args[2])
 					else 
-						chat('/w '..speaker.Name..' [ ✅ ]: Enabled kill aura (Range: '..range..')')
-						killAura(nil, range) 
+						if not Aura[speaker.UserId] then
+							chat('/w '..speaker.Name..' [ ✅ ]: Enabled kill aura (Range: '..range..')')
+							killAura(speaker, range)
+						else chat('/w '..speaker.Name..' [ ❌ ]: Already enabled kill aura') end
 						Return = true
 						return 
 					end
@@ -4644,7 +4651,7 @@ local function executeRankedCmd(speaker, cmd, args)
 					if args[2] then
 						if tonumber(args[2]) then
 							range = tonumber(args[2])
-							if range < 0 or range >= 20 then
+							if range < 0 or range > 20 then
 								chat('/w '..speaker.Name..' [ ❌ ]: Range must be between 1-20')
 								Return = true
 								return 
@@ -4697,11 +4704,11 @@ local function executeRankedCmd(speaker, cmd, args)
 						until not plr or plr.TeamColor.Name == 'Really red'
 					else continue end
 				end
-				chat('/w '..speaker.Name..' [ ✅ ]: Made all players criminals...')
+				chat('/w '..speaker.Name..' [ ✅ ]: Made all players criminals')
 			else 
 				local plr = getPlr(args[1])
 				if plr then
-					if plr ~= fag then
+					if plr ~= speaker then
 						if plr.TeamColor.Name ~= 'Really red' then
 							repeat 
 								bringPlr(plr, CFrame.new(-919, 96, 2138)) 
@@ -4761,11 +4768,11 @@ local function executeRankedCmd(speaker, cmd, args)
 						until not plr or plr.TeamColor.Name == 'Really red'
 					else continue end
 				end
-				chat('/w '..speaker.Name..' [ ✅ ]: Made all players criminals...')
+				chat('/w '..speaker.Name..' [ ✅ ]: Made all players criminals')
 			else 
 				local plr = getPlr(args[1])
 				if plr then
-					if plr ~= fag then
+					if plr ~= speaker then
 						if plr.TeamColor.Name ~= 'Really red' then
 							repeat 
 								bringPlr(plr, CFrame.new(-919, 96, 2138)) 
@@ -4832,7 +4839,10 @@ local function executeRankedCmd(speaker, cmd, args)
 					goTo(speaker)
 					chat('/w '..speaker.Name..' [ ✅ ]: Brought '..plrName(fag))
 				elseif plr ~= speaker then
-					bringPlr(plr, plrPos)
+					repeat 
+						bringPlr(plr, plrPos)
+						RunService.Heartbeat:Wait()
+					until (plrPos.Position - plr.Character.HumanoidRootPart.Position).magnitude <= 5
 					chat('/w '..speaker.Name..' [ ✅ ]: Brought '..plrName(plr))
 				else chat('/w '..speaker.Name.."[ ❌ ]: You can't bring yourself") end
 			else chat('/w '..speaker.Name..' [ ❌ ]: No player found') end
@@ -4840,7 +4850,10 @@ local function executeRankedCmd(speaker, cmd, args)
 		if teamToBring and teamToBring ~= nil then
 			for _, plr in ipairs(Players:GetChildren()) do
 				if not Whitelisted[plr.Name] and workspace:FindFirstChild(plr.Name) and (not workspace[plr.Name].Humanoid.Sit) and plr ~= fag and plr.TeamColor.Name == teamToBring[2] then
-					bringPlr(plr, plrPos)
+					repeat 
+						bringPlr(plr, plrPos)
+						RunService.Heartbeat:Wait()
+					until (plrPos.Position - plr.Character.HumanoidRootPart.Position).magnitude <= 5
 				end
 			end
 			chat('/w '..speaker.Name..' [ ✅ ]: Brought all '..teamToBring[1]:lower())
@@ -4902,7 +4915,7 @@ local function executeRankedCmd(speaker, cmd, args)
 							repeat 
 								Remotes.TeamEvent:FireServer('Bright blue') 
 								RunService.Heartbeat:Wait()
-							until fag.TeamColor.Name == 'Bright blue' or not Toggles.FindKey
+							until fag.TeamColor.Name == 'Bright blue'
 						end
 						repeat
 							goToCF(CFrame.new(-365.976562, 84.2401199, 1987.99207))
@@ -4930,6 +4943,7 @@ local function executeRankedCmd(speaker, cmd, args)
 							goTo(plr)
 							RunService.Heartbeat:Wait()
 						until not plr or tool.Parent ~= fag.Character
+						wait(.5)
 						Remotes.loadchar:InvokeServer()
 						goToCF(position)
 						chat('/w '..speaker.Name..' [ ✅ ]: Gave key card to '..plrName(plr))
@@ -4945,7 +4959,7 @@ local function executeRankedCmd(speaker, cmd, args)
 					repeat 
 						Remotes.TeamEvent:FireServer('Bright blue') 
 						RunService.Heartbeat:Wait()
-					until fag.TeamColor.Name == 'Bright blue' or not Toggles.FindKey
+					until fag.TeamColor.Name == 'Bright blue'
 				end
 				repeat
 					goToCF(CFrame.new(-365.976562, 84.2401199, 1987.99207))
@@ -4972,6 +4986,8 @@ local function executeRankedCmd(speaker, cmd, args)
 				goTo(speaker)
 				RunService.Heartbeat:Wait()
 			until not speaker or tool.Parent ~= fag.Character
+			wait(.5)
+			goToCF(position)
 			Remotes.loadchar:InvokeServer()
 			goToCF(position)
 			chat('/w '..speaker.Name..' [ ✅ ]: Obtained key card')
@@ -5068,9 +5084,12 @@ local function executeRankedCmd(speaker, cmd, args)
 end
 
 addFunction(Players.PlayerAdded:Connect(function(plr) 
-	plr.CharacterAdded:Connect(function(char)
+	local counter = 0
+	local func
+	func = plr.CharacterAdded:Connect(function(char)
 		ContentProvider:PreloadAsync(char:GetChildren())
 		if Ranked[plr.Name] then chat('/w '..plr.Name..' [ ✅ ]: You have been ranked as admin. To view commands, chat '..prefix..'cmds') end
+		if counter > 0 then func:Disconnect() else counter = counter + 1 end
 	end)
 end))
 
