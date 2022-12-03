@@ -2522,7 +2522,7 @@ local function executeCmd(cmd, args)
 				Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['Remington 870'].ITEMPICKUP)
 				local tool = fag.Character:FindFirstChild('Remington 870') or fag.Backpack:FindFirstChild('Remington 870')
 				Toggles.Lag = true
-				log('Lagging server for '..args[1]..' seconds')
+				log('[ ✅ ]: Lagging server for '..args[1]..' seconds')
 				for i = 1, (tonumber(args[1])*3) do
 					if not Toggles.Lag then break end
 					local event = {
