@@ -940,16 +940,18 @@ local function bringPlr(plr, cf)
 		char.Humanoid.DisplayDistanceType = 'None'
 		local tool = fag.Backpack:FindFirstChild('M9') or fag.Character:FindFirstChild('M9')
 		tool.Parent = char
+		local counter = 0
 		repeat
+			counter = counter + 1
 			goTo(plr)
 			RunService.Heartbeat:Wait()
-		until not plr or tool.Parent ~= fag.Character
-		local counter = 0
+		until not plr or (tool.Parent ~= fag.Character and counter > 12)
+		counter = 0
 		repeat
 			counter = counter + 1
 			goToCF(cf)
 			RunService.Heartbeat:Wait()
-		until counter > 15
+		until counter > 12
 		Remotes.loadchar:InvokeServer()
 		goToCF(position)
 	end)
