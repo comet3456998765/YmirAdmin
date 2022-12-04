@@ -370,7 +370,7 @@ Cmd[#Cmd + 1] = {Name='unloopkill / unlk <plr / team / all>',Desc='Disables loop
 Cmd[#Cmd + 1] = {Name='clearloopkill / clearloopkills',Desc='Removes all loop kills'}
 Cmd[#Cmd + 1] = {Name='clickkill',Desc='Kills the player you click'}
 Cmd[#Cmd + 1] = {Name='noclickkill / unclickkill',Desc='Disables click kill'}
-Cmd[#Cmd + 1] = {Name='killaura / aura [range / plr] [range / plr]',Desc='Kills everyone who is near you or the player or sets kill aura range'}
+Cmd[#Cmd + 1] = {Name='killaura / aura [plr] [range]',Desc='Kills everyone who is near you or the player or sets kill aura range'}
 Cmd[#Cmd + 1] = {Name='nokillaura / noaura [plr]',Desc='Disables kill aura for you or the player'}
 Cmd[#Cmd + 1] = {Name='inmate / inmates',Desc='Join the inmate team'}
 Cmd[#Cmd + 1] = {Name='guard / guards',Desc='Join the guard team'}
@@ -441,7 +441,7 @@ Cmd[#Cmd + 1] = {Name='keycard / key [plr]',Desc='Finds for key card or you spaw
 Cmd[#Cmd + 1] = {Name='findkeycard / findkey ',Desc='Finds for a key card'}
 Cmd[#Cmd + 1] = {Name='unfindkeycard / unfindkey ',Desc='Stops finding for a key card'}
 Cmd[#Cmd + 1] = {Name='crudeknife / knife [plr]',Desc='Adds crude knife to your backpack or give it to a player'}
-Cmd[#Cmd + 1] = {Name='superknife / oneshotknife',Desc='Enables or adds super knife to your bacpack'}
+Cmd[#Cmd + 1] = {Name='superknife / oneshotknife',Desc='Enables or adds super knife to your backpack'}
 Cmd[#Cmd + 1] = {Name='unsuperknife / normalknife',Desc='Disables super knife'}
 Cmd[#Cmd + 1] = {Name='hammer [plr]',Desc='Adds hammer to your backpack or give it to a player'}
 Cmd[#Cmd + 1] = {Name='baseballbat / bat',Desc='Adds one shot bat to your backpack'}
@@ -3744,7 +3744,7 @@ local function executeCmd(cmd, args)
 			local handle = Instance.new('Part', tool)
 			handle.Name = 'Handle'
 			handle.Size = Vector3.new(0.4, 5, 0.4)
-			local mesh = Instance.new('SpecialMesh', handle)
+			local mesh = Instance.new('Mesh', handle)
 			mesh.MeshId = 'rbxassetid://1387483758'
 			local anim = Instance.new('Animation', tool)
 			anim.AnimationId = 'rbxassetid://218504594'
