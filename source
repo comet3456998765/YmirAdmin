@@ -3744,7 +3744,7 @@ local function executeCmd(cmd, args)
 			local handle = Instance.new('Part', tool)
 			handle.Name = 'Handle'
 			handle.Size = Vector3.new(0.4, 5, 0.4)
-			local mesh = Instance.new('Mesh', handle)
+			local mesh = Instance.new('SpecialMesh', handle)
 			mesh.MeshId = 'rbxassetid://1387483758'
 			local anim = Instance.new('Animation', tool)
 			anim.AnimationId = 'rbxassetid://218504594'
