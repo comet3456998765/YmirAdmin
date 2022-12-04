@@ -1,6 +1,6 @@
 --//vvv SERVICES vvv\\--
 if not game:IsLoaded() then game.Loaded:Wait() end
-local ver = '2.5.2'
+local ver = '2.5.3'
 local Players = game:GetService('Players')
 local UserInputService = game:GetService('UserInputService')
 local RunService = (game:GetService('RunService'));
@@ -2164,7 +2164,9 @@ local function executeCmd(cmd, args)
 				end
 			else 
 				local findPlr = getPlr(args[1])
-				if findPlr then plr = findPlr else
+				if findPlr then
+					if findPlr ~= user then plr = findPlr end
+				else
 					Return = true
 					log('[ ❌ ]: No player found')
 				end
@@ -3029,6 +3031,26 @@ local function executeCmd(cmd, args)
 					else log('[ ❌ ]: You are not loop bringing '..plrName(plr)) end
 				else log('[ ❌ ]: No player found') end
 			end
+		else 
+			if Toggles.LoopBringEnemies then
+				Toggles.LoopBringEnemies = false
+				log('[ ✅ ]: Disabled loop bringing')
+			elseif Toggles.LoopBringCrims then
+				Toggles.LoopBringCrims = false
+				log('[ ✅ ]: Disabled loop bringing')
+			elseif Toggles.LoopBringAll then
+				Toggles.LoopBringAll = false
+				log('[ ✅ ]: Disabled loop bringing')
+			elseif Toggles.LoopBringGuards then
+				Toggles.LoopBringGuards = false
+				log('[ ✅ ]: Disabled loop bringing')
+			elseif Toggles.LoopBringInmates then
+				Toggles.LoopBringInmates = false
+				log('[ ✅ ]: Disabled loop bringing')
+			elseif Bringing then
+				Bringing = nil
+				log('[ ✅ ]: Disabled loop bringing')
+			else log('[ ❌ ]: Already disabled loop bringing') end
 		end
 	elseif cmd == 'antibring' then
 		if not Toggles.AntiBring then
@@ -3037,21 +3059,22 @@ local function executeCmd(cmd, args)
 			repeat
 				pcall(function()
 					local arm = user.Character['Right Arm']
+					local hum = user.Character.Humanoid
 					if arm:FindFirstChild('RightGrip') and arm.RightGrip:IsA('Weld') then
 						local prt0 = arm.RightGrip.Part1.Parent
 						if prt0:IsA('Tool') then
 							for _, plr in next, Players:GetPlayers() do
 								if plr ~= user then
 									local plrArm = plr.Character['Right Arm']
-									if arm:FindFirstChild('RightGrip') and arm.RightGrip:IsA('Weld') then
-										local prt1 = arm.RightGrip.Part1.Parent
+									if plrArm:FindFirstChild('RightGrip') and plrArm.RightGrip:IsA('Weld') then
+										local prt1 = plrArm.RightGrip.Part1.Parent
 										if prt0 == prt1 then 
-											for _,v in next, arm:GetTouchingParts() do
-												if v == plrArm then 
-													prt0.Handle:Destroy()
-													prt0:Destroy()
-												else continue end
-											end
+											arm.RightGrip:Destroy()
+											plrArm.RightGrip:Destroy()
+											prt0.Handle:Destroy()
+											prt0:Destroy()
+											hum:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
+											hum:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
 										end
 									else continue end
 								else continue end
@@ -4950,7 +4973,12 @@ local function executeRankedCmd(speaker, cmd, args)
 				end
 			else 
 				local findPlr = getPlr(args[1])
-				if findPlr then plr = findPlr else
+				if findPlr then 
+					if findPlr == user then
+						Return = true
+						chat('/w '..speaker.Name..' [ ❌ ]: Cannot give aura to '..plrName(findPlr))
+					else plr = findPlr end
+				else
 					Return = true
 					chat('/w '..speaker.Name..' [ ❌ ]: No player found')
 				end
