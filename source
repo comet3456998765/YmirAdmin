@@ -1,6 +1,6 @@
 --//vvv SERVICES vvv\\--
 if not game:IsLoaded() then game.Loaded:Wait() end
-local ver = '2.5.1'
+local ver = '2.5.2'
 local Players = game:GetService('Players')
 local UserInputService = game:GetService('UserInputService')
 local RunService = (game:GetService('RunService'));
@@ -354,6 +354,8 @@ Cmd[#Cmd + 1] = {Name='tase / taze <plr / team / all>',Desc='Tases the player/te
 Cmd[#Cmd + 1] = {Name='looptase / looptaze <plr / team / all>',Desc='Loop tases the player/team/all if you choose one of them'}
 Cmd[#Cmd + 1] = {Name='unlooptase / unlooptaze <plr / team / all>',Desc='Disables loop tasing the player/team/all if you choose one of them'}
 Cmd[#Cmd + 1] = {Name='clearlooptase / clearlooptaze',Desc='Removes all loop tases'}
+Cmd[#Cmd + 1] = {Name='antitaser / taserbypass',Desc='Prevents you from being tased'}
+Cmd[#Cmd + 1] = {Name='unantitaser / notaserbypass',Desc='Disables taser bypass'}
 Cmd[#Cmd + 1] = {Name='arrest <plr / all>',Desc='Arrests the player or all criminals if you choose all'}
 Cmd[#Cmd + 1] = {Name='clickarrest',Desc="Arrests the player you click if you're near them"}
 Cmd[#Cmd + 1] = {Name='noclickarrest / unclickarrest',Desc='Disables click arrest'}
@@ -390,8 +392,8 @@ Cmd[#Cmd + 1] = {Name='lag <duration>',Desc='Lags for an amount of time'}
 Cmd[#Cmd + 1] = {Name='unlag',Desc='Stops lag'}
 Cmd[#Cmd + 1] = {Name='crash / crashserver',Desc='Lags and crashes the server'}
 Cmd[#Cmd + 1] = {Name='uncrash / uncrashserver',Desc="Stops crashing the server"}
-Cmd[#Cmd + 1] = {Name='fpslag / lagspike',Desc="Makes all players' FPS decrease (Requires SWAT gamepass)"}
-Cmd[#Cmd + 1] = {Name='unfpslag / unlagspike',Desc='Stops FPS spiking'}
+Cmd[#Cmd + 1] = {Name='dropfps / spikefps',Desc="Makes all players' FPS decrease (Requires SWAT gamepass)"}
+Cmd[#Cmd + 1] = {Name='undropfps / unspikefps',Desc='Stops FPS spiking'}
 Cmd[#Cmd + 1] = {Name='infstamina',Desc="Enables infinite stamina"}
 Cmd[#Cmd + 1] = {Name='uninfstamina / noinfstamina',Desc='Disables infinite stamina'}
 Cmd[#Cmd + 1] = {Name='earbang / earrape [intensity]',Desc='Makes the whole server except you hear a loud noise'}
@@ -416,7 +418,6 @@ Cmd[#Cmd + 1] = {Name='goto / to <plr>',Desc='Teleports you to the player'}
 Cmd[#Cmd + 1] = {Name='bring <plr / team / all>',Desc='Teleports the player/team/all/enemies to you if you choose one of them'}
 Cmd[#Cmd + 1] = {Name='loopbring <plr / team / all>',Desc='Loop teleports the player/team/all to your position'}
 Cmd[#Cmd + 1] = {Name='unloopbring <plr / team / all>',Desc='Stops loop bringing the player/team/all'}
-Cmd[#Cmd + 1] = {Name='clearloopbring / clearloopbrings',Desc='Removes all loop bringing'}
 Cmd[#Cmd + 1] = {Name='antibring',Desc='Prevents you from being brought by other exploiters'}
 Cmd[#Cmd + 1] = {Name='unantibring',Desc='Disables antibring'}
 Cmd[#Cmd + 1] = {Name='fling <plr>',Desc='Flings the player'}
@@ -424,10 +425,6 @@ Cmd[#Cmd + 1] = {Name='loopfling <plr>',Desc='Loop flings the player'}
 Cmd[#Cmd + 1] = {Name='unloopfling [plr]',Desc='Stops loopflinging'}
 Cmd[#Cmd + 1] = {Name='antifling',Desc='Prevents you from being flinged'}
 Cmd[#Cmd + 1] = {Name='unantifling',Desc='Disables antifling'}
-Cmd[#Cmd + 1] = {Name='antitaser / taserbypass',Desc='Prevents you from being tased'}
-Cmd[#Cmd + 1] = {Name='unantitaser / untaserbypass',Desc='Disables taser bypass'}
-Cmd[#Cmd + 1] = {Name='antishield / antishields',Desc='Removes shields from other players'}
-Cmd[#Cmd + 1] = {Name='unantishield / unantishields',Desc='Restores shields from other players'}
 Cmd[#Cmd + 1] = {Name='fastpunch',Desc='Activates fast punching'}
 Cmd[#Cmd + 1] = {Name='nofastpunch / slowpunch',Desc='Disables fast punching'}
 Cmd[#Cmd + 1] = {Name='onepunch / oneshotpunch',Desc='Activates one punching'}
@@ -449,6 +446,8 @@ Cmd[#Cmd + 1] = {Name='unsuperknife / normalknife',Desc='Disables super knife'}
 Cmd[#Cmd + 1] = {Name='hammer [plr]',Desc='Adds hammer to your backpack or give it to a player'}
 Cmd[#Cmd + 1] = {Name='baseballbat / bat',Desc='Adds one shot bat to your backpack'}
 Cmd[#Cmd + 1] = {Name='shield [plr]',Desc='Adds shield to your backpack or give it to a player (Requires SWAT Gamepass)'}
+Cmd[#Cmd + 1] = {Name='antishield / antishields',Desc='Removes shields from other players'}
+Cmd[#Cmd + 1] = {Name='unantishield / unantishields',Desc='Restores shields from other players'}
 Cmd[#Cmd + 1] = {Name='m9 / pistol',Desc='Adds M9 to your backpack'}
 Cmd[#Cmd + 1] = {Name='remington / shotgun',Desc='Adds Remington 870 to your backpack'}
 Cmd[#Cmd + 1] = {Name='ak / ak47',Desc='Adds AK-47 to your backpack'}
@@ -464,7 +463,6 @@ Cmd[#Cmd + 1] = {Name='oneshotgun',Desc="Makes the gun you're holding one shot"}
 Cmd[#Cmd + 1] = {Name='firerate <num>',Desc="Changes the firerate of the gun you're holding"}
 Cmd[#Cmd + 1] = {Name='autofire / rapidfire',Desc="Makes the gun you're holding shoot really fast"}
 Cmd[#Cmd + 1] = {Name='modgun / supergun',Desc="Enables all gun mods for the gun you're holding"}
-Cmd[#Cmd + 1] = {Name='unmodgun / unsupergun',Desc="Disables gun mods for the gun you're holding"}
 Cmd[#Cmd + 1] = {Name='automodguns / autosuperguns',Desc='Auto enables all gun mods for all your guns'}
 Cmd[#Cmd + 1] = {Name='unautomodguns / unautosuperguns',Desc='Disables auto gun mods'}
 Cmd[#Cmd + 1] = {Name='gate / frontgate',Desc='Teleports you to the gate'}
@@ -479,15 +477,15 @@ Cmd[#Cmd + 1] = {Name='backnexus / backnex',Desc='Teleports you in the back of t
 Cmd[#Cmd + 1] = {Name='sewer / sewers',Desc='Teleports you in the sewer'}
 Cmd[#Cmd + 1] = {Name='cafeteria / cafe',Desc='Teleports you in the cafeteria'}
 Cmd[#Cmd + 1] = {Name='roof',Desc='Teleports you to the roof'}
-Cmd[#Cmd + 1] = {Name='neutralspawn',Desc='Teleports you to the neutral spawn'}
 Cmd[#Cmd + 1] = {Name='criminalbase / crimbase',Desc='Teleports you in the criminal base'}
+Cmd[#Cmd + 1] = {Name='neutralspawn',Desc='Teleports you to the neutral spawn'}
 Cmd[#Cmd + 1] = {Name='antifall / antivoid',Desc='Teleports you above if you almost fall to the void'}
 Cmd[#Cmd + 1] = {Name='unantifall / unantivoid',Desc='Disables antifall'}
 Cmd[#Cmd + 1] = {Name='antiafk',Desc='Prevents you from being kicked for being AFK'}
 Cmd[#Cmd + 1] = {Name='unantiafk',Desc='Disables anti-afk'}
 Cmd[#Cmd + 1] = {Name='rejoin / rj',Desc='Rejoin the server'}
 Cmd[#Cmd + 1] = {Name='serverhop / shop',Desc='Join a different server'}
-Cmd[#Cmd + 1] = {Name='prefix / setprefix [text]',Desc='View or set prefix for commands'}
+Cmd[#Cmd + 1] = {Name='prefix [prefix]',Desc='View or set prefix for commands'}
 Cmd[#Cmd + 1] = {Name='chatcmd / enablechatcmd',Desc='Enable commands in chat'}
 Cmd[#Cmd + 1] = {Name='nochatcmd / disablechatcmd',Desc='Disable commands in chat'}
 Cmd[#Cmd + 1] = {Name='notifs / notifications',Desc='Enable notifications you whenever you use a command'}
@@ -2308,20 +2306,14 @@ local function executeCmd(cmd, args)
 						end
 					else 
 						if team ~= 'Really red' then
-							if team == 'Bright orange' then
-								repeat
-									local CF = CFrame.new(-975.127686, 109.323769, 2045.06262)
-									if user.Character.HumanoidRootPart.CFrame ~= CF then 
-										goToCF(CF)
-									end
-									RunService.Heartbeat:Wait()
-								until getTeam() == 'Really red'
-								goToCF(position)
-							else
-								Remotes.loadchar:InvokeServer(nil, 'Really red')
-								goToCF(position)
-								workspace.CurrentCamera.CFrame = camPos
-							end
+							repeat
+								local CF = CFrame.new(-975.127686, 109.323769, 2045.06262)
+								if user.Character.HumanoidRootPart.CFrame ~= CF then 
+									goToCF(CF)
+								end
+								RunService.Heartbeat:Wait()
+							until getTeam() == 'Really red'
+							goToCF(position)
 							log('[ ✅ ]: Joined criminals team')
 						else log('[ ❌ ]: Already joined criminals team') end
 					end
@@ -2329,27 +2321,6 @@ local function executeCmd(cmd, args)
 			end
 		else
 			if team  ~= 'Really red' then
-				if team == 'Bright orange' then
-					repeat
-						local CF = CFrame.new(-975.127686, 109.323769, 2045.06262)
-						if user.Character.HumanoidRootPart.CFrame ~= CF then 
-							goToCF(CF)
-						end
-						RunService.Heartbeat:Wait()
-					until getTeam() == 'Really red'
-					goToCF(position)
-				else
-					Remotes.loadchar:InvokeServer(nil, 'Really red')
-					goToCF(position)
-					workspace.CurrentCamera.CFrame = camPos
-				end
-				log('[ ✅ ]: Joined criminals team')
-			else log('[ ❌ ]: Already joined criminals team') end
-		end
-	elseif cmd == 'criminals' or cmd == 'crims' then
-		local team = getTeam()
-		if team  ~= 'Really red' then
-			if team == 'Bright orange' then
 				repeat
 					local CF = CFrame.new(-975.127686, 109.323769, 2045.06262)
 					if user.Character.HumanoidRootPart.CFrame ~= CF then 
@@ -2358,11 +2329,20 @@ local function executeCmd(cmd, args)
 					RunService.Heartbeat:Wait()
 				until getTeam() == 'Really red'
 				goToCF(position)
-			else
-				Remotes.loadchar:InvokeServer(nil, 'Really red')
-				goToCF(position)
-				workspace.CurrentCamera.CFrame = camPos
-			end
+				log('[ ✅ ]: Joined criminals team')
+			else log('[ ❌ ]: Already joined criminals team') end
+		end
+	elseif cmd == 'criminals' or cmd == 'crims' then
+		local team = getTeam()
+		if team  ~= 'Really red' then
+			repeat
+				local CF = CFrame.new(-975.127686, 109.323769, 2045.06262)
+				if user.Character.HumanoidRootPart.CFrame ~= CF then 
+					goToCF(CF)
+				end
+				RunService.Heartbeat:Wait()
+			until getTeam() == 'Really red'
+			goToCF(position)
 			log('[ ✅ ]: Joined criminals team')
 		else log('[ ❌ ]: Already joined criminals team') end
 	elseif cmd == 'neutral' or cmd == 'neutrals' then
@@ -2580,11 +2560,11 @@ local function executeCmd(cmd, args)
 			tool.Parent = user.Character
 			tool:Destroy()
 		else log('[ ❌ ]: Already uncrashing server') end
-	elseif cmd == 'fpslag' or cmd == 'lagspike' then
-		if not Toggles.FPSLag then
+	elseif cmd == 'dropfps' or cmd == 'spikefps' then
+		if not Toggles.DropFPS then
 			if SWAT then
 				log('[ ✅ ]: FPS spiking all players')
-				Toggles.FPSLag = true
+				Toggles.DropFPS = true
 				repeat
 					local team = getTeam()
 					if team ~= 'Bright blue' then
@@ -2600,13 +2580,13 @@ local function executeCmd(cmd, args)
 						end
 					end)
 					RunService.Heartbeat:Wait()
-				until not Toggles.FPSLag
+				until not Toggles.DropFPS
 			else log('[ ❌ ]: You need the SWAT gamepass to use this command') end
 		else log('[ ❌ ]: Already FPS spiking all players') end
-	elseif cmd == 'unfpslag' or cmd == 'unlagspike ' then
-		if Toggles.FPSLag then
+	elseif cmd == 'undropfps' or cmd == 'unspikefps ' then
+		if Toggles.DropFPS then
 			log('[ ✅ ]: Disabled FPS spiking all players')
-			Toggles.FPSLag = false
+			Toggles.DropFPS = false
 			repeat
 				Remotes.loadchar:InvokeServer()
 				RunService.Heartbeat:Wait()
@@ -3049,14 +3029,6 @@ local function executeCmd(cmd, args)
 				else log('[ ❌ ]: No player found') end
 			end
 		end
-	elseif cmd == 'clearloopbring' or cmd == 'clearloopbrings' then
-		Toggles.LoopBringAll = false
-		Toggles.LoopBringGuards = false
-		Toggles.LoopBringInmates = false
-		Toggles.LoopBringCrims = false
-		Toggles.LoopBringEnemies = false
-		Bringing = nil
-		log('[ ✅ ]: Cleared loop bringing all players')
 	elseif cmd == 'antibring' then
 		if not Toggles.AntiBring then
 			log('[ ✅ ]: Enabled antibring')
@@ -3772,6 +3744,8 @@ local function executeCmd(cmd, args)
 			local handle = Instance.new('Part', tool)
 			handle.Name = 'Handle'
 			handle.Size = Vector3.new(0.4, 5, 0.4)
+			local mesh = Instance.new('Mesh', handle)
+			mesh.MeshId = 'rbxassetid://1387483758'
 			local anim = Instance.new('Animation', tool)
 			anim.AnimationId = 'rbxassetid://218504594'
 			local track = user.Character.Humanoid.Animator:LoadAnimation(anim)
@@ -3975,6 +3949,7 @@ local function executeCmd(cmd, args)
 			local tool = user.Character:FindFirstChildOfClass('Tool')
 			if tool:FindFirstChild('GunStates') then
 				local name = tool.Name
+				if ModdedGuns[name] then ModdedGuns[name] = nil end
 				tool.Parent = user.Backpack
 				tool.Handle:Destroy()
 				tool.Parent = user.Character
@@ -3991,6 +3966,7 @@ local function executeCmd(cmd, args)
 			local tool = user.Character:FindFirstChildOfClass('Tool')
 			if tool:FindFirstChild('GunStates') then
 				local name = tool.Name
+				if ModdedGuns[name] then ModdedGuns[name] = nil end
 				tool.Parent = user.Backpack
 				tool.Handle:Destroy()
 				tool.Parent = user.Character
@@ -4079,31 +4055,13 @@ local function executeCmd(cmd, args)
 				else log('[ ❌ ]: Already enabled gun mods for '..tool.Name) end
 			else log('[ ❌ ]: Equip a gun before using this command') end
 		else log('[ ❌ ]: Equip a gun before using this command') end
-	elseif cmd == 'unmodgun' or cmd == 'unsupergun'  then
-		if user.Character:FindFirstChildOfClass('Tool') then
-			local tool = user.Character:FindFirstChildOfClass('Tool')
-			if tool:FindFirstChild('GunStates') and tool.Name ~= 'Taser' then
-				if ModdedGuns[tool.Name] then
-					ModdedGuns[tool.Name] = nil
-					tool.Handle:Destroy()
-					local toolPar = tool.Parent
-					repeat RunService.Heartbeat:Wait() until not tool:FindFirstChild('Handle')
-					tool.Parent = user.Character
-					tool:Destroy()				
-					Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver[tool.Name].ITEMPICKUP)
-					user.Backpack[tool.Name].Parent = toolPar
-					log('[ ✅ ]: Disabled gun mods for '..tool.Name)
-				else log('[ ❌ ]: Already disabled gun mods for '..tool.Name) end
-			else log('[ ❌ ]: Equip a gun before using this command') end
-		else log('[ ❌ ]: Equip a gun before using this command') end
 	elseif cmd == 'automodguns' or cmd == 'autosuperguns' then
 		if not Toggles.AutoModGuns then
 			Toggles.AutoModGuns = true
 			log('[ ✅ ]: Enabled auto mod guns')
 			if user.Character:FindFirstChildOfClass('Tool') and user.Character:FindFirstChildOfClass('Tool'):FindFirstChild('GunStates') then
 				local tool = user.Character:FindFirstChildOfClass('Tool')
-				if not ModdedGuns[tool.Name] and tool.Name ~= 'Taser' then
-					ModdedGuns[tool.Name] = true
+				if tool.Name ~= 'Taser' then
 					spawn(function()
 						repeat
 							pcall(function()
@@ -4127,14 +4085,13 @@ local function executeCmd(cmd, args)
 								end
 							end)
 							RunService.Heartbeat:Wait()
-						until not ModdedGuns[tool.Name] or not Toggles.AutoModGuns
+						until not Toggles.AutoModGuns
 					end)
 				end
 			end
 			repeat
 				for _, tool in pairs(user.Backpack:GetChildren()) do
-					if tool:FindFirstChild('GunStates') and tool.Name ~= 'Taser' and not ModdedGuns[tool.Name] then
-						ModdedGuns[tool.Name] = true
+					if tool:FindFirstChild('GunStates') and tool.Name ~= 'Taser' then
 						spawn(function()
 							repeat
 								pcall(function()
@@ -4158,7 +4115,7 @@ local function executeCmd(cmd, args)
 									end
 								end)
 								RunService.Heartbeat:Wait()
-							until not ModdedGuns[tool.Name] or not Toggles.AutoModGuns
+							until not Toggles.AutoModGuns
 						end)
 					end
 				end
@@ -4383,7 +4340,7 @@ local function executeCmd(cmd, args)
 				notif('Failed to server hop')
 			end
 		else TeleportService:Teleport(game.PlaceId) end
-	elseif cmd == 'prefix' or cmd == 'setprefix' then
+	elseif cmd == 'prefix' then
 		if args[1] then
 			if prefix ~= args[1] then
 				prefix = args[1]
