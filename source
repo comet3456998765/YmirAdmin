@@ -2270,8 +2270,9 @@ local function executeCmd(cmd, args)
 		local team = getTeam()
 		if team  ~= 'Bright blue' then
 			Remotes.TeamEvent:FireServer('Bright blue')
-			Remotes.TeamEvent.OnServerEvent:Wait()
-			if team ~= 'Bright blue' then
+			wait(.25)
+			local newTeam = getTeam()
+			if newTeam ~= 'Bright blue' then
 				log('[ ❌ ]: Cannot join guards team')
 			else log('[ ✅ ]: Joined guards team') end
 		else log('[ ❌ ]: Already joined guards team') end
@@ -3040,10 +3041,19 @@ local function executeCmd(cmd, args)
 						local prt0 = arm.RightGrip.Part1.Parent
 						if prt0:IsA('Tool') then
 							for _, plr in next, Players:GetPlayers() do
-								local plrArm = plr.Character['Right Arm']
-								if arm:FindFirstChild('RightGrip') and arm.RightGrip:IsA('Weld') then
-									local prt1 = arm.RightGrip.Part1.Parent
-									if prt0 == prt1 then prt0:Destroy() end
+								if plr ~= user then
+									local plrArm = plr.Character['Right Arm']
+									if arm:FindFirstChild('RightGrip') and arm.RightGrip:IsA('Weld') then
+										local prt1 = arm.RightGrip.Part1.Parent
+										if prt0 == prt1 then 
+											for _,v in next, arm:GetTouchingParts() do
+												if v == plrArm then 
+													prt0.Handle:Destroy()
+													prt0:Destroy()
+												else continue end
+											end
+										end
+									else continue end
 								else continue end
 							end
 						end
