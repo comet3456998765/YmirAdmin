@@ -417,7 +417,7 @@ Cmd[#Cmd + 1] = {Name='unview / unspectate [plr]',Desc='Stops spectating'}
 Cmd[#Cmd + 1] = {Name='goto / to <plr>',Desc='Teleports you to the player'}
 Cmd[#Cmd + 1] = {Name='bring <plr / team / all>',Desc='Teleports the player/team/all/enemies to you if you choose one of them'}
 Cmd[#Cmd + 1] = {Name='loopbring <plr / team / all>',Desc='Loop teleports the player/team/all to your position'}
-Cmd[#Cmd + 1] = {Name='unloopbring <plr / team / all>',Desc='Stops loop bringing the player/team/all'}
+Cmd[#Cmd + 1] = {Name='unloopbring [plr / team / all]',Desc='Stops loop bringing'}
 Cmd[#Cmd + 1] = {Name='antibring',Desc='Prevents you from being brought by other exploiters'}
 Cmd[#Cmd + 1] = {Name='unantibring',Desc='Disables antibring'}
 Cmd[#Cmd + 1] = {Name='fling <plr>',Desc='Flings the player'}
@@ -2936,7 +2936,11 @@ local function executeCmd(cmd, args)
 							Toggles.LoopBringEnemies = false
 							log('[ ✅ ]: Loop bringing '..plrName(plr))
 							repeat
-								bringPlr(plr, position)
+								pcall(function()
+									if getPlr(plr.Name) then
+										bringPlr(plr, position)
+									end
+								end)
 								RunService.Heartbeat:Wait()
 							until Bringing ~= plr
 						else log('[ ❌ ]: Already loop bringing '..plrName(plr)) end
