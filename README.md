@@ -14,4 +14,4 @@ loadstring(game:HttpGet(('https://raw.githubusercontent.com/senorkal/YmirAdmin/m
 > For more information, check out the [wiki](https://github.com/senorkal/YmirAdmin/wiki/) page!
 
 ## Credits
-> [@quo](https://github.com/senorkal) / quo#7618 - Primary developer, scripter and GUI designer
+> [@quo](https://github.com/senorkal) - Primary developer, scripter and GUI designer
