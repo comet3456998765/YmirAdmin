@@ -16,8 +16,8 @@ local Lighting = game:GetService('Lighting')
 local chatevents = RepStorage.DefaultChatSystemChatEvents
 local user = Players.LocalPlayer
 
-local funcs = {}
-local function addfunc(func) table.insert(funcs, func) end
+local Functions = {}
+local function addFunction(func) table.insert(Functions, func) end
 local function loadstr(str) loadstring(game:HttpGet((str), true))() end
 local function chat(str) chatevents.SayMessageRequest:FireServer(str, "All") end
 --\\
@@ -590,7 +590,7 @@ end
 --\\
 --// Command descriptions
 local Mouse = user:GetMouse()
-addfunc(Mouse.Move:Connect(function()
+addFunction(Mouse.Move:Connect(function()
 	local Guis = CoreGUI:GetGuiObjectsAtPosition(Mouse.X, Mouse.Y)
 	local Gui
 	for _, v in pairs(Guis) do
@@ -1042,14 +1042,14 @@ local function godMode()
 	local reanimName = 'reanim'
 	local hum = char.Humanoid
 	local cam = workspace.CurrentCamera
-	local godfuncs = {}
+	local godFunctions = {}
 	local vt3 = Vector3.new
 	local cf = CFrame.new
-	local function godfunc(func) table.insert(godfuncs, func) end
+	local function godFunction(func) table.insert(godFunctions, func) end
 	--//
 	for _, v in next, char:GetDescendants() do
 		if v:IsA('BasePart') then
-			godfunc(RunService.Heartbeat:Connect(function()
+			godFunction(RunService.Heartbeat:Connect(function()
 				pcall(function()
 					v.Velocity = vt3(0,-30,0)
 					sethiddenproperty(user,'MaximumSimulationRadius',math.huge)
@@ -1125,7 +1125,7 @@ local function godMode()
 
 	for _, v in next, char:GetDescendants() do
 		if v:IsA('BasePart') then
-			addfunc(RunService.Stepped:Connect(function()
+			addFunction(RunService.Stepped:Connect(function()
 				v.CanCollide = false
 			end))
 		end
@@ -1145,7 +1145,7 @@ local function godMode()
 	create(char['Right Leg'],reanim['Right Leg'])
 	create(char['Left Leg'],reanim['Left Leg'])
 
-	godfunc(UIS.JumpRequest:Connect(function()
+	godFunction(UIS.JumpRequest:Connect(function()
 		if reanim.Humanoid.FloorMaterial ~= Enum.Material.Air then 
 			reanim.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
 			reanim.Humanoid.Sit = false 
@@ -1164,7 +1164,7 @@ local function godMode()
 	local anim2 = Instance.new('Animation'); anim2.Name = 'fightR'; anim2.AnimationId = 'rbxassetid://484926359'; local fightR = reanim.Humanoid.Animator:LoadAnimation(anim2) 
 	local anim3 = Instance.new('Animation'); anim3.Name = 'crouchI'; anim3.AnimationId = 'rbxassetid://481089053'; local crouchI = reanim.Humanoid.Animator:LoadAnimation(anim3) 
 	local anim4 = Instance.new('Animation'); anim4.Name = 'crouchW'; anim4.AnimationId = 'rbxassetid://481088553'; local crouchW = reanim.Humanoid.Animator:LoadAnimation(anim4)
-	godfunc(Mouse.KeyDown:Connect(function(k)
+	godFunction(Mouse.KeyDown:Connect(function(k)
 		if k == 'f' and not fighting and reanim.Humanoid.WalkSpeed == 16 then
 			fighting = true
 			for _,v in next, reanim.Humanoid:GetPlayingAnimationTracks() do
@@ -1204,7 +1204,7 @@ local function godMode()
 		if k == 'c' and not crouchCD then
 			if not crouch then
 				crouchI:Play()
-				game:GetService("tween"):Create(reanim.Humanoid,TweenInfo.new(),{CameraOffset=Vector3.new(0,-4,0)}):Play()
+				TweenService:Create(reanim.Humanoid,TweenInfo.new(),{CameraOffset=Vector3.new(0,-4,0)}):Play()
 				reanim.Humanoid.WalkSpeed = 5
 				crouch = true
 				crouchCD = true; wait(.2); crouchCD = false
@@ -1212,7 +1212,7 @@ local function godMode()
 				for _,v in next, reanim.Humanoid:GetPlayingAnimationTracks() do
 					if v.Animation.Name:match('crouch') then v:Stop() end
 				end
-				game:GetService("tween"):Create(reanim.Humanoid,TweenInfo.new(),{CameraOffset=Vector3.new(0,0,0)}):Play()
+				TweenService:Create(reanim.Humanoid,TweenInfo.new(),{CameraOffset=Vector3.new(0,0,0)}):Play()
 				reanim.Humanoid.WalkSpeed = 16
 				crouch = false
 				crouchCD = true; wait(.2); crouchCD = false
@@ -1220,19 +1220,19 @@ local function godMode()
 		end
 	end))
 
-	godfunc(UIS.InputBegan:Connect(function(k)
+	godFunction(UIS.InputBegan:Connect(function(k)
 		if k.KeyCode == Enum.KeyCode.LeftShift and not fighting and not crouch then
 			reanim.Humanoid.WalkSpeed = 24
 		end
 	end))
 
-	godfunc(UIS.InputEnded:Connect(function(k)
+	godFunction(UIS.InputEnded:Connect(function(k)
 		if k.KeyCode == Enum.KeyCode.LeftShift and not fighting and not crouch then
 			reanim.Humanoid.WalkSpeed = 16
 		end
 	end))
 
-	godfunc(RunService.RenderStepped:Connect(function()
+	godFunction(RunService.RenderStepped:Connect(function()
 		if crouch and reanim.HumanoidRootPart.Velocity.Magnitude < 2 then
 			for _,v in next, reanim.Humanoid:GetPlayingAnimationTracks() do
 				if v.Animation.Name == 'crouchW' then v:Stop() end
@@ -1240,7 +1240,7 @@ local function godMode()
 		end
 	end))
 
-	godfunc(RunService.RenderStepped:Connect(function()
+	godFunction(RunService.RenderStepped:Connect(function()
 		reanim.Humanoid:Move(hum.MoveDirection,false)
 		if crouch and not crouchW.IsPlaying then
 			crouchW:Play()
@@ -1250,9 +1250,9 @@ local function godMode()
 
 	cam.CameraSubject = reanim.Humanoid
 
-	godfunc(RunService.RenderStepped:Connect(function()
+	godFunction(RunService.RenderStepped:Connect(function()
 		if not workspace:FindFirstChild(user.Name) or not workspace[user.Name]:FindFirstChild(folderName) then
-			for _,v in pairs(godfuncs) do
+			for _,v in pairs(godFunctions) do
 				v:Disconnect()
 			end
 		end
@@ -2286,7 +2286,7 @@ local function executeCmd(cmd, args)
 						until not plr or plr.TeamColor.Name == 'Really red'
 					else continue end
 				end
-				log('[ ✅ ]: Made all Players criminals')
+				log('[ ✅ ]: Made all players criminals')
 			else 
 				local plr = getPlr(args[1])
 				if plr then
@@ -2442,7 +2442,7 @@ local function executeCmd(cmd, args)
 		local team = getTeam()
 		if args[1] then
 			if args[1] == 'all' or args[1] == 'other' or args[1] == 'others' then
-				log('[ ✅ ]: Making all Players criminals')
+				log('[ ✅ ]: Making all players criminals')
 				for _, plr in ipairs(Players:GetPlayers()) do
 					if not Whitelisted[plr.Name] and plr.TeamColor.Name ~= 'Medium stone grey' and plr ~= user and plr.TeamColor.Name ~= 'Really red' then
 						repeat
@@ -2751,14 +2751,14 @@ local function executeCmd(cmd, args)
 			Toggles.AlwaysDay = false
 		else log('[ ❌ ]: Already enabled day cycle') end
 	elseif cmd == 'showinventory' or cmd == 'showinv' then
-		game.StarterGui:SetcoregEnabled(Enum.coregType.Backpack, true)
+		game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, true)
 		log('[ ✅ ]: Showed inventory')
 	elseif cmd == 'autoshowinventory' or cmd == 'autoshowinv' then
 		if not Toggles.AutoShowInv then
 			log('[ ✅ ]: Enabled auto show inventory')
 			Toggles.AutoShowInv = true
 			repeat
-				game.StarterGui:SetcoregEnabled(Enum.coregType.Backpack, true)
+				game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, true)
 				RunService.Heartbeat:Wait()
 			until not Toggles.AutoShowInv
 		else log('[ ❌ ]: Already enabled auto show inventory') end
@@ -3213,7 +3213,7 @@ local function executeCmd(cmd, args)
 						if v.Animation.AnimationId == 'rbxassetid://279227693' or v.Animation.AnimationId == 'rbxassetid://279229192' then
 							getsenv(user.Character.ClientInputHandler).cs.isTazed = false
 							v:Stop()
-							game.StarterGui:SetcoregEnabled(Enum.coregType.Backpack, true)
+							game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, true)
 							user.Character.Humanoid.WalkSpeed = 16
 							user.Character.Humanoid.JumpPower = 50
 						else continue end
@@ -5102,7 +5102,7 @@ local function executeRankedCmd(speaker, cmd, args)
 						until not plr or plr.TeamColor.Name == 'Really red'
 					else continue end
 				end
-				chat('/w '..speaker.Name..' [ ✅ ]: Made all Players criminals')
+				chat('/w '..speaker.Name..' [ ✅ ]: Made all players criminals')
 			else 
 				local plr = getPlr(args[1])
 				if plr then
@@ -5166,7 +5166,7 @@ local function executeRankedCmd(speaker, cmd, args)
 						until not plr or plr.TeamColor.Name == 'Really red'
 					else continue end
 				end
-				chat('/w '..speaker.Name..' [ ✅ ]: Made all Players criminals')
+				chat('/w '..speaker.Name..' [ ✅ ]: Made all players criminals')
 			else 
 				local plr = getPlr(args[1])
 				if plr then
@@ -5782,7 +5782,7 @@ local function executeRankedCmd(speaker, cmd, args)
 	end
 end
 
-addfunc(Players.PlayerAdded:Connect(function(plr) 
+addFunction(Players.PlayerAdded:Connect(function(plr) 
 	local counter = 0
 	local func
 	func = plr.CharacterAdded:Connect(function(char)
@@ -5839,7 +5839,7 @@ end)
 --\\
 --// Chat
 local chatbox = game.WaitForChild(user.PlayerGui, 'Chat').Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar
-addfunc(chatbox:GetPropertyChangedSignal('Text'):Connect(function()
+addFunction(chatbox:GetPropertyChangedSignal('Text'):Connect(function()
 	if ChatCmd then
 		local p = string.match(chatbox.Text, '^%s*(.)')
 		if p == prefix then
@@ -5876,7 +5876,7 @@ addfunc(chatbox:GetPropertyChangedSignal('Text'):Connect(function()
 	end
 end))
 
-addfunc(chatbox.FocusLost:Connect(function()
+addFunction(chatbox.FocusLost:Connect(function()
 	if ChatCmd then
 		for _, v in pairs(CmdHandler:GetChildren()) do
 			if v:IsA('TextButton') then
@@ -5889,7 +5889,7 @@ addfunc(chatbox.FocusLost:Connect(function()
 	end
 end))
 
-addfunc(chatevents.OnMessageDoneFiltering.OnClientEvent:Connect(function(d)
+addFunction(chatevents.OnMessageDoneFiltering.OnClientEvent:Connect(function(d)
 	local plr = Players:FindFirstChild(d.FromSpeaker)
 	local c = d.Message
 	if plr == user then
@@ -5916,7 +5916,7 @@ addfunc(chatevents.OnMessageDoneFiltering.OnClientEvent:Connect(function(d)
 end))
 --\\
 --// Stop entire script when removed
-addfunc(CmdGUI:GetPropertyChangedSignal('Parent'):Connect(function()
+addFunction(CmdGUI:GetPropertyChangedSignal('Parent'):Connect(function()
 	LoopKilled = {}
 	LoopTased = {}
 	Aura = {}
@@ -5930,6 +5930,6 @@ addfunc(CmdGUI:GetPropertyChangedSignal('Parent'):Connect(function()
 	punchCooldown = nil
 	knifeCooldown = nil
 	batCooldown = nil
-	for _, v in pairs(funcs) do v:Disconnect() end
+	for _, v in pairs(Functions) do v:Disconnect() end
 	CmdGUI:Destroy()
 end))
