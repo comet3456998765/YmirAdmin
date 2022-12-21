@@ -4106,11 +4106,13 @@ local function executeCmd(cmd, args)
 								if user.Character:FindFirstChild(tool.Name) or user.Backpack:FindFirstChild(tool.Name) then
 									local toolInInv = user.Character:FindFirstChild(tool.Name) or user.Backpack:FindFirstChild(tool.Name) 
 									local req = require(toolInInv.GunStates)
-									req.Damage = math.huge
-									req.Range = math.huge
-									req.FireRate = -math.huge
-									req.ReloadTime = -math.huge
-									req.AutoFire = true
+									if req.FireRate > -999999999 then
+										req.Damage = math.huge
+										req.Range = math.huge
+										req.FireRate = -math.huge
+										req.ReloadTime = -math.huge
+										req.AutoFire = true
+									end
 									if req.CurrentAmmo <= 0 then
 										local orig = toolInInv.Parent
 										toolInInv.Handle:Destroy()
@@ -4136,11 +4138,13 @@ local function executeCmd(cmd, args)
 									if user.Character:FindFirstChild(tool.Name) or user.Backpack:FindFirstChild(tool.Name) then
 										local toolInInv = user.Character:FindFirstChild(tool.Name) or user.Backpack:FindFirstChild(tool.Name) 
 										local req = require(toolInInv.GunStates)
-										req.Damage = math.huge
-										req.Range = math.huge
-										req.FireRate = -math.huge
-										req.ReloadTime = -math.huge
-										req.AutoFire = true
+										if req.FireRate > -999999999 then
+											req.Damage = math.huge
+											req.Range = math.huge
+											req.FireRate = -math.huge
+											req.ReloadTime = -math.huge
+											req.AutoFire = true
+										end
 										if req.CurrentAmmo <= 0 then
 											local orig = toolInInv.Parent
 											toolInInv.Handle:Destroy()
