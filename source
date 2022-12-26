@@ -1,4 +1,4 @@
-local ver = '2.5.4' --// 6 December 2022 EST
+local ver = '2.5.5' --// 26 December 2022 EST
 if not game:IsLoaded() then game.Loaded:Wait() end --// Wait for game to load to prevent errors
 --// Services
 local Players = game:GetService('Players')
@@ -196,6 +196,7 @@ _G.settings = {
 	logsOpen = false,
 	mainPos = {x1 = CmdMain.Position.X.Scale, x2 = CmdMain.Position.X.Offset, y1 = CmdMain.Position.Y.Scale, y2 = CmdMain.Position.Y.Offset},
 	KillTool = 'AK-47',
+	TPTool = 'M9',
 	Whitelisted = {},
 	Ranked = {},
 }
@@ -358,7 +359,7 @@ Cmd[#Cmd + 1] = {Name='spamarrest <plr>',Desc='Spam arrests the player (Causes l
 Cmd[#Cmd + 1] = {Name='unspamarrest [plr]',Desc='Stops spam arresting'}
 Cmd[#Cmd + 1] = {Name='arrestaura',Desc='Arrests everyone who is near you'}
 Cmd[#Cmd + 1] = {Name='noarrestaura / unarrestaura',Desc='Disables arrest aura'}
-Cmd[#Cmd + 1] = {Name='killtool / killgun <gun>',Desc='Set the gun that you will use for killing players via command'}
+Cmd[#Cmd + 1] = {Name='killtool / killgun [tool]',Desc='View or sets the gun that you will use for killing players via command'}
 Cmd[#Cmd + 1] = {Name='kill <plr / team / all>',Desc='Kills the player/team/all if you choose one of them'}
 Cmd[#Cmd + 1] = {Name='loopkill / lk <plr / team / all>',Desc='Loop kills the player/team/all if you choose one of them'}
 Cmd[#Cmd + 1] = {Name='unloopkill / unlk <plr / team / all>',Desc='Disables loop killing the player/team/all if you choose one of them'}
@@ -411,6 +412,7 @@ Cmd[#Cmd + 1] = {Name='view / spectate <plr>',Desc='Spectates the player'}
 Cmd[#Cmd + 1] = {Name='unview / unspectate [plr]',Desc='Stops spectating'}
 Cmd[#Cmd + 1] = {Name='goto / to <plr>',Desc='Teleports you to the player'}
 Cmd[#Cmd + 1] = {Name='bring <plr / team / all>',Desc='Teleports the player/team/all/enemies to you if you choose one of them'}
+Cmd[#Cmd + 1] = {Name='tptool [tool]',Desc='View or sets the tool for bringing players via commands'}
 Cmd[#Cmd + 1] = {Name='loopbring <plr / team / all>',Desc='Loop teleports the player/team/all to your position'}
 Cmd[#Cmd + 1] = {Name='unloopbring [plr / team / all]',Desc='Stops loop bringing'}
 Cmd[#Cmd + 1] = {Name='antibring',Desc='Prevents you from being brought by other exploiters'}
@@ -635,6 +637,7 @@ local Bringing = nil
 local Flinging = nil
 local SpamArresting = nil
 local KillTool = _G.settings.KillTool
+local TPTool = _G.settings.TPTool
 local AuraRange = 10
 local punchCooldown
 local knifeCooldown 
@@ -922,12 +925,27 @@ end
 
 local function bringPlr(plr, cf)
 	if not plr then return end
+	if isDead() then Remotes.loadchar:InvokeServer() end
 	local position = getPos()
+	local team = getTeam()
 	local newPos = CFrame.new(9e9, 9e9, 9e9)
-	local attempts = 0
 	repeat 
 		pcall(function()
-			Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver['M9'].ITEMPICKUP)
+			if not user.Backpack:FindFirstChild(TPTool) and not user.Character:FindFirstChild(TPTool) then
+				local items = workspace.Prison_ITEMS
+				if items.giver:FindFirstChild(TPTool) then Remotes.ItemHandler:InvokeServer(items.giver[TPTool].ITEMPICKUP)
+				elseif items.single:FindFirstChild(TPTool) then 
+					if team ~= 'Bright blue' then
+						Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single[TPTool].ITEMPICKUP)
+					else 
+						Remotes.TeamEvent:FireServer('Medium stone grey')
+						Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single[TPTool].ITEMPICKUP)
+						Remotes.TeamEvent:FireServer('Bright blue')
+					end
+					Remotes.ItemHandler:InvokeServer(items.single[TPTool].ITEMPICKUP) 
+				end
+			end
+			local tool = user.Backpack[TPTool] or user.Character[TPTool]
 			local char = user.Character
 			char.Humanoid.Name = 'fuck'
 			local c = char.fuck:Clone()
@@ -939,24 +957,39 @@ local function bringPlr(plr, cf)
 			wait()
 			char.Animate.Disabled = false
 			char.Humanoid.DisplayDistanceType = 'None'
-			local tool = user.Backpack:FindFirstChild('M9') or user.Character:FindFirstChild('M9')
 			tool.Parent = char
-			repeat
-				goTo(plr)
-				RunService.Heartbeat:Wait()
-			until not plr or not char:FindFirstChild('HumanoidRootPart') or tool.Parent == plr.Character or tool.Parent ~= user.Character
 			local counter = 0
 			repeat
+				wait(.1)
+				if not user.Backpack:FindFirstChild(TPTool) and not user.Character:FindFirstChild(TPTool) then
+					local items = workspace.Prison_ITEMS
+					if items.giver:FindFirstChild(TPTool) then Remotes.ItemHandler:InvokeServer(items.giver[TPTool].ITEMPICKUP)
+					elseif items.single:FindFirstChild(TPTool) then 
+						if team ~= 'Bright blue' then
+							Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single[TPTool].ITEMPICKUP)
+						else 
+							Remotes.TeamEvent:FireServer('Medium stone grey')
+							Remotes.ItemHandler:InvokeServer(workspace.Prison_ITEMS.single[TPTool].ITEMPICKUP)
+							Remotes.TeamEvent:FireServer('Bright blue')
+						end
+						Remotes.ItemHandler:InvokeServer(items.single[TPTool].ITEMPICKUP) 
+					end
+				end
+				counter = counter + 1
+				goTo(plr,CFrame.new(0, 0, 0) * CFrame.new(math.random(-100, 100)/200,math.random(-100, 100)/200,math.random(-100, 100)/200))
+			until (isDead() or not char:FindFirstChild('HumanoidRootPart') or tool.Parent ~= char) and counter > 2			
+			counter = 0
+			repeat
+				wait(.1)
 				counter = counter + 1
 				goToCF(cf)
-				RunService.Heartbeat:Wait()
-			until counter > 13 or not char:FindFirstChild('HumanoidRootPart') or tool.Parent ~= plr.Character
+			until (isDead() or not char:FindFirstChild('HumanoidRootPart') or tool.Parent ~= plr.Character or counter > 20) and counter > 2
 			Remotes.loadchar:InvokeServer()
 			goToCF(position)
 			newPos = plr.Character.HumanoidRootPart.CFrame
-			attempts = attempts + 1
 		end)
-	until (cf.Position - newPos.Position).magnitude <= 5 or attempts > 3
+		wait()
+	until (cf.Position - newPos.Position).magnitude <= 5
 end
 
 local function flingPlr(plr)
@@ -1802,37 +1835,43 @@ local function executeCmd(cmd, args)
 		else log('[ ❌ ]: Already disabled arrest aura') end
 	elseif cmd == 'killtool' or cmd == 'killgun' or cmd == 'killweapon' then
 		if args[1] then
-			local already
+			local err
 			if args[1] == 'ak' or args[1] == 'ak47' or args[1] == 'ak-47' then
 				if KillTool ~= 'AK-47' then KillTool = 'AK-47' 
 				else 
-					log('[ ❌ ]: Already set'..KillTool..'as kill tool')
-					already = true
+					log('[ ❌ ]: Already set'..KillTool..' as kill tool')
+					err = true
 				end
 			elseif args[1] == 'm4' or args[1] == 'm4a1' then
 				if KillTool ~= 'M4A1' then KillTool = 'M4A1' 
 				else 
-					log('[ ❌ ]: Already set'..KillTool..'as kill tool')
-					already = true
+					log('[ ❌ ]: Already set'..KillTool..' as kill tool')
+					err = true
 				end
 			elseif args[1] == 'm9' or args[1] == 'pistol' then
 				if KillTool ~= 'M9' then KillTool = 'M9' 
 				else 
-					log('[ ❌ ]: Already set'..KillTool..'as kill tool')
-					already = true
+					log('[ ❌ ]: Already set'..KillTool..' as kill tool')
+					err = true
 				end
-			elseif args[1] == 'remington' or args[1] == 'reming' or args[1] == 'shotgun' or cmd == 'remington870' then
+			elseif args[1] == 'remington' or args[1] == 'reming' or args[1] == 'shotgun' or args[1] == 'remington870' then
 				if KillTool ~= 'Remington 870' then KillTool = 'Remington 870' 
 				else 
-					log('[ ❌ ]: Already set'..KillTool..'as kill tool')
-					already = true
+					log('[ ❌ ]: Already set'..KillTool..' as kill tool')
+					err = true
 				end
-			else log('[ ❌ ]: Input a valid gun') end
-			if not already then
+			else 
+				log('[ ❌ ]: Input a valid gun')
+				err = true
+			end
+			if not err then
 				_G.settings.KillTool = KillTool
 				save()
 				log('[ ✅ ]: Set '..KillTool..' as kill tool')
 			end
+		else 
+			log('[ 📄 ]: '..KillTool..' is the kill tool')
+			notif(KillTool..' is the kill tool')
 		end
 	elseif cmd == 'kill' then
 		local team = getTeam()
@@ -2818,6 +2857,58 @@ local function executeCmd(cmd, args)
 					log('[ ✅ ]: Teleported to '..plrName(plr))
 				else log("[ ❌ ]: You can't teleport to yourself") end
 			else log('[ ❌ ]: No player found') end
+		end
+	elseif cmd == 'tptool' then
+		if args[1] then
+			local err
+			if args[1] == 'ak' or args[1] == 'ak47' or args[1] == 'ak-47' then
+				if TPTool ~= 'AK-47' then TPTool = 'AK-47' 
+				else 
+					log('[ ❌ ]: Already set'..TPTool..' as TP tool')
+					err = true
+				end
+			elseif args[1] == 'm4' or args[1] == 'm4a1' then
+				if TPTool ~= 'M4A1' then TPTool = 'M4A1' 
+				else 
+					log('[ ❌ ]: Already set'..TPTool..' as TP tool')
+					err = true
+				end
+			elseif args[1] == 'm9' or args[1] == 'pistol' then
+				if TPTool ~= 'M9' then TPTool = 'M9' 
+				else 
+					log('[ ❌ ]: Already set'..TPTool..' as TP tool')
+					err = true
+				end
+			elseif args[1] == 'remington' or args[1] == 'reming' or args[1] == 'shotgun' or args[1] == 'remington870' then
+				if TPTool ~= 'Remington 870' then TPTool = 'Remington 870' 
+				else 
+					log('[ ❌ ]: Already set'..TPTool..' as TP tool')
+					err = true
+				end
+			elseif args[1] == 'hammer' then
+				if TPTool ~= 'Hammer' then TPTool = 'Hammer' 
+				else 
+					log('[ ❌ ]: Already set'..TPTool..' as TP tool')
+					err = true
+				end
+			elseif args[1] == 'crudeknife' or args[1] == 'knife' or args[1] == 'shank'  then
+				if TPTool ~= 'Crude Knife' then TPTool = 'Crude Knife' 
+				else 
+					log('[ ❌ ]: Already set'..TPTool..' as TP tool')
+					err = true
+				end
+			else 
+				log('[ ❌ ]: Input a valid tool')
+				err = true
+			end
+			if not err then
+				_G.settings.TPTool = TPTool
+				save()
+				log('[ ✅ ]: Set '..TPTool..' as TP tool')
+			end
+		else 
+			log('[ 📄 ]: '..TPTool..' is the TP tool')
+			notif(TPTool..' is the TP tool')
 		end
 	elseif cmd == 'bring' then
 		local teamToBring = nil
