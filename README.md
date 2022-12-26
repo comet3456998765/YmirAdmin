@@ -9,9 +9,11 @@ loadstring(game:HttpGet(('https://raw.githubusercontent.com/senorkal/YmirAdmin/m
 ```
 
 ## Information
-> **Version 2.5.4 (6 December 2022):** 153 working commands
+> **Version 2.5.5 (26 December 2022):** 154 working commands
 
 > For more information, check out the [wiki](https://github.com/senorkal/YmirAdmin/wiki/) page!
+
+> Submit bugs to our page so I can fix it as soon as possible.
 
 ## Credits
 > [@quo](https://github.com/senorkal) - Primary developer, scripter and GUI designer
