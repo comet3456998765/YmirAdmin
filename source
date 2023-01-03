@@ -2719,13 +2719,15 @@ local function executeCmd(cmd, args)
 			log('[ ✅ ]: Enabled auto refresh')
 			Toggles.AutoRefresh = true
 			repeat
-				if user.Character.Humanoid.Health <= 0 then
-					local newPos = getPos()
-					local newCam = getCam()
-					Remotes.loadchar:InvokeServer()
-					goToCF(newPos)
-					workspace.CurrentCamera.CFrame = newCam
-				end
+				pcall(function()
+					if user.Character.Humanoid.Health <= 0 then
+						local newPos = getPos()
+						local newCam = getCam()
+						Remotes.loadchar:InvokeServer()
+						goToCF(newPos)
+						workspace.CurrentCamera.CFrame = newCam
+					end
+				end)
 				RunService.Heartbeat:Wait()
 			until not Toggles.AutoRefresh
 		else log('[ ❌ ]: Already enabled auto refresh') end
