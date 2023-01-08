@@ -4465,7 +4465,7 @@ local function executeCmd(cmd, args)
 	elseif cmd == 'serverhop' or cmd == 'shop' then
 		log('[ ✅ ]: Joining new server')
 		notif('Joining new server')
-		local httprequest =  (syn and syn.request) or Http.request or http_request or (fluxus and fluxus.request) or request
+		local httprequest =  (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 		if httprequest then
 			local servers = {}
 			local req = httprequest({Url = string.format('https://games.roblox.com/v1/games/%s/servers/Public?sortOrder=Asc&limit=100', game.PlaceId)})
