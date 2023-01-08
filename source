@@ -1223,11 +1223,11 @@ local function godMode()
 			func = p.Touched:connect(function(h)
 				if not punchCD and Players:FindFirstChild(h.Parent.Name) and h.Parent ~= user and workspace[h.Parent.Name].Humanoid.Health > 0 then
 					punchCD = true
-					game.RepStorage.meleeEvent:FireServer(Players[h.Parent.Name])
+					RepStorage.meleeEvent:FireServer(Players[h.Parent.Name])
 					local sound = h.Parent.Head.punchSound:Clone()
 					sound.Parent = h.Parent.Head
 					sound:Play()
-					game.RepStorage.SoundEvent:FireServer(h.Parent.Head.punchSound, h.Parent.Head)
+					RepStorage.SoundEvent:FireServer(h.Parent.Head.punchSound, h.Parent.Head)
 					func:Disconnect()
 				else func:Disconnect() return end
 			end)
@@ -1514,15 +1514,14 @@ local function executeCmd(cmd, args)
 			elseif args[1] == 'all' or args[1] == 'other' or args[1] == 'others' then
 				local plrTable = {}
 				for _, plr in pairs(Players:GetPlayers()) do
-					local currentTeam = getTeam()
-					if currentTeam ~= 'Bright blue' then
-						Remotes.loadchar:InvokeServer(nil, 'Bright blue')
-						goToCF(position)
-						workspace.CurrentCamera.CFrame = camPos
-					end
 					if not Whitelisted[plr.Name] and plr.TeamColor.Name ~= 'Bright blue' and plr ~= user and workspace:FindFirstChild(plr.Name) then
 						table.insert(plrTable, plr)
 					else continue end
+				end
+				if not plr.Character:FindFirstChild('Taser') and not plr.Backpack:FindFirstChild('Taser') then
+					Remotes.loadchar:InvokeServer(nil, 'Bright blue')
+					goToCF(position)
+					workspace.CurrentCamera.CFrame = camPos
 				end
 				tasePlrs(plrTable)
 				log('[ ✅ ]: Tased all players')
@@ -1538,31 +1537,35 @@ local function executeCmd(cmd, args)
 			else
 				local plr = getPlr(args[1])
 				if plr then
-					if plr.TeamColor.Name ~= 'Bright blue' then
-						tasePlr(plr)
-						log('[ ✅ ]: Tased '..plrName(plr))
-						if user.TeamColor.Name ~= team then
-							if team == 'Bright blue' or team == 'Bright orange' or team == 'Medium stone grey' then
-								Remotes.TeamEvent:FireServer(team)
-							else
-								Remotes.loadchar:InvokeServer(nil, team)
-								goToCF(position)
-								workspace.CurrentCamera.CFrame = camPos 
-							end
+					if not plr.Character:FindFirstChild('Taser') and not plr.Backpack:FindFirstChild('Taser') then
+						Remotes.loadchar:InvokeServer(nil, 'Bright blue')
+						goToCF(position)
+						workspace.CurrentCamera.CFrame = camPos
+					end
+					tasePlr(plr)
+					log('[ ✅ ]: Tased '..plrName(plr))
+					if user.TeamColor.Name ~= team then
+						if team == 'Bright blue' or team == 'Bright orange' or team == 'Medium stone grey' then
+							Remotes.TeamEvent:FireServer(team)
+						else
+							Remotes.loadchar:InvokeServer(nil, team)
+							goToCF(position)
+							workspace.CurrentCamera.CFrame = camPos 
 						end
-					else log('[ ❌ ]: Cannot tase player') end
+					end
 				else log('[ ❌ ]: No player found') end
 			end
 			if teamToTase and teamToTase ~= nil then
 				local plrTable = {}
 				for _, plr in pairs(Players:GetPlayers()) do
-					local currentTeam = getTeam()
-					if currentTeam ~= 'Bright blue' then
-						Remotes.loadchar:InvokeServer(nil, 'Bright blue')
-					end
 					if not Whitelisted[plr.Name] and plr ~= user and plr.TeamColor.Name == teamToTase[2] and workspace:FindFirstChild(plr.Name) then
 						table.insert(plrTable, plr)
 					else continue end
+				end
+				if not plr.Character:FindFirstChild('Taser') and not plr.Backpack:FindFirstChild('Taser') then
+					Remotes.loadchar:InvokeServer(nil, 'Bright blue')
+					goToCF(position)
+					workspace.CurrentCamera.CFrame = camPos
 				end
 				tasePlrs(plrTable)
 				log('[ ✅ ]: Tased all '..teamToTase[1]:lower())
@@ -1608,30 +1611,34 @@ local function executeCmd(cmd, args)
 			else
 				local plr = getPlr(args[1])
 				if plr then
-					if plr.TeamColor.Name ~= 'Bright blue' then
-						if not LoopTased[plr.UserId] then
-							LoopTased[plr.UserId] = plr
-							log('[ ✅ ]: Loop tasing '..plrName(plr))
-							repeat
-								local team = getTeam()
-								if team ~= 'Bright blue' then
-									Remotes.loadchar:InvokeServer(nil, 'Bright blue')
-								end
-								if not Whitelisted[plr.Name] and plr ~= user and workspace:FindFirstChild(plr.Name) then
-									tasePlr(plr)
-								end
-								RunService.Heartbeat:Wait()
-							until LoopTased[plr.UserId] == nil
-						else log('[ ❌ ]: Already loop tasing '..plrName(plr)) end
-					else log('[ ❌ ]: Cannot tase player') end
+					if not LoopTased[plr.UserId] then
+						LoopTased[plr.UserId] = plr
+						log('[ ✅ ]: Loop tasing '..plrName(plr))
+						repeat
+							if not plr.Character:FindFirstChild('Taser') and not plr.Backpack:FindFirstChild('Taser') then
+								local newPos = getPos()
+								local newCam = getCam()
+								Remotes.loadchar:InvokeServer(nil, 'Bright blue')
+								goToCF(newPos)
+								workspace.CurrentCamera.CFrame = newCam
+							end
+							if not Whitelisted[plr.Name] and plr ~= user and workspace:FindFirstChild(plr.Name) then
+								tasePlr(plr)
+							end
+							RunService.Heartbeat:Wait()
+						until LoopTased[plr.UserId] == nil
+					else log('[ ❌ ]: Already loop tasing '..plrName(plr)) end
 				else log('[ ❌ ]: No player found') end
 			end
 			if not already then
 				if Toggles.LoopTaseInmates then
 					repeat
-						local team = getTeam()
-						if team ~= 'Bright blue' then
+						if not plr.Character:FindFirstChild('Taser') and not plr.Backpack:FindFirstChild('Taser') then
+							local newPos = getPos()
+							local newCam = getCam()
 							Remotes.loadchar:InvokeServer(nil, 'Bright blue')
+							goToCF(newPos)
+							workspace.CurrentCamera.CFrame = newCam
 						end
 						local plrTable = {}
 						for _, plr in pairs(Players:GetPlayers()) do
@@ -1644,9 +1651,12 @@ local function executeCmd(cmd, args)
 					until not Toggles.LoopTaseInmates 
 				elseif Toggles.LoopTaseCrims then
 					repeat
-						local team = getTeam()
-						if team ~= 'Bright blue' then
+						if not plr.Character:FindFirstChild('Taser') and not plr.Backpack:FindFirstChild('Taser') then
+							local newPos = getPos()
+							local newCam = getCam()
 							Remotes.loadchar:InvokeServer(nil, 'Bright blue')
+							goToCF(newPos)
+							workspace.CurrentCamera.CFrame = newCam
 						end
 						local plrTable = {}
 						for _, plr in pairs(Players:GetPlayers()) do
@@ -1659,8 +1669,7 @@ local function executeCmd(cmd, args)
 					until not Toggles.LoopTaseCrims
 				elseif Toggles.LoopTaseAll then
 					repeat
-						local team = getTeam()
-						if team ~= 'Bright blue' then
+						if not plr.Character:FindFirstChild('Taser') and not plr.Backpack:FindFirstChild('Taser') then
 							local newPos = getPos()
 							local newCam = getCam()
 							Remotes.loadchar:InvokeServer(nil, 'Bright blue')
