@@ -1518,7 +1518,7 @@ local function executeCmd(cmd, args)
 						table.insert(plrTable, plr)
 					else continue end
 				end
-				if not plr.Character:FindFirstChild('Taser') and not plr.Backpack:FindFirstChild('Taser') then
+				if not user.Character:FindFirstChild('Taser') and not user.Backpack:FindFirstChild('Taser') then
 					Remotes.loadchar:InvokeServer(nil, 'Bright blue')
 					goToCF(position)
 					workspace.CurrentCamera.CFrame = camPos
